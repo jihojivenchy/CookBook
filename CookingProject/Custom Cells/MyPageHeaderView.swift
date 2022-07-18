@@ -54,7 +54,7 @@ class MyPageHeaderView : UIView {
         
         
         addSubview(idLabel)
-        idLabel.text = "djawlekdl123"
+        idLabel.text = "ddasdadadsa@naver.com"
         idLabel.font = .systemFont(ofSize: 15)
         idLabel.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp_bottomMargin).offset(10)
