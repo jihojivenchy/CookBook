@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>522961275616-dm50jg95go2dsaiqoc6cbbgjj0gaqnsr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.522961275616-dm50jg95go2dsaiqoc6cbbgjj0gaqnsr</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBA2F-FmhQr1bF8NfmFDdy1CcnSC_k3lfA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>522961275616</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>co.appbrewery.CookingProject</string>
+	<key>PROJECT_ID</key>
+	<string>cookingproject-5bf82</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cookingproject-5bf82.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:522961275616:ios:30767d102f10daf0d9de85</string>
+</dict>
+</plist>
