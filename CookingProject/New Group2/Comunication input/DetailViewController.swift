@@ -1,13 +1,13 @@
 //
-//  ComunicationViewController.swift
+//  DetailViewController.swift
 //  CookingProject
 //
-//  Created by 엄지호 on 2022/07/15.
+//  Created by 엄지호 on 2022/07/22.
 //
 
 import UIKit
 
-class ComunicationViewController: UIViewController {
+class DetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
