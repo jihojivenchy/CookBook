@@ -1,13 +1,13 @@
 //
-//  RegisterCellTableViewCell.swift
+//  NextRegisterCustomCell.swift
 //  CookingProject
 //
-//  Created by 엄지호 on 2022/07/22.
+//  Created by 엄지호 on 2022/07/25.
 //
 
 import UIKit
 
-class RegisterCellTableViewCell: UITableViewCell {
+class NextRegisterCustomCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
