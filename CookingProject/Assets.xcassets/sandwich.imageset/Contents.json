@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "sandwich.png",
+      "filename" : "free-icon-sandwich-1196629.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "sandwich@2x.png",
+      "filename" : "free-icon-sandwich-1196629@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "sandwich@3x.png",
+      "filename" : "free-icon-sandwich-1196629@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

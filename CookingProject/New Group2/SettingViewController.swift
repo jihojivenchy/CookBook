@@ -1,13 +1,13 @@
 //
-//  RegisterHeaderView.swift
+//  SettingViewController.swift
 //  CookingProject
 //
-//  Created by 엄지호 on 2022/07/22.
+//  Created by 엄지호 on 2022/08/12.
 //
 
 import UIKit
 
-class RegisterHeaderView: UIViewController {
+class SettingViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
