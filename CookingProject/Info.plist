@@ -2,6 +2,38 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakaoc992fa6c24b3d9b23179ef2b3c43d3f2</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>naverlogin</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>수박체.otf</string>
+		<string>조선체.ttf</string>
+		<string>EF_Diary.ttf</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

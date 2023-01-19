@@ -12,54 +12,145 @@ import Pageboy
 
 class ReadViewController : TabmanViewController {
     //MARK: - Properties
+    private var viewControllers : Array<UIViewController> = []
     
-    lazy var searchButton : UIBarButtonItem = {
-        let sb = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonPressed(_:)))
+    var defaltPageNumber = 0
+    
+    private lazy var backButton : UIBarButtonItem = {
+        let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
         
         return sb
     }()
     
-    let backButton = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
-    
-    private let categoryTitleList = [ "한식", "중식", "양식", "일식", "간식", "채식", "퓨전", "분식", "안주" ]
-    
+    private let categoryTitleList = ["전체보기","한 식", "중 식", "양 식", "일 식", "간 식", "채 식", "퓨 전", "분 식", "안 주"]
     
     //MARK: - LifeCycle
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        navigationController?.navigationBar.prefersLargeTitles = false
-        navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "요리가 좋아"
-        navigationItem.rightBarButtonItem = searchButton
-//        navigationController?.navigationBar.topItem?.title = ""  //back button의 타이틀을 없애기
-        
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .customGreen2
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
+        naviBarAppearance()
+        navigationTitleCustom()
         
         tabBarController?.tabBar.isHidden = true
         
-        navigationItem.backBarButtonItem = backButton
-       
+        view.backgroundColor = .white
+        
+        let vc1 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AllViewController") as! AllViewController
+        let vc2 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "KoreaViewController") as! KoreaViewController
+        let vc3 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ChinaViewController") as! ChinaViewController
+        let vc4 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AViewController") as! AViewController
+        let vc5 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "JViewController") as! JViewController
+        let vc6 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SnakViewController") as! SnakViewController
+        let vc7 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VeViewController") as! VeViewController
+        let vc8 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "FuViewController") as! FuViewController
+        let vc9 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SFViewController") as! SFViewController
+        let vc10 = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SojuViewController") as! SojuViewController
+        
+        viewControllers.append(vc1)
+        viewControllers.append(vc2)
+        viewControllers.append(vc3)
+        viewControllers.append(vc4)
+        viewControllers.append(vc5)
+        viewControllers.append(vc6)
+        viewControllers.append(vc7)
+        viewControllers.append(vc8)
+        viewControllers.append(vc9)
+        viewControllers.append(vc10)
+                    
+        self.dataSource = self
+        
+        setBar()
+        
     }
     
 
     
 //MARK: - ViewMethod
-//MARK: - ButtonMethod
-    
-    @objc func searchButtonPressed(_ sender : UIBarButtonItem) {
-        performSegue(withIdentifier: "ReadToSearch", sender: self)
+    private func naviBarAppearance(){
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .customPink
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.backBarButtonItem = backButton
+        
     }
+    
+    private func setBar() {
+        let bar = TMBar.ButtonBar()
+        bar.layout.transitionStyle = .snap //Customize
+        
+        // Add to view
+        addBar(bar, dataSource: self, at: .top)
+        
+        bar.backgroundView.style = .blur(style: .light) //버튼 백그라운드 스타일
+        bar.layout.alignment = .centerDistributed // .center시 선택된 탭이 가운데로 오게 됨.
+        bar.layout.interButtonSpacing = 50 //버튼들의 간격설정
+        bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 10.0, bottom: 0.0, right: 20.0) //안에 전체 버튼의 제약조건
+        
+        
+        bar.buttons.customize { (button) in
+            button.tintColor = .lightGray
+            button.selectedTintColor = .customPink2
+            button.font = UIFont(name: "EF_Diary", size: 16) ?? .systemFont(ofSize: 16)
+            button.selectedFont = UIFont(name: "EF_Diary", size: 20) ?? .systemFont(ofSize: 20)
+        }
+        
+        bar.indicator.tintColor = .customPink2
+        bar.indicator.overscrollBehavior = .compress
+        
+        
+    }
+    
+    private func navigationTitleCustom() {
+        let titleName = UILabel()
+        titleName.text = "요리 도감"
+        titleName.font = UIFont(name: "EF_Diary", size: 20)
+        titleName.textAlignment = .center
+        titleName.textColor = .black
+        titleName.sizeToFit()
+        
+        let stackView = UIStackView(arrangedSubviews: [titleName])
+        stackView.axis = .horizontal
+        stackView.frame.size.width = titleName.frame.width
+        stackView.frame.size.height = titleName.frame.height
+        
+        navigationItem.titleView = stackView
+        
+    }
+//MARK: - ButtonMethod
     
 }
 
 //MARK: - Extension
+
+extension ReadViewController : PageboyViewControllerDataSource, TMBarDataSource {
+
+    func barItem(for bar: TMBar, at index: Int) -> TMBarItemable {
+        
+        let item = TMBarItem(title: "")
+        item.title = categoryTitleList[index]
+        
+        
+        return item
+    }
+    
+    func numberOfViewControllers(in pageboyViewController: PageboyViewController) -> Int {
+        return viewControllers.count
+        
+    }
+    
+    func viewController(for pageboyViewController: PageboyViewController,
+                        at index: PageboyViewController.PageIndex) -> UIViewController? {
+        
+        
+        return viewControllers[index]
+    }
+    
+    func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
+        
+        return .at(index: defaltPageNumber)
+    }
+    
+}

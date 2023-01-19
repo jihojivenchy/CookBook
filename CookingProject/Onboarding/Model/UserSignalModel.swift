@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+
+struct UserSignalModel{
+    
+    var title : String
+    var senderUser : String
+    var ownerUser : String
+    var date : String
+    var writedDate : String
+    var nickName : String
+}

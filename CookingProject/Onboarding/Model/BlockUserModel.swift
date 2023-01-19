@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct BlockUserModel {
+    var userUid : String
+    var userNickName : String
+}

@@ -7,15 +7,20 @@
 
 import UIKit
 import SnapKit
-import PhotosUI
 import Firebase
 import FirebaseFirestore
+import FirebaseStorage
+import BSImagePicker
+import Photos
 
 
 class ModifyingDataViewController: UIViewController {
 
 //MARK: - Properties
+    private let storage = Storage.storage()
     private let db = Firestore.firestore()
+    
+    private var selectedPhAsset : [PHAsset] = []
 
     private var titleText = ""
     private var ingredientText = ""
@@ -23,7 +28,11 @@ class ModifyingDataViewController: UIViewController {
     private var temaText = ""
     private var contentsText = ""
     private var savedDate = ""
+    private var userNickName = ""
+    
     private var saveDocumentID = ""
+    
+    private let scrollView = UIScrollView()
     
     private let titleLabel = UILabel()
     private lazy var titleTextField : UITextField = {
@@ -42,8 +51,6 @@ class ModifyingDataViewController: UIViewController {
     }()
     
     private let ingredientsLabel = UILabel()
-    private let scrollView = UIScrollView()
-    
     private lazy var ingredientsTextView : UITextView = {
         let tv = UITextView()
         tv.returnKeyType = .next
@@ -87,18 +94,6 @@ class ModifyingDataViewController: UIViewController {
     private let titlePickerArray = ["한식", "중식", "양식", "일식", "간식", "채식", "퓨전", "분식", "안주"]
     
     private let contentsLabel = UILabel()
-    
-    private lazy var saveButton : UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action: #selector(clearButtonPressed(_:)))
-        
-        return button
-    }()
-    
-    private lazy var photoButton : UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .done, target: self, action: #selector(imageFindButtonPressed(_:)))
-        return button
-    }()
-    
     private lazy var contentTextView : UITextView = {
         let tv = UITextView()
         tv.returnKeyType = .next
@@ -112,16 +107,15 @@ class ModifyingDataViewController: UIViewController {
         return tv
     }()
     
-    private lazy var photoCollectionView : UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.scrollDirection = .horizontal
-        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        cv.delegate = self
-        cv.dataSource = self
-        cv.backgroundColor = .white
+    private lazy var saveButton : UIBarButtonItem = {
+        let button = UIBarButtonItem(image: UIImage(systemName: "checkmark"), style: .done, target: self, action: #selector(clearButtonPressed(_:)))
         
-        return cv
+        return button
+    }()
+    
+    private lazy var photoButton : UIBarButtonItem = {
+        let button = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .done, target: self, action: #selector(imageFindButtonPressed(_:)))
+        return button
     }()
     
     private var photoImageArray : [UIImage] = []
@@ -130,19 +124,32 @@ class ModifyingDataViewController: UIViewController {
     private let label1 = UILabel()
     private let photoLabel = UILabel()
     
+    private lazy var photoCollectionView : UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.scrollDirection = .horizontal
+        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        cv.delegate = self
+        cv.dataSource = self
+        cv.backgroundColor = .white
+        
+        return cv
+    }()
+    
+    private lazy var indicatorView : UIActivityIndicatorView = {
+       let ia = UIActivityIndicatorView()
+        ia.hidesWhenStopped = true
+        ia.style = .large
+        
+        return ia
+    }()
     
 //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .customPink
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
-        
-        navigationController?.navigationBar.tintColor = .black
-        navigationItem.rightBarButtonItems = [saveButton, photoButton]
+        naviBarAppearance()
         navigationTitleCustom()
         
         viewChange()
@@ -156,6 +163,17 @@ class ModifyingDataViewController: UIViewController {
     }
 
 //MARK: - ViewMethod
+    private func naviBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .customPink
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        
+        navigationController?.navigationBar.tintColor = .black
+        navigationItem.rightBarButtonItems = [saveButton, photoButton]
+    }
+    
     private func viewChange() {
         
         view.backgroundColor = .white
@@ -303,6 +321,11 @@ class ModifyingDataViewController: UIViewController {
             make.height.equalTo(40)
         }
         
+        scrollView.addSubview(indicatorView)
+        indicatorView.snp.makeConstraints { make in
+            make.centerX.centerY.equalTo(view)
+            make.width.height.equalTo(70)
+        }
         
     }
     
@@ -365,28 +388,91 @@ class ModifyingDataViewController: UIViewController {
         }
     }
     
+    @objc private func imageFindButtonPressed(_ sender : UIBarButtonItem){
+        let options = PHImageRequestOptions()
+        options.isNetworkAccessAllowed = true
+        
+        let imagePicker = ImagePickerController()
+        imagePicker.modalPresentationStyle = .fullScreen
+        imagePicker.settings.selection.max = 5
+        imagePicker.settings.theme.selectionStyle = .numbered
+        imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
+        imagePicker.settings.theme.selectionFillColor = .customPink ?? .white
+        imagePicker.doneButton.tintColor = .customPink
+        imagePicker.doneButtonTitle = "완료"
+        imagePicker.cancelButton.tintColor = .customPink
+        
+        presentImagePicker(imagePicker, select: { (asset) in
+            //사진 하나씩 선택할 때마다 실행되는 내용
+        }, deselect: { (asset) in
+            //선택 해제했을 때 실행되는 내용
+        }, cancel: { (asset) in
+            self.dismiss(animated: true, completion: nil) //cancel버튼 실행되는 내용
+        }, finish: { (asset) in
+            
+            self.selectedPhAsset.removeAll()
+            
+            for aset in asset{
+                self.selectedPhAsset.append(aset)
+            }
+            
+            self.convertAssetToImage(asset: self.selectedPhAsset, option: options)
+            self.photoCollectionView.reloadData()
+            
+        })
+    }
+    
+    private func convertAssetToImage(asset : [PHAsset], option : PHImageRequestOptions) {
+        
+        if asset.count != 0 {
+            
+            for i in 0 ..< asset.count {
+                let imageManager = PHImageManager.default()
+                
+                option.isSynchronous = true
+                
+                var thumbnail = UIImage()
+                imageManager.requestImage(for: asset[i], targetSize: CGSize(width: asset[i].pixelWidth, height: asset[i].pixelHeight), contentMode: .aspectFill, options: option) { result, info in
+                    
+                    thumbnail = result!
+                }
+                
+                guard let data = thumbnail.jpegData(compressionQuality: 0.8) else{return}
+                guard let newImage = UIImage(data: data) else{return}
+                
+                if photoImageArray.count < 5 {
+                    self.photoImageArray.append(newImage as UIImage)
+                }
+            }
+        }
+        
+    }
+    
     @objc private func deleteButtonPressed(_ sender : UIButton){ //collectionview photo delete method
-        print("delete")
         photoCollectionView.deleteItems(at: [IndexPath.init(row: sender.tag, section: 0)])
         photoImageArray.remove(at: sender.tag)
         photoCollectionView.reloadData()
+        
     }
     
-@available(iOS 14, *)
-    @objc private func imageFindButtonPressed(_ sender : UIBarButtonItem){
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10 //선택할 수 있는 개수
-        configuration.filter = .any(of: [.images]) //갤러리에서 가져올 때 제한할 종류
-        let picker = PHPickerViewController(configuration : configuration)
-        picker.delegate = self
+    @objc private func clearButtonPressed(_ sender : UIButton){
+        guard let title = titleTextField.text, let ingredient = ingredientsTextView.text, let tema = pickerField.text, let contents = contentTextView.text else {return print("Error text nil")}
         
-        self.present(picker, animated: true, completion: nil)
-    
+        if title != "", ingredient != "", tema != "", contents != "", photoImageArray != [] {
+            self.titleText = title
+            self.ingredientText = ingredient
+            self.temaText = tema
+            self.contentsText = contents
+            
+            self.saveData()
+        }else{
+            errorAlert(title: "작성오류", message: "모든 정보란에 정보를 기입해주세요")
+        }
     }
     
 //MARK: - DataMethod
     
-    private func dataError(title : String, message : String) {
+    private func errorAlert(title : String, message : String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let alertAction = UIAlertAction(title: "확인", style: .default, handler: nil)
         alertAction.setValue(UIColor.black, forKey: "titleTextColor")
@@ -408,7 +494,7 @@ class ModifyingDataViewController: UIViewController {
                             let data = doc.data()
                             self.saveDocumentID = doc.documentID //해당 도큐먼트 id 저장하기.
                             
-                            if let titleData = data["Title"] as? String, let segmentData = data["segment"] as? String, let ingredientData = data["ingredients"] as? String, let temaData = data["tema"] as? String, let contentsData = data["contents"] as? String, let dateData = data["date"] as? String{
+                            if let titleData = data["Title"] as? String, let segmentData = data["segment"] as? String, let ingredientData = data["ingredients"] as? String, let temaData = data["tema"] as? String, let contentsData = data["contents"] as? String, let dateData = data["date"] as? String, let nickName = data["userNickName"] as? String{
                                 
                                 self.segmentSavedData(segmentData: segmentData)
                                 self.titleTextField.text = titleData
@@ -416,6 +502,7 @@ class ModifyingDataViewController: UIViewController {
                                 self.pickerField.text = temaData
                                 self.savedDate = dateData
                                 self.contentTextView.text = contentsData
+                                self.userNickName = nickName
                             }
                         }
                     }
@@ -435,23 +522,87 @@ class ModifyingDataViewController: UIViewController {
         }
     }
     
-    private func setUploadModifyData() {
+    private func setUploadModifyData(url : [String], imageFileTitle : [String]) {
         
-        if saveDocumentID == "" {
-            print("Failed find documentId")
-        }else{
-            if let user = Auth.auth().currentUser{
-                db.collection("전체보기").document(saveDocumentID).setData(["Title" : self.titleText,
-                                                                        "ingredients" : self.ingredientText,
-                                                                        "segment" : self.seguementText,
-                                                                        "tema" : self.temaText,
-                                                                        "contents" : contentsText,
-                                                                        "user" : user.uid,
-                                                                        "date" : savedDate])
-                self.navigationController?.popViewController(animated: true)
-            }
+        if let user = Auth.auth().currentUser{
+            guard let userEmail = user.email else{return}
+            db.collection("전체보기").document(saveDocumentID).setData(["Title" : self.titleText,
+                                                                    "ingredients" : self.ingredientText,
+                                                                    "segment" : self.seguementText,
+                                                                    "tema" : self.temaText,
+                                                                    "contents" : contentsText,
+                                                                    "user" : user.uid,
+                                                                    "date" : savedDate,
+                                                                    "userNickName" : userNickName,
+                                                                    "userEmail" : userEmail,
+                                                                    "url" : FieldValue.arrayUnion(url),
+                                                                    "imageFile" : FieldValue.arrayUnion(imageFileTitle)])
+            self.navigationController?.popViewController(animated: true)
+            self.indicatorView.stopAnimating()
         }
     } //data 저장을 위한 method
+    
+    private func setUploadImage() {
+        
+        var completionCount = 0 //for문이 끝나는 시점을 알기 위해서.
+        var saveUrlArray = [String](repeating: "", count: photoImageArray.count)  //image url들을 담는 공간
+        var fileTitleArray : [String] = [] //image file의 제목
+        
+        self.indicatorView.startAnimating()
+        
+        for (index, image) in photoImageArray.enumerated() {
+            
+            let titleDate = Date().timeIntervalSince1970
+            
+            var data = Data()
+            data = image.jpegData(compressionQuality: 0.8)!
+            
+            let filePath = "saveImage\(titleDate)"
+            let storageRefChild = self.storage.reference().child(filePath)
+            
+            
+            let metaData = StorageMetadata()
+            metaData.contentType = "image/jpeg"
+            
+            storageRefChild.putData(data, metadata: metaData) { (metadata, error) in
+                if let e = error{
+                    print("Error saved image : \(e)")
+                }else{
+                    storageRefChild.downloadURL { url, error in
+                        if let e = error{
+                            print("Error downloadURL : \(e)")
+                        }else{
+                            
+                            guard let urlString = url?.absoluteString else{return}
+                            
+                            if index == 0 {
+                                saveUrlArray[0] = urlString
+                            }else if index == 1 {
+                                saveUrlArray[1] = urlString
+                            }else if index == 2 {
+                                saveUrlArray[2] = urlString
+                            }else if index == 3 {
+                                saveUrlArray[3] = urlString
+                            }else {
+                                saveUrlArray[4] = urlString
+                            }
+                            
+                            fileTitleArray.append(filePath)
+                            
+                            if self.photoImageArray.count - 1 == completionCount{ //반복문이 모두 끝날 때 data 저장
+                        
+                                self.setUploadModifyData(url: saveUrlArray, imageFileTitle: fileTitleArray)
+                                
+                            }else{
+                                completionCount += 1
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     
     private func saveData() {
         let alert = UIAlertController(title: "수정", message: "저장을 누르면 수정된 글로 저장됩니다.", preferredStyle: .alert)
@@ -460,8 +611,7 @@ class ModifyingDataViewController: UIViewController {
         cancelAction.setValue(UIColor.black, forKey: "titleTextColor")
        
         let saveAction = UIAlertAction(title: "저장", style: .default) { action in
-            self.setUploadModifyData()
-            
+            self.setUploadImage()
         }
         
         saveAction.setValue(UIColor.black, forKey: "titleTextColor")
@@ -472,24 +622,10 @@ class ModifyingDataViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    @objc private func clearButtonPressed(_ sender : UIButton){
-        guard let title = titleTextField.text, let ingredient = ingredientsTextView.text, let tema = pickerField.text, let contents = contentTextView.text else {return print("Error text nil")}
-        
-        if title != "", ingredient != "", tema != "", contents != "" {
-            self.titleText = title
-            self.ingredientText = ingredient
-            self.temaText = tema
-            self.contentsText = contents
-            
-            self.saveData()
-        }else{
-            dataError(title: "작성오류", message: "모든 정보란에 정보를 기입해주세요")
-        }
-    }
+    
 
 }
 //MARK: - Extension
-
 extension ModifyingDataViewController : UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -516,32 +652,6 @@ extension ModifyingDataViewController : UITextFieldDelegate {
         
         return true
     }
-}
-
-
-extension ModifyingDataViewController : PHPickerViewControllerDelegate {
-    
-    @available(iOS 14, *)
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        
-        picker.dismiss(animated: true, completion: nil)
-        
-        for result in results {
-            let itemProvider = result.itemProvider
-            
-            if itemProvider.canLoadObject(ofClass: UIImage.self){
-                itemProvider.loadObject(ofClass: UIImage.self) { [weak self](image, error) in
-                    
-                    DispatchQueue.main.async {
-                        guard let image = image as? UIImage else{return}
-                        self?.photoImageArray.append(image)
-                        self?.photoCollectionView.reloadData()
-                    }
-                }
-            }
-        }
-    }
-    
 }
 
 extension ModifyingDataViewController : UICollectionViewDataSource {

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="3pB-Rx-fXh">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KEi-Dr-Ifa">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,21 +12,282 @@
         <!--Home View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="HomeViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="HomeView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" customClass="HomeViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="NvY-tE-dwa"/>
-                    <connections>
-                        <segue destination="aEc-Nj-gGe" kind="show" identifier="goToLogin" id="vFE-pU-6Oi"/>
-                    </connections>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="939.13043478260875" y="79.6875"/>
+            <point key="canvasLocation" x="3672" y="-141"/>
+        </scene>
+        <!--Korea View Controller-->
+        <scene sceneID="RMD-Eu-vwJ">
+            <objects>
+                <viewController storyboardIdentifier="KoreaViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wr8-hL-d68" customClass="KoreaViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aaG-Ta-cst">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="3gw-Fj-SUn"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="Nw8-5D-PLv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="s13-BI-gL4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5751" y="-337"/>
+        </scene>
+        <!--China View Controller-->
+        <scene sceneID="9T7-Up-2yj">
+            <objects>
+                <viewController storyboardIdentifier="ChinaViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="TaF-O0-3sM" customClass="ChinaViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="jUq-1T-gIY">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="jwK-in-Hqq"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="giM-oY-FnA"/>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="GKT-2u-XCM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="c3G-SD-loD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6704" y="-338"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="CBu-pv-HRT">
+            <objects>
+                <viewController storyboardIdentifier="AViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="gG0-bb-zbl" customClass="AViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ayW-gA-pQ8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="xpY-Ph-hpH"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="ler-Ow-WUy"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zmB-EV-KWp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7714" y="-326"/>
+        </scene>
+        <!--Read View Controller-->
+        <scene sceneID="CH2-oF-ZzY">
+            <objects>
+                <viewController id="tHj-uv-SJW" customClass="ReadViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0Cn-jq-eLl">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="GvA-nE-ag1"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="31M-5I-O7a"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7km-TN-95z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3999" y="-927"/>
+        </scene>
+        <!--Report View Controller-->
+        <scene sceneID="8TI-ZR-tan">
+            <objects>
+                <viewController id="xwg-7A-WET" customClass="ReportViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="WV4-jx-UGX">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="gNs-Nt-zga"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="uUc-86-5oW"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qwt-GZ-jnM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8880" y="2658"/>
+        </scene>
+        <!--Selected Image View Controller-->
+        <scene sceneID="DGz-vW-MLP">
+            <objects>
+                <viewController id="HOq-Yq-IZ5" customClass="SelectedImageViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="76c-Pb-TFD">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="IO1-MV-hn0"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="EqF-CX-5tI"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9pf-sg-caq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="9984.0579710144939" y="2630.3571428571427"/>
+        </scene>
+        <!--Signal View Controller-->
+        <scene sceneID="0K4-SE-c52">
+            <objects>
+                <viewController storyboardIdentifier="SignalView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="gvh-to-XAm" customClass="SignalViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="nte-di-ClH">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="xc6-bp-iUt"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="K43-5l-RLS"/>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="Jdc-eH-Z8q"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VnY-pv-kxY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1367" y="1992"/>
+        </scene>
+        <!--Notice View Controller-->
+        <scene sceneID="eDK-q9-rQJ">
+            <objects>
+                <viewController id="JTj-hn-7SU" customClass="NoticeViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0dP-6M-Dj0">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="qiT-FL-NZW"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="r0b-89-EbF"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vqx-BM-qWz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5202.898550724638" y="2110.7142857142858"/>
+        </scene>
+        <!--Save Created Data View Controller-->
+        <scene sceneID="6nO-0a-gAk">
+            <objects>
+                <viewController storyboardIdentifier="WritedView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BId-h3-rJO" customClass="SaveCreatedDataViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TDN-j7-74H">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="dtq-WI-3Xf"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="lUB-eb-Tnv"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mle-bQ-PYI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="925" y="883"/>
+        </scene>
+        <!--Profile View Controller-->
+        <scene sceneID="Bhi-Pk-ofp">
+            <objects>
+                <viewController id="eWm-T5-lyL" customClass="ProfileViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="K4o-9l-kpb">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="6iV-hO-nWu"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="AbD-RH-wmH"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="e8i-Hu-fUo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3350" y="2098"/>
+        </scene>
+        <!--My Book View Controller-->
+        <scene sceneID="SUX-ot-2Zz">
+            <objects>
+                <viewController id="9ag-zX-C17" customClass="MyBookViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="iSY-A0-438">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="hLG-Or-qVf"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="INS-hE-P1l"/>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="7vP-0M-ILP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2Q0-qQ-ugO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4290" y="2111"/>
+        </scene>
+        <!--Comunication View Controller-->
+        <scene sceneID="z01-pU-PSS">
+            <objects>
+                <viewController storyboardIdentifier="Communication" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9Ez-v0-OKH" customClass="ComunicationViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4wa-Lj-4x7">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="4zj-5Q-xLO"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="kaN-1a-2PY"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <segue destination="GZX-lS-pK1" kind="show" identifier="goToRegister" id="Rrm-7h-SuC"/>
+                        <segue destination="xwg-7A-WET" kind="show" identifier="goToReport" id="wCl-e8-NgI"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yMa-dj-9sx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7607" y="1874"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="MDP-yb-F4h">
+            <objects>
+                <viewController storyboardIdentifier="DetailViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bfa-Oq-3L1" customClass="DetailViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="j1u-lQ-sqX">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="HPD-8E-Uiu"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="HOq-Yq-IZ5" kind="show" identifier="goToSeleted" id="6Bg-R6-3Si"/>
+                        <segue destination="9ag-zX-C17" kind="show" identifier="detailToMy" id="tC8-o2-w2B"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lNQ-7V-u7W" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8880" y="1787"/>
+        </scene>
+        <!--Comments View Controller-->
+        <scene sceneID="XFj-AV-r3m">
+            <objects>
+                <viewController storyboardIdentifier="CommentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J78-7c-UYc" customClass="CommentsViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="NHp-Oj-yUf">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="GFT-14-PTF"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="N32-8h-fD7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="9987" y="1874"/>
+        </scene>
+        <!--My Page View Controller-->
+        <scene sceneID="8TZ-4W-Wat">
+            <objects>
+                <viewController storyboardIdentifier="MenuView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="SLg-cP-o2W" customClass="MyPageViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="G9R-62-bn8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Zbl-Z8-Azk"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="6ds-Vy-Rbg"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mdb-Xp-ryT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5126.0869565217399" y="1303.7946428571429"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="0wj-wz-bLS">
@@ -38,30 +300,276 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="xse-CE-s0F"/>
+                    <connections>
+                        <segue destination="BB4-af-0cW" kind="show" identifier="goToJoin" id="iST-xd-Byo"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="esc-ce-1pq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1757.9710144927537" y="79.6875"/>
+            <point key="canvasLocation" x="4290" y="504"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="gXN-My-Ngh">
+        <!--Join Register View Controller-->
+        <scene sceneID="TUz-U0-s9R">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="3pB-Rx-fXh" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="4hL-a7-8yM">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
+                <viewController id="BB4-af-0cW" customClass="JoinRegisterViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Phb-JB-MKC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="bCS-wx-f8e"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="7K3-Pr-bOh"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="elc-Oz-Q6Z"/>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="goToHome" id="gnk-d1-LdZ"/>
                     </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="C6u-xd-6AV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6lc-k3-kdo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="28.985507246376812" y="79.6875"/>
+            <point key="canvasLocation" x="5990" y="444"/>
+        </scene>
+        <!--Onboarding View Controller-->
+        <scene sceneID="cNn-wD-51B">
+            <objects>
+                <viewController storyboardIdentifier="OnboardingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Tab-bq-cOg" customClass="OnboardingViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="A3k-kA-Un7">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="BMH-gG-Trt"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Iks-b0-gk8"/>
+                    <connections>
+                        <segue destination="BB4-af-0cW" kind="show" identifier="goToJoin" id="GAf-Oh-Cxc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="U2w-9a-3M4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1812" y="-194"/>
+        </scene>
+        <!--Setting View Controller-->
+        <scene sceneID="dz5-Mh-7JY">
+            <objects>
+                <viewController id="Gf0-Uv-CWL" customClass="SettingViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="rQJ-vu-fft">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Ka0-za-Z6b"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="5fN-cU-aMR"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UiU-hJ-gpl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3999" y="3070"/>
+        </scene>
+        <!--Manage Blocked User View Controller-->
+        <scene sceneID="a6T-O2-71A">
+            <objects>
+                <viewController id="LrX-Qf-fe5" customClass="ManageBlockedUserViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="r4t-UT-SqY">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="p7o-sQ-7ca"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="ZBC-Pg-0OK"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="L25-6S-lqq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4994" y="3784"/>
+        </scene>
+        <!--Custom Tab Bar Controller-->
+        <scene sceneID="oKG-od-mJz">
+            <objects>
+                <tabBarController storyboardIdentifier="TabBar" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Dyj-Yr-XKZ" customClass="CustomTabBarController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ZVb-lO-J4Z">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Nw9-Yr-n9B" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1550.7246376811595" y="-1039.2857142857142"/>
+        </scene>
+        <!--Modifying Data View Controller-->
+        <scene sceneID="M0G-Ju-yMK">
+            <objects>
+                <viewController id="GZX-lS-pK1" customClass="ModifyingDataViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="6Ei-b1-eSx">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="QGI-XZ-siK"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="6Q3-Pf-fsJ"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Svv-mm-WQJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7713" y="2608"/>
+        </scene>
+        <!--Ve View Controller-->
+        <scene sceneID="zxo-HD-glg">
+            <objects>
+                <viewController storyboardIdentifier="VeViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XLb-rG-auP" customClass="VeViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="IGX-Kp-LOg">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="ClY-3T-Wgu"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="DRZ-D9-PSW"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="V7j-9p-G7b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="10890" y="-326"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="yz6-BN-r3F">
+            <objects>
+                <viewController storyboardIdentifier="JViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="doR-Bd-FJ2" customClass="JViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="VQQ-5D-eTa">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="6Tt-jz-6e2"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="PVJ-3f-LTW"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="I8P-mo-8GW" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8881" y="-326"/>
+        </scene>
+        <!--Fu View Controller-->
+        <scene sceneID="u2N-C2-qyE">
+            <objects>
+                <viewController storyboardIdentifier="FuViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="u9l-yV-rw8" customClass="FuViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Rix-O2-MI7">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="67o-MV-60U"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="Mo3-uI-fSb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="l6F-Xv-Cen" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="11929" y="-301"/>
+        </scene>
+        <!--Snak View Controller-->
+        <scene sceneID="usB-Kx-MvU">
+            <objects>
+                <viewController storyboardIdentifier="SnakViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fyu-qz-NBg" customClass="SnakViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="eUA-ON-qNv">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="d6l-pJ-jeL"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="gxg-cd-Nce"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SxH-c7-TUm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="9784" y="-326"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="hf7-lm-6go">
+            <objects>
+                <viewController storyboardIdentifier="SFViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="lsp-Rd-f1b" customClass="SFViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="H0I-Id-4a9">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="qZM-hB-zzn"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="Gko-YS-f6x"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="g90-en-op8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="12897" y="-338"/>
+        </scene>
+        <!--Soju View Controller-->
+        <scene sceneID="rEe-lV-A68">
+            <objects>
+                <viewController storyboardIdentifier="SojuViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="PIr-Mp-Jzs" customClass="SojuViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="rZq-qa-drV">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="dsg-YT-FdY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="haf-L8-gqR"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="f0T-8n-O1C" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8113" y="352"/>
+        </scene>
+        <!--All View Controller-->
+        <scene sceneID="zmB-yv-xl4">
+            <objects>
+                <viewController storyboardIdentifier="AllViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="6o3-yQ-CdX" customClass="AllViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="2jZ-da-hWc">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="irN-NU-eJH"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <segue destination="9Ez-v0-OKH" kind="show" identifier="goToComunication" id="FXA-Fv-guu"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dS8-KV-pGd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="9129" y="372"/>
+        </scene>
+        <!--Custom Splash View Controller-->
+        <scene sceneID="hps-yQ-5Zf">
+            <objects>
+                <viewController storyboardIdentifier="CustomSplash" id="KEi-Dr-Ifa" customClass="CustomSplashViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="QEs-Vv-V53">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="78G-mr-i5h"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0q1-Vh-M4K" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-83" y="-745"/>
+        </scene>
+        <!--Social Login View Controller-->
+        <scene sceneID="nD7-Wj-GhM">
+            <objects>
+                <viewController id="hqg-HY-v94" customClass="SocialLoginViewController" customModule="CookingProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XgD-PL-x0a">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="rdK-x0-9GE"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="b8y-Gv-EI4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2616" y="-149"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="iST-xd-Byo"/>
+        <segue reference="Jdc-eH-Z8q"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

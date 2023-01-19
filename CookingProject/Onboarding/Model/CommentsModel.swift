@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct CommentsModel {
+    
+    var userId : String
+    var messages : String
+    var saveDate : String
+    var nickName : String
+    var documentId : String
+}

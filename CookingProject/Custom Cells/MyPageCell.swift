@@ -26,7 +26,7 @@ class MyPageCell : UITableViewCell {
     }
     
     private func viewInit() {
-        
+        self.backgroundColor = .white
         addSubview(labelImage)
         labelImage.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -36,6 +36,8 @@ class MyPageCell : UITableViewCell {
         }
         
         addSubview(cellLabel)
+        cellLabel.textColor = .black
+        cellLabel.font = UIFont(name: "EF_Diary", size: 17)
         cellLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.equalTo(labelImage.snp_rightMargin).offset(15)

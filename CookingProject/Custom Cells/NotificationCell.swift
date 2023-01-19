@@ -12,9 +12,12 @@ import SnapKit
 class NotificationCell : UITableViewCell{
     
     static let cellName = "NotificationTableCell"
+    
     let labelImage = UIImageView()
     let cellLabel = UILabel()
     let timeLabel = UILabel()
+    let titleLabel = UILabel()
+    let writeDateLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,6 +29,7 @@ class NotificationCell : UITableViewCell{
     }
     
     private func viewInit() {
+        self.backgroundColor = .white
         addSubview(labelImage)
         labelImage.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -37,6 +41,7 @@ class NotificationCell : UITableViewCell{
         addSubview(cellLabel)
         cellLabel.numberOfLines = 1
         cellLabel.lineBreakMode = .byTruncatingTail
+        cellLabel.textColor = .black
         cellLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.left.equalTo(labelImage.snp_rightMargin).offset(20)
@@ -45,7 +50,6 @@ class NotificationCell : UITableViewCell{
         }
         
         addSubview(timeLabel)
-        timeLabel.text = "5분전"
         timeLabel.font = .systemFont(ofSize: 10)
         timeLabel.textColor = .lightGray
         timeLabel.snp.makeConstraints { make in

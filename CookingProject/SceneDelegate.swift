@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import KakaoSDKAuth
+import NaverThirdPartyLogin
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -13,10 +15,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = storyBoard.instantiateViewController(identifier: "CustomSplash") as? CustomSplashViewController else{return print("error")}
+        
+        
+        self.window?.rootViewController = vc
+        self.window?.makeKeyAndVisible()
+        
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -27,8 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        UIApplication.shared.applicationIconBadgeNumber = 0 //아이콘에 뱃지를 없애주기
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
@@ -46,7 +52,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
-
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        //카톡앱에서 우리 앱으로 다시 돌아올 때 카카오 로그인 처리를 정상적으로 완료하기 위해서 추가
+        if let url = URLContexts.first?.url {
+            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                _ = AuthController.handleOpenUrl(url: url)
+            }
+        }
+        
+        //naver 인스턴스를 생성하여 액세스 토큰을 발급받는 것을 요청.
+        if let instance = NaverThirdPartyLoginConnection.getSharedInstance() {
+            instance.receiveAccessToken(URLContexts.first?.url)
+            
+        }
+    }
+    
 }
-
+extension SceneDelegate {
+    func changeRootView(vc : UIViewController) {
+        guard let window = self.window else{return}
+        window.rootViewController = vc
+    }
+}

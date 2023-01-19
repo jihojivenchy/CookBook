@@ -28,7 +28,7 @@ class CHeaderView : UICollectionReusableView {
     }
     
     func viewInit() {
-        
+        self.backgroundColor = .white
         addSubview(pImage)
         pImage.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -37,7 +37,8 @@ class CHeaderView : UICollectionReusableView {
         }
         
         addSubview(nickNameLabel)
-        nickNameLabel.font = .systemFont(ofSize: 25)
+        nickNameLabel.textColor = .black
+        nickNameLabel.font = UIFont(name: "EF_Diary", size: 25)
         nickNameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(25)
             make.left.equalToSuperview().offset(20)
@@ -46,6 +47,7 @@ class CHeaderView : UICollectionReusableView {
         }
         
         addSubview(idLabel)
+        idLabel.textColor = .black
         idLabel.font = .systemFont(ofSize: 14)
         idLabel.snp.makeConstraints { make in
             make.top.equalTo(nickNameLabel.snp_bottomMargin).offset(10)

@@ -6,14 +6,11 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseFirestore
 
 struct UserModel {
     var title : String
     var segment : String
     var userName : String
-    
-    
-    
+    var saveDate : String
+    var userUid : String
 }

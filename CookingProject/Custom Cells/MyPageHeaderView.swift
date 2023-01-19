@@ -29,12 +29,11 @@ class MyPageHeaderView : UIView {
     
     
     private func viewInit() {
+
+        self.backgroundColor = .white
         
         addSubview(imageView)
         imageView.tintColor = .white
-        imageView.backgroundColor = .gray
-        imageView.layer.cornerRadius = 60 / 2
-        imageView.clipsToBounds = true
         imageView.image = UIImage(named: "요리사")
         imageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -43,8 +42,9 @@ class MyPageHeaderView : UIView {
         }
         
         addSubview(nameLabel)
+        nameLabel.textColor = .black
         nameLabel.text = "닉네임"
-        nameLabel.font = .systemFont(ofSize: 20)
+        nameLabel.font = UIFont(name: "EF_Diary", size: 20)
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.left.equalTo(imageView.snp_rightMargin).offset(23)
@@ -54,6 +54,7 @@ class MyPageHeaderView : UIView {
         
         
         addSubview(idLabel)
+        idLabel.textColor = .black
         idLabel.text = "ddasdadadsa@naver.com"
         idLabel.font = .systemFont(ofSize: 15)
         idLabel.snp.makeConstraints { make in
