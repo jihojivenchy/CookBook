@@ -40,11 +40,17 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         self.backgroundColor = .clear
         
         addSubview(foodImageView)
+        foodImageView.backgroundColor = .brown
         foodImageView.clipsToBounds = true
         foodImageView.layer.cornerRadius = 8
+        foodImageView.layer.masksToBounds = false
+        foodImageView.layer.shadowOpacity = 1
+        foodImageView.layer.shadowColor = UIColor.darkGray.cgColor
+        foodImageView.layer.shadowOffset = CGSize(width: 0, height: 0)
+        foodImageView.layer.shadowRadius = 2
         foodImageView.snp.makeConstraints { make in
             make.top.left.right.equalToSuperview()
-            make.bottom.equalToSuperview().inset(50)
+            make.bottom.equalToSuperview().inset(35)
         }
         
         addSubview(explainView)
@@ -57,7 +63,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         explainView.layer.shadowOffset = CGSize(width: 0, height: 0)
         explainView.layer.shadowRadius = 2
         explainView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(15)
+            make.bottom.equalToSuperview().inset(5)
             make.left.right.equalToSuperview().inset(15)
             make.height.equalTo(65)
         }
