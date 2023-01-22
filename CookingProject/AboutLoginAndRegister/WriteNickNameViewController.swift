@@ -186,7 +186,7 @@ final class WriteNickNameViewController: UIViewController {
         guard let name = nickNameTextField.text else{return}
         
         if name == "" {
-            self.present(CommonAlert.alert(title: "오류", subMessage: "닉네임을 입력해주세요."), animated: true)
+            CustomAlert.show(title: "오류", subMessage: "닉네임을 입력해주세요.")
             
         }else{
             if checkSign == true {
@@ -195,7 +195,7 @@ final class WriteNickNameViewController: UIViewController {
                 self.navigationController?.pushViewController(vc, animated: true)
                 
             }else{
-                self.present(CommonAlert.alert(title: "오류", subMessage: "약관에 동의해주세요."), animated: true)
+                CustomAlert.show(title: "오류", subMessage: "약관에 동의해주세요.")
             }
         }
         

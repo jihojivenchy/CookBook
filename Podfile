@@ -17,4 +17,8 @@ target 'CookingProject' do
   pod 'KakaoSDKUser'  # 카카오 로그인, 사용자 관리
   pod 'KakaoSDKCommon'
   pod 'naveridlogin-sdk-ios'
+  pod 'NVActivityIndicatorView'
+  pod 'SCLAlertView'
+  pod 'SideMenu'
+
 end

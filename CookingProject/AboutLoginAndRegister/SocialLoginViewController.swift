@@ -14,6 +14,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import NaverThirdPartyLogin
 import Alamofire
+import NVActivityIndicatorView
 
 final class SocialLoginViewController: UIViewController {
 //MARK: - Properties
@@ -91,7 +92,6 @@ final class SocialLoginViewController: UIViewController {
         
         return button
     }()
-    
     
     
 //MARK: - LifeCycle
@@ -279,8 +279,9 @@ final class SocialLoginViewController: UIViewController {
         guard let password = pwTextField.text else{return}
         
         if email == "", password == "" {
-            self.present(CommonAlert.alert(title: "오류", subMessage: "양식에 맞게 작성해주세요."), animated: true)
+            CustomAlert.show(title: "오류", subMessage: "양식에 맞게 작성해주세요.")
         }else{
+            CustomLoadingView.shared.startLoading()
             firebaseLogin(email: email, password: password)
         }
     }
@@ -290,21 +291,26 @@ final class SocialLoginViewController: UIViewController {
     }
     
     @objc func naverLoginPressed(_ sender : UIButton) {
+        CustomLoadingView.shared.startLoading()
         loginInstance?.requestThirdPartyLogin()
     }
     
     @objc func appleLoginPressed(_ sender : UIButton) {
         let nonce = randomNonceString()
-          currentNonce = nonce
-          let appleIDProvider = ASAuthorizationAppleIDProvider()
-          let request = appleIDProvider.createRequest()
-          request.requestedScopes = [.fullName, .email]
-          request.nonce = sha256(nonce)
-
-          let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-          authorizationController.delegate = self
-          authorizationController.presentationContextProvider = self
-          authorizationController.performRequests()
+        currentNonce = nonce
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = sha256(nonce)
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+        
+        DispatchQueue.main.async {
+            CustomLoadingView.shared.startLoading()
+        }
     }
     
     //로그인 요청과 함께 nonce의 SHA256 해시를 보내면 Apple이 응답에서 변경하지 않고 전달합니다. Firebase는 원래 nonce를 해싱하고 이를 Apple에서 전달한 값과 비교하여 응답의 유효성을 검사합니다.
@@ -331,6 +337,7 @@ extension SocialLoginViewController : UITextFieldDelegate {
 //MARK: - KaKao Social Login
 extension SocialLoginViewController {
     private func kakaoInstallCheck() {
+        CustomLoadingView.shared.startLoading()
         
         if (UserApi.isKakaoTalkLoginAvailable()) { //카톡 설치 확인
             
@@ -338,9 +345,14 @@ extension SocialLoginViewController {
             UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
                 if let e = error {
                     print(e)
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                        CustomAlert.show(title: "오류", subMessage: "카카오 로그인 실패")
+                    }
                 } else {
                     print("카카오 톡으로 로그인 성공")
                     self.kakaoLoginUserInfo()
+                    
                 }
             }
         }else{
@@ -348,9 +360,15 @@ extension SocialLoginViewController {
             UserApi.shared.loginWithKakaoAccount { (oauthToken, error) in
                 if let e = error {
                     print(e)
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                        CustomAlert.show(title: "오류", subMessage: "카카오 로그인 실패")
+                    }
+                    
                 } else {
                     print("카카오 계정으로 로그인 성공")
                     self.kakaoLoginUserInfo()
+
                 }
             }
         }
@@ -361,6 +379,11 @@ extension SocialLoginViewController {
         UserApi.shared.me() { user, error in
             if let error = error {
                 print("Error 카카오톡 사용자 정보가져오기 에러 \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                    CustomAlert.show(title: "오류", subMessage: "유저 정보를 가져오는데 실패.")
+                }
+                
             } else {
                 print("유저 정보 가져오기 성공")
                 guard let email = user?.kakaoAccount?.email else{return}
@@ -391,6 +414,11 @@ extension SocialLoginViewController : NaverThirdPartyLoginConnectionDelegate{
     
     func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) { //에러 다루기
         print("Error 네이버 로그인 실패 : \(error.localizedDescription)")
+        
+        DispatchQueue.main.async {
+            CustomLoadingView.shared.stopLoading()
+        }
+        
     }
     
     private func naverLoginUserInfo() {
@@ -402,7 +430,7 @@ extension SocialLoginViewController : NaverThirdPartyLoginConnectionDelegate{
         }
         
         guard let tokenType = loginInstance?.tokenType else { return}
-        guard let accessToken = loginInstance?.accessToken else { return}
+        guard let accessToken = loginInstance?.accessToken else {return}
         let urlStr = "https://openapi.naver.com/v1/nid/me"
         let url = URL(string: urlStr)!
         
@@ -425,10 +453,18 @@ extension SocialLoginViewController : NaverThirdPartyLoginConnectionDelegate{
                     
                 } catch {
                     print("캐치 에러 : \(error.localizedDescription)")
+                    
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                    }
                 }
                 
             case .failure(let error):
                 print("데이터 받기 에러 : \(error.localizedDescription)")
+                
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
             }
             
         }
@@ -441,6 +477,7 @@ extension SocialLoginViewController : NaverThirdPartyLoginConnectionDelegate{
 //MARK: - Apple Social Login
 extension SocialLoginViewController : ASAuthorizationControllerDelegate{
     // Apple ID 연동 성공 시
+    
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         //몇 가지 표준 키 검사를 실행
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
@@ -461,6 +498,7 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
                 print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
                 return
             }
+            
            
             // Initialize a Firebase credential.
             let credential = OAuthProvider.credential(withProviderID: "apple.com",
@@ -471,6 +509,10 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
             Auth.auth().signIn(with: credential) { (authResult, error) in
                 if let e = error {
                     print(e.localizedDescription)
+                    
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                    }
                     return
                 }else{
                     
@@ -482,8 +524,10 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
                                                                             "email" : email,
                                                                             "login" : "appleLogin"])
                     
-                    self.navigationController?.popViewController(animated: true)
-                    
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                        self.navigationController?.popViewController(animated: true)
+                    }
                 }
             }
         }
@@ -492,6 +536,9 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         // Handle error.
         print("Sign in with Apple errored: \(error)")
+        DispatchQueue.main.async {
+            CustomLoadingView.shared.stopLoading()
+        }
     }
     
     //모든 로그인 요청에 대해 임의의 문자열("nonce")을 생성하여 앱의 인증 요청에 대한 응답으로 받은 ID 토큰이 특별히 부여되었는지 확인하는 데 사용할 수 있습니다. 이 단계는 재생 공격을 방지하는 데 중요합니다
@@ -546,11 +593,15 @@ extension SocialLoginViewController {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let e = error{
                 print(e)
-                self.present(CommonAlert.alert(title: "오류", subMessage: "양식에 맞게 작성해주세요."), animated: true)
+                DispatchQueue.main.async {
+                    CustomAlert.show(title: "로그인 실패", subMessage: "이미 가입한 회원님 아니신가요?")
+                    CustomLoadingView.shared.stopLoading()
+                }
                 
             }else{
                 
                 DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
                     self.navigationController?.popViewController(animated: true)
                 }
             }
@@ -577,6 +628,7 @@ extension SocialLoginViewController {
                 
                 
                 DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
                     self.navigationController?.popViewController(animated: true)
                 }
             }

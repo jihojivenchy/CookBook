@@ -107,7 +107,11 @@ final class FindPasswordViewController: UIViewController {
             Auth.auth().sendPasswordReset(withEmail: email) { error in
                 if let e = error {
                     print("Error 비밀번호 재설정 이메일 보내기 실패 : \(e)")
-                    self.present(CommonAlert.alert(title: "전송 오류", subMessage: "양식에 맞게 작성해주세요."), animated: true)
+                    
+                    DispatchQueue.main.async {
+                        CustomAlert.show(title: "오류", subMessage: "양식에 맞게 작성해주세요.")
+                    }
+                    
                 }else{
                     
                     self.navigationController?.popViewController(animated: true)
@@ -116,7 +120,10 @@ final class FindPasswordViewController: UIViewController {
             
             
         }else{
-            self.present(CommonAlert.alert(title: "오류", subMessage: "양식에 맞게 작성해주세요."), animated: true)
+            DispatchQueue.main.async {
+                CustomAlert.show(title: "오류", subMessage: "양식에 맞게 작성해주세요.")
+            }
+            
         }
         
     }

@@ -14,3 +14,9 @@ struct UserModel {
     var saveDate : String
     var userUid : String
 }
+
+struct UserInformationData {
+    var name : String
+    var email : String
+    var login : String
+}

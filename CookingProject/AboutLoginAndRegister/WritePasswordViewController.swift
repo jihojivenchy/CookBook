@@ -158,9 +158,10 @@ final class WritePasswordViewController: UIViewController {
         guard let password = pwCheckTextField.text else{return}
         
         if check == "비밀번호가 일치합니다." {
+            CustomLoadingView.shared.startLoading()
             self.firebaseRegister(email: self.email, password: password, nickName: self.nickName)
         }else{
-            self.present(CommonAlert.alert(title: "오류", subMessage: "비밀번호를 확인해주세요."), animated: true)
+            CustomAlert.show(title: "오류", subMessage: "비밀번호를 확인해주세요.")
         }
         
     }
@@ -205,7 +206,12 @@ extension WritePasswordViewController {
             
             if let error = error {
                 print("Error 파이어베이스 회원가입 실패 \(error.localizedDescription)")
-                self.present(CommonAlert.alert(title: "가입 오류", subMessage: "양식에 맞게 작성 혹은 이미 가입한 회원입니다."), animated: true)
+                
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                    CustomAlert.show(title: "가입 실패", subMessage: "양식에 맞게 작성해주셨나요?")
+                }
+                
             } else {
                 guard let userUID = result?.user.uid else{return}
                 
@@ -215,6 +221,8 @@ extension WritePasswordViewController {
                                                                        "login" : "firebase"])
                 
                 DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                    
                     let vc = WelcomeViewController()
                     vc.nickName = self.nickName
                     self.navigationController?.pushViewController(vc, animated: true)

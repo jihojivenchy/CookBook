@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		7C024B2B2974F25800D25F9A /* SocialLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C024B2A2974F25800D25F9A /* SocialLoginViewController.swift */; };
 		7C024B2D2975151D00D25F9A /* testViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C024B2C2975151D00D25F9A /* testViewController.swift */; };
-		7C024B2F2975215800D25F9A /* 조선체.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C024B2E2975215700D25F9A /* 조선체.ttf */; };
 		7C024B3129755F3500D25F9A /* CustomSplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C024B3029755F3500D25F9A /* CustomSplashViewController.swift */; };
 		7C024B34297561E700D25F9A /* cook.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C024B33297561E700D25F9A /* cook.json */; };
 		7C024B362975986100D25F9A /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C024B352975986100D25F9A /* CustomTabBarController.swift */; };
@@ -29,7 +28,6 @@
 		7C247E6C28ABF20000389A9F /* BlockUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C247E6B28ABF20000389A9F /* BlockUserTableViewCell.swift */; };
 		7C247E6E28ABF45A00389A9F /* BlockUserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C247E6D28ABF45A00389A9F /* BlockUserModel.swift */; };
 		7C2CE80829765E78007E5A54 /* 수박체.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C2CE80729765E77007E5A54 /* 수박체.otf */; };
-		7C2CE80A29767EF3007E5A54 /* CustomLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE80929767EF3007E5A54 /* CustomLoadingView.swift */; };
 		7C2CE80C297684DC007E5A54 /* CommonAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE80B297684DC007E5A54 /* CommonAlert.swift */; };
 		7C2CE87F29783EC5007E5A54 /* PopularCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE87E29783EC5007E5A54 /* PopularCollectionViewCell.swift */; };
 		7C2CE881297846A8007E5A54 /* TemaCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE880297846A8007E5A54 /* TemaCollectionViewCell.swift */; };
@@ -40,6 +38,11 @@
 		7C2CE88C2978F5F2007E5A54 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE88B2978F5F2007E5A54 /* WelcomeViewController.swift */; };
 		7C2CE88F2979194C007E5A54 /* dance.json in Resources */ = {isa = PBXBuildFile; fileRef = 7C2CE88E2979194C007E5A54 /* dance.json */; };
 		7C2CE89329795ED9007E5A54 /* FindPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE89229795ED9007E5A54 /* FindPasswordViewController.swift */; };
+		7C2CE899297C1C1D007E5A54 /* CustomLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE898297C1C1D007E5A54 /* CustomLoadingView.swift */; };
+		7C2CE89B297D0167007E5A54 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE89A297D0167007E5A54 /* CustomAlert.swift */; };
+		7C2CE89D297D0EBD007E5A54 /* SideMenuNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE89C297D0EBD007E5A54 /* SideMenuNavigation.swift */; };
+		7C2CE8A0297D1670007E5A54 /* SideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE89F297D1670007E5A54 /* SideMenuViewController.swift */; };
+		7C2CE8A2297D6BB5007E5A54 /* SideMenuTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2CE8A1297D6BB5007E5A54 /* SideMenuTableViewCell.swift */; };
 		7C3704FE28A0EDF300D6BD83 /* SaveCreatedDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3704FD28A0EDF300D6BD83 /* SaveCreatedDataViewController.swift */; };
 		7C37050028A1508D00D6BD83 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3704FF28A1508D00D6BD83 /* PhotoCollectionViewCell.swift */; };
 		7C43492328A605B200E92B97 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C43492228A605B200E92B97 /* SettingViewController.swift */; };
@@ -56,7 +59,7 @@
 		7C5AAD6428840AC1007643F9 /* CHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD6328840AC1007643F9 /* CHeaderView.swift */; };
 		7C5AAD6628840BF0007643F9 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD6528840BF0007643F9 /* NotificationCell.swift */; };
 		7C5AAD6828840C9E007643F9 /* MyPageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD6728840C9E007643F9 /* MyPageCell.swift */; };
-		7C5AAD6A28840CDA007643F9 /* MyPageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD6928840CDA007643F9 /* MyPageHeaderView.swift */; };
+		7C5AAD6A28840CDA007643F9 /* SideMenuHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD6928840CDA007643F9 /* SideMenuHeaderView.swift */; };
 		7C5AAD6C28843BE0007643F9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD6B28843BE0007643F9 /* ProfileViewController.swift */; };
 		7C5AAD7728854491007643F9 /* KoreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD7628854491007643F9 /* KoreaViewController.swift */; };
 		7C5AAD79288544A7007643F9 /* ChinaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5AAD78288544A7007643F9 /* ChinaViewController.swift */; };
@@ -75,7 +78,6 @@
 		7C60B2F12881AE4D00EC88C6 /* MyBookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C60B2F02881AE4D00EC88C6 /* MyBookViewController.swift */; };
 		7C68DFF3288A5A18001BE18D /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C68DFF2288A5A18001BE18D /* DetailViewController.swift */; };
 		7C68DFF6288A5A5B001BE18D /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C68DFF5288A5A5B001BE18D /* CommentsViewController.swift */; };
-		7C68DFFB288A9B18001BE18D /* EF_Diary.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C68DFFA288A9B18001BE18D /* EF_Diary.ttf */; };
 		7C68DFFD288AA53C001BE18D /* ComunicationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C68DFFC288AA53C001BE18D /* ComunicationCell.swift */; };
 		7C68DFFF288AA558001BE18D /* ComunicationHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C68DFFE288AA558001BE18D /* ComunicationHeader.swift */; };
 		7C8B48FA28AB7B1C00C7A90A /* ManageBlockedUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8B48F928AB7B1C00C7A90A /* ManageBlockedUserViewController.swift */; };
@@ -86,7 +88,6 @@
 		46C970EA6115BCAA08E0B0A1 /* Pods_CookingProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CookingProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C024B2A2974F25800D25F9A /* SocialLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialLoginViewController.swift; sourceTree = "<group>"; };
 		7C024B2C2975151D00D25F9A /* testViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testViewController.swift; sourceTree = "<group>"; };
-		7C024B2E2975215700D25F9A /* 조선체.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "조선체.ttf"; sourceTree = "<group>"; };
 		7C024B3029755F3500D25F9A /* CustomSplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSplashViewController.swift; sourceTree = "<group>"; };
 		7C024B33297561E700D25F9A /* cook.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cook.json; sourceTree = "<group>"; };
 		7C024B352975986100D25F9A /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
@@ -108,7 +109,6 @@
 		7C247E6B28ABF20000389A9F /* BlockUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserTableViewCell.swift; sourceTree = "<group>"; };
 		7C247E6D28ABF45A00389A9F /* BlockUserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserModel.swift; sourceTree = "<group>"; };
 		7C2CE80729765E77007E5A54 /* 수박체.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "수박체.otf"; sourceTree = "<group>"; };
-		7C2CE80929767EF3007E5A54 /* CustomLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLoadingView.swift; sourceTree = "<group>"; };
 		7C2CE80B297684DC007E5A54 /* CommonAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlert.swift; sourceTree = "<group>"; };
 		7C2CE87E29783EC5007E5A54 /* PopularCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularCollectionViewCell.swift; sourceTree = "<group>"; };
 		7C2CE880297846A8007E5A54 /* TemaCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemaCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -119,6 +119,11 @@
 		7C2CE88B2978F5F2007E5A54 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		7C2CE88E2979194C007E5A54 /* dance.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = dance.json; sourceTree = "<group>"; };
 		7C2CE89229795ED9007E5A54 /* FindPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindPasswordViewController.swift; sourceTree = "<group>"; };
+		7C2CE898297C1C1D007E5A54 /* CustomLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLoadingView.swift; sourceTree = "<group>"; };
+		7C2CE89A297D0167007E5A54 /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
+		7C2CE89C297D0EBD007E5A54 /* SideMenuNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuNavigation.swift; sourceTree = "<group>"; };
+		7C2CE89F297D1670007E5A54 /* SideMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuViewController.swift; sourceTree = "<group>"; };
+		7C2CE8A1297D6BB5007E5A54 /* SideMenuTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuTableViewCell.swift; sourceTree = "<group>"; };
 		7C3704FD28A0EDF300D6BD83 /* SaveCreatedDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveCreatedDataViewController.swift; sourceTree = "<group>"; };
 		7C3704FF28A1508D00D6BD83 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		7C43492228A605B200E92B97 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
@@ -135,7 +140,7 @@
 		7C5AAD6328840AC1007643F9 /* CHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHeaderView.swift; sourceTree = "<group>"; };
 		7C5AAD6528840BF0007643F9 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		7C5AAD6728840C9E007643F9 /* MyPageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageCell.swift; sourceTree = "<group>"; };
-		7C5AAD6928840CDA007643F9 /* MyPageHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageHeaderView.swift; sourceTree = "<group>"; };
+		7C5AAD6928840CDA007643F9 /* SideMenuHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuHeaderView.swift; sourceTree = "<group>"; };
 		7C5AAD6B28843BE0007643F9 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		7C5AAD7628854491007643F9 /* KoreaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoreaViewController.swift; sourceTree = "<group>"; };
 		7C5AAD78288544A7007643F9 /* ChinaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChinaViewController.swift; sourceTree = "<group>"; };
@@ -154,7 +159,6 @@
 		7C60B2F02881AE4D00EC88C6 /* MyBookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBookViewController.swift; sourceTree = "<group>"; };
 		7C68DFF2288A5A18001BE18D /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		7C68DFF5288A5A5B001BE18D /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
-		7C68DFFA288A9B18001BE18D /* EF_Diary.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EF_Diary.ttf; sourceTree = "<group>"; };
 		7C68DFFC288AA53C001BE18D /* ComunicationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComunicationCell.swift; sourceTree = "<group>"; };
 		7C68DFFE288AA558001BE18D /* ComunicationHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComunicationHeader.swift; sourceTree = "<group>"; };
 		7C6ECCEC28CC57F9007C2336 /* CookingProject.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CookingProject.entitlements; sourceTree = "<group>"; };
@@ -191,7 +195,6 @@
 				7C51BCFC289BF0CE00EB35DE /* CommentsModel.swift */,
 				7C528AE328A547C3005D339F /* UserSignalModel.swift */,
 				7C247E6D28ABF45A00389A9F /* BlockUserModel.swift */,
-				7C2CE80929767EF3007E5A54 /* CustomLoadingView.swift */,
 				7C2CE8822978E5F3007E5A54 /* NaverResponse.swift */,
 			);
 			name = Model;
@@ -226,7 +229,9 @@
 				7C2CE88D2978F96C007E5A54 /* Static */,
 				7C60B2E7287E8ED700EC88C6 /* extension */,
 				7C0E890328902EF900A781B5 /* Model */,
+				7C2CE89E297D0EC5007E5A54 /* TapBar */,
 				7C18F7F1287C782C00362F9B /* AboutHomeView */,
+				7C2CE8A3297D963D007E5A54 /* AboutSideMenu */,
 				7C2CE88A2978F5BD007E5A54 /* AboutLoginAndRegister */,
 				7C18F7F2287C783F00362F9B /* New Group2 */,
 				7C5AAD752885445B007643F9 /* TabmanView */,
@@ -244,8 +249,9 @@
 		7C18F7F1287C782C00362F9B /* AboutHomeView */ = {
 			isa = PBXGroup;
 			children = (
-				7C024B352975986100D25F9A /* CustomTabBarController.swift */,
 				7C18F7D3287839EE00362F9B /* HomeViewController.swift */,
+				7C2CE87E29783EC5007E5A54 /* PopularCollectionViewCell.swift */,
+				7C2CE880297846A8007E5A54 /* TemaCollectionViewCell.swift */,
 				7C3704FD28A0EDF300D6BD83 /* SaveCreatedDataViewController.swift */,
 				7C18F7ED287AF98700362F9B /* SignalViewController.swift */,
 				7C18F7EF287AF99900362F9B /* MyPageViewController.swift */,
@@ -292,20 +298,38 @@
 			isa = PBXGroup;
 			children = (
 				7C2CE80B297684DC007E5A54 /* CommonAlert.swift */,
+				7C2CE898297C1C1D007E5A54 /* CustomLoadingView.swift */,
+				7C2CE89A297D0167007E5A54 /* CustomAlert.swift */,
 			);
 			path = Static;
+			sourceTree = "<group>";
+		};
+		7C2CE89E297D0EC5007E5A54 /* TapBar */ = {
+			isa = PBXGroup;
+			children = (
+				7C024B352975986100D25F9A /* CustomTabBarController.swift */,
+			);
+			path = TapBar;
+			sourceTree = "<group>";
+		};
+		7C2CE8A3297D963D007E5A54 /* AboutSideMenu */ = {
+			isa = PBXGroup;
+			children = (
+				7C2CE89C297D0EBD007E5A54 /* SideMenuNavigation.swift */,
+				7C2CE89F297D1670007E5A54 /* SideMenuViewController.swift */,
+				7C2CE8A1297D6BB5007E5A54 /* SideMenuTableViewCell.swift */,
+				7C5AAD6928840CDA007643F9 /* SideMenuHeaderView.swift */,
+			);
+			path = AboutSideMenu;
 			sourceTree = "<group>";
 		};
 		7C5AAD60288409FA007643F9 /* Custom Cells */ = {
 			isa = PBXGroup;
 			children = (
-				7C2CE87E29783EC5007E5A54 /* PopularCollectionViewCell.swift */,
-				7C2CE880297846A8007E5A54 /* TemaCollectionViewCell.swift */,
 				7C5AAD6128840A39007643F9 /* CustomCell.swift */,
 				7C5AAD6328840AC1007643F9 /* CHeaderView.swift */,
 				7C5AAD6528840BF0007643F9 /* NotificationCell.swift */,
 				7C5AAD6728840C9E007643F9 /* MyPageCell.swift */,
-				7C5AAD6928840CDA007643F9 /* MyPageHeaderView.swift */,
 				7C68DFFC288AA53C001BE18D /* ComunicationCell.swift */,
 				7C68DFFE288AA558001BE18D /* ComunicationHeader.swift */,
 				7C3704FF28A1508D00D6BD83 /* PhotoCollectionViewCell.swift */,
@@ -356,8 +380,6 @@
 		7C68DFF9288A9AF7001BE18D /* font */ = {
 			isa = PBXGroup;
 			children = (
-				7C68DFFA288A9B18001BE18D /* EF_Diary.ttf */,
-				7C024B2E2975215700D25F9A /* 조선체.ttf */,
 				7C2CE80729765E77007E5A54 /* 수박체.otf */,
 			);
 			path = font;
@@ -441,9 +463,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C18F7DC287839EE00362F9B /* LaunchScreen.storyboard in Resources */,
-				7C68DFFB288A9B18001BE18D /* EF_Diary.ttf in Resources */,
 				7C462D8528885BE000B61DAB /* GoogleService-Info.plist in Resources */,
-				7C024B2F2975215800D25F9A /* 조선체.ttf in Resources */,
 				7C18F7D9287839EE00362F9B /* Assets.xcassets in Resources */,
 				7C2CE80829765E78007E5A54 /* 수박체.otf in Resources */,
 				7C2CE88F2979194C007E5A54 /* dance.json in Resources */,
@@ -501,17 +521,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C5AAD6A28840CDA007643F9 /* MyPageHeaderView.swift in Sources */,
+				7C5AAD6A28840CDA007643F9 /* SideMenuHeaderView.swift in Sources */,
 				7C5AAD7F288550B2007643F9 /* AllViewController.swift in Sources */,
 				7C5AAD7D28855069007643F9 /* JViewController.swift in Sources */,
+				7C2CE89D297D0EBD007E5A54 /* SideMenuNavigation.swift in Sources */,
 				7C2CE8872978F583007E5A54 /* WriteEmailViewController.swift in Sources */,
 				7C18F7F0287AF99900362F9B /* MyPageViewController.swift in Sources */,
 				7C2CE87F29783EC5007E5A54 /* PopularCollectionViewCell.swift in Sources */,
+				7C2CE899297C1C1D007E5A54 /* CustomLoadingView.swift in Sources */,
 				7C5AAD6C28843BE0007643F9 /* ProfileViewController.swift in Sources */,
 				7C43492328A605B200E92B97 /* SettingViewController.swift in Sources */,
 				7C2CE8892978F599007E5A54 /* WritePasswordViewController.swift in Sources */,
 				7C2CE88C2978F5F2007E5A54 /* WelcomeViewController.swift in Sources */,
-				7C2CE80A29767EF3007E5A54 /* CustomLoadingView.swift in Sources */,
 				7C60B2ED2881586100EC88C6 /* ComunicationViewController.swift in Sources */,
 				7C496B4728B3BDF600216ECF /* OnBoadingCollectionViewCell.swift in Sources */,
 				7C18F7D4287839EE00362F9B /* HomeViewController.swift in Sources */,
@@ -530,8 +551,11 @@
 				7C18F7EE287AF98700362F9B /* SignalViewController.swift in Sources */,
 				7C5AAD83288550E9007643F9 /* VeViewController.swift in Sources */,
 				7C68DFFD288AA53C001BE18D /* ComunicationCell.swift in Sources */,
+				7C2CE8A2297D6BB5007E5A54 /* SideMenuTableViewCell.swift in Sources */,
 				7C5AAD6428840AC1007643F9 /* CHeaderView.swift in Sources */,
+				7C2CE8A0297D1670007E5A54 /* SideMenuViewController.swift in Sources */,
 				7C2CE80C297684DC007E5A54 /* CommonAlert.swift in Sources */,
+				7C2CE89B297D0167007E5A54 /* CustomAlert.swift in Sources */,
 				7C024B362975986100D25F9A /* CustomTabBarController.swift in Sources */,
 				7C18F7D0287839EE00362F9B /* AppDelegate.swift in Sources */,
 				7C60B2E9287E8EF400EC88C6 /* Extension.swift in Sources */,

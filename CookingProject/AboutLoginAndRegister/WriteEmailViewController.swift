@@ -144,7 +144,7 @@ final class WriteEmailViewController: UIViewController {
             
             self.navigationController?.pushViewController(vc, animated: true)
         }else{
-            self.present(CommonAlert.alert(title: "오류", subMessage: "양식에 맞게 작성해주세요."), animated: true)
+            CustomAlert.show(title: "오류", subMessage: "양식에 맞게 작성해주세요.")
         }
         
     }

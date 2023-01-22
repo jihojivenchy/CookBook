@@ -8,10 +8,14 @@
 import UIKit
 import SnapKit
 import FirebaseAuth
+import FirebaseFirestore
 import AuthenticationServices
+import SideMenu
 
 final class HomeViewController: UIViewController{
 //MARK: - Properties
+    private let db = Firestore.firestore()
+    
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
         
@@ -52,7 +56,7 @@ final class HomeViewController: UIViewController{
     }()
     
     private let popularImageArray : [String] = ["양식", "퓨전", "채식", "비빔밥", "맥주"]
-    private lazy var increasedDataSource: [String] = {
+    private lazy var popularDataSource: [String] = {
        popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray
     }()
     
@@ -68,7 +72,6 @@ final class HomeViewController: UIViewController{
         
         return pc
     }()
-    
     
     private var scrollToEnd: Bool = false  //무한 carousel을 구현할 때 다시 원점으로 돌아가게 해주도록 toggle 형식
     private var scrollToBegin: Bool = false //무한 carousel을 구현할 때 다시 원점으로 돌아가게 해주도록 toggle 형식
@@ -95,14 +98,13 @@ final class HomeViewController: UIViewController{
     private let scrollView = UIScrollView()
     private let whiteView = UIView()
 
+
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
-        
-        checkLoginState()
     }
     
     override func viewDidLoad() {
@@ -222,14 +224,6 @@ final class HomeViewController: UIViewController{
         }
     }
     
-    private func checkLoginState() {
-        if Auth.auth().currentUser != nil { //유저가 로그인 상태가 아니라면 로그인 뷰로 고고
-            
-        }else{
-            self.navigationController?.pushViewController(SocialLoginViewController(), animated: true)
-        }
-    } //login check
-    
     private func setPopularCollection() {
         popularCollectionView.register(PopularCollectionViewCell.self, forCellWithReuseIdentifier: PopularCollectionViewCell.identifier)
         popularCollectionView.dataSource = self
@@ -261,11 +255,13 @@ final class HomeViewController: UIViewController{
     }
 //MARK: - ButtonMethod
     @objc private func menuButtonPressed(_ sender : UIBarButtonItem) {
+        let sideView = SideMenuNavigation(rootViewController: SideMenuViewController())
         
+        present(sideView, animated: true)
     }
     
     @objc private func signalButtonPressed(_ sender : UIBarButtonItem) {
-        
+        self.navigationController?.pushViewController(SignalViewController(), animated: true)
     }
     
     
@@ -284,13 +280,19 @@ final class HomeViewController: UIViewController{
         }
         
         currentIndex += 1
-        if currentIndex == 39 { //39번 인덱스에 가면 다시 원상복귀
+        if currentIndex == 40 { //39번 인덱스에 가면 다시 원상복귀
             currentIndex = 20
             pageIndex = 0
         }
         
         let indexPath = IndexPath(item: currentIndex, section: 0)
-        popularCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        
+        if currentIndex == 20 { //돌아갈 때 휘리리릭하는 애니메이션 없애면 좀 더 이어지는 느낌이 난다.
+            popularCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        }else{
+            popularCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        }
+        
         pageControl.currentPage = pageIndex
     }
 
@@ -347,6 +349,7 @@ extension HomeViewController : UIScrollViewDelegate {
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.setPageControlIndex()
         
         if scrollToBegin {
             self.pageControl.currentPage = 0
@@ -367,8 +370,7 @@ extension HomeViewController : UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.setPageControlIndex()
-        
+    
         let cellWidthIncludeSpacing : CGFloat = 270                    //cell의 width + cell의 spacing
         let offsetX = popularCollectionView.contentOffset.x            //컬렉션뷰의 현재 x 위치
         let index = (offsetX + popularCollectionView.contentInset.left) / cellWidthIncludeSpacing
@@ -393,7 +395,7 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if collectionView.tag == 0 {
-            return self.increasedDataSource.count
+            return self.popularDataSource.count
         }else{
             return self.temaImageArray.count
         }
@@ -405,7 +407,7 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
         if collectionView.tag == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularCollectionViewCell.identifier, for: indexPath) as! PopularCollectionViewCell
             
-            cell.foodImageView.image = UIImage(named: self.increasedDataSource[indexPath.row])
+            cell.foodImageView.image = UIImage(named: self.popularDataSource[indexPath.row])
             
             if indexPath.row != self.previousCellIndex {
                 cell.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)

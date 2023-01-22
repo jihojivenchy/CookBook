@@ -178,7 +178,7 @@ final class MyPageViewController : UIViewController {
             
         } catch let signOutError as NSError {
             print ("Error signing out: %@", signOutError)
-            self.present(CommonAlert.alert(title: "로그아웃 실패", subMessage: "앱을 재실행해주세요."), animated: true)
+            CustomAlert.show(title: "로그아웃 실패", subMessage: "다시 실행해주세요.")
         }
         
         DispatchQueue.main.async {
@@ -368,14 +368,14 @@ extension MyPageViewController : UITableViewDataSource {
 
 extension MyPageViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerVIew = MyPageHeaderView()
+        let headerVIew = SideMenuHeaderView()
     
-        if section == 0 {
-            headerVIew.nameLabel.text = nickNameDefaults
-            headerVIew.idLabel.text = registerID
-            return headerVIew
-        }
-    
+//        if section == 0 {
+//            headerVIew.nameLabel.text = nickNameDefaults
+//            headerVIew.idLabel.text = registerID
+//            return headerVIew
+//        }
+//        
         return nil
     }
     
