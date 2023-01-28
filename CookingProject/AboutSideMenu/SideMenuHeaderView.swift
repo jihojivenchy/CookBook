@@ -11,6 +11,8 @@ import SnapKit
 //MARK: = CustomHeaderView
 final class SideMenuHeaderView : UIView {
     
+    final var delegate : SideMenuHeaderTouchDelegate?
+    
     static let identifier = "SideMenuHeader"
     
     final let userImageView = UIImageView()
@@ -21,6 +23,10 @@ final class SideMenuHeaderView : UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubViews()
+        
+        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+
+        
     }
     
     required init?(coder: NSCoder) {
@@ -43,14 +49,14 @@ final class SideMenuHeaderView : UIView {
         
         
         nameLabel.textColor = .white
-        nameLabel.font = .boldSystemFont(ofSize: 18)
+        nameLabel.font = UIFont(name: KeyWord.CustomFont, size: 18)
         nameLabel.snp.makeConstraints { make in
             make.height.equalTo(20)
         }
         
         
         emailLabel.textColor = .white
-        emailLabel.font = .boldSystemFont(ofSize: 13)
+        emailLabel.font = UIFont(name: KeyWord.CustomFont, size: 13)
         emailLabel.snp.makeConstraints { make in
             make.height.equalTo(20)
         }
@@ -68,11 +74,17 @@ final class SideMenuHeaderView : UIView {
             make.right.equalToSuperview().inset(20)
             make.height.equalTo(40)
         }
-
-        
-       
     }
+    
+    
+    
+    @objc func handleTap(sender: UITapGestureRecognizer) {
+        self.delegate?.tapHeaderView()
+    }
+    
     
 }
 
-
+protocol SideMenuHeaderTouchDelegate {
+    func tapHeaderView()
+}

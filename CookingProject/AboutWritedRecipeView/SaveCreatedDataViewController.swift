@@ -704,7 +704,6 @@ extension SaveCreatedDataViewController : UICollectionViewDataSource {
         cell.deleteButton.tag = indexPath.row
         cell.deleteButton.addTarget(self, action: #selector(deleteButtonPressed(_:)), for: .touchUpInside)
         
-        
         return cell
     }
     
@@ -716,16 +715,16 @@ extension SaveCreatedDataViewController : UICollectionViewDelegate {
 extension SaveCreatedDataViewController : UICollectionViewDelegateFlowLayout {
     
     //옆 간격
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-            return 2
-        }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 2
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let size = CGSize(width: 100, height: 100)
         
         return size
-       }
+    }
     
 }
 

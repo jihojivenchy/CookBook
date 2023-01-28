@@ -11,7 +11,7 @@ import Firebase
 import FirebaseFirestore
 import Kingfisher
 
-class MyBookViewController: UIViewController {
+final class MyBookViewController: UIViewController {
     
 //MARK: - Properties
     private let db = Firestore.firestore()
@@ -59,6 +59,11 @@ class MyBookViewController: UIViewController {
 
 
 //MARK: - LifeCycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tabBarController?.tabBar.isHidden = true
+    }
   
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -11,7 +11,7 @@ import SCLAlertView
 struct CustomAlert {
     
     static func show(title : String, subMessage : String) {
-        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: "EF_watermelonSalad", size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: "EF_watermelonSalad", size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
+        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: KeyWord.CustomFontMedium, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: KeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
         let alert = SCLAlertView(appearance: appearence)
         
         

@@ -30,9 +30,9 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>수박체.otf</string>
-		<string>조선체.ttf</string>
-		<string>EF_Diary.ttf</string>
+		<string>DalseoHealingMedium.otf</string>
+		<string>DalseoDarling.otf</string>
+		<string>DalseoHealingBold.otf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

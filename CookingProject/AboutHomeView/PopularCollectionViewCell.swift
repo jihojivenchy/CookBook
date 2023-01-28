@@ -40,7 +40,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         self.backgroundColor = .clear
         
         addSubview(foodImageView)
-        foodImageView.backgroundColor = .brown
+        foodImageView.backgroundColor = .white
         foodImageView.clipsToBounds = true
         foodImageView.layer.cornerRadius = 8
         foodImageView.layer.masksToBounds = false
@@ -49,12 +49,13 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         foodImageView.layer.shadowOffset = CGSize(width: 0, height: 0)
         foodImageView.layer.shadowRadius = 2
         foodImageView.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
+            make.top.equalToSuperview().inset(5)
+            make.left.right.equalToSuperview()
             make.bottom.equalToSuperview().inset(35)
         }
         
         addSubview(explainView)
-        explainView.backgroundColor = .customSignature
+        explainView.backgroundColor = .white
         explainView.clipsToBounds = true
         explainView.layer.cornerRadius = 7
         explainView.layer.masksToBounds = false
@@ -70,9 +71,9 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(foodLabel)
         foodLabel.text = "해물감자수제비"
-        foodLabel.textColor = .white
+        foodLabel.textColor = .black
         foodLabel.textAlignment = .center
-        foodLabel.font = .boldSystemFont(ofSize: 17) //ChosunCentennial
+        foodLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
         foodLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(10)
             make.left.right.equalToSuperview().inset(15)
@@ -81,7 +82,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(personImageView)
         personImageView.image = UIImage(systemName: "person.fill")
-        personImageView.tintColor = .white
+        personImageView.tintColor = .customSignature
         personImageView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(10)
             make.left.equalToSuperview().inset(20)
@@ -90,7 +91,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(nameLabel)
         nameLabel.text = "엄쉐프"
-        nameLabel.textColor = .white
+        nameLabel.textColor = .black
         nameLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
         nameLabel.snp.makeConstraints { make in
             make.centerY.equalTo(personImageView)
@@ -101,7 +102,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(heartImageView)
         heartImageView.image = UIImage(systemName: "suit.heart.fill")
-        heartImageView.tintColor = .white
+        heartImageView.tintColor = .customSignature
         heartImageView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(10)
             make.centerX.equalToSuperview()
@@ -110,7 +111,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(heartCountLabel)
         heartCountLabel.text = "3"
-        heartCountLabel.textColor = .white
+        heartCountLabel.textColor = .black
         heartCountLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
         heartCountLabel.sizeToFit()
         heartCountLabel.snp.makeConstraints { make in
@@ -120,7 +121,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(levelLabel)
         levelLabel.text = "중급"
-        levelLabel.textColor = .white
+        levelLabel.textColor = .black
         levelLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
         levelLabel.sizeToFit()
         levelLabel.snp.makeConstraints { make in
@@ -130,7 +131,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(levelImageView)
         levelImageView.image = UIImage(systemName: "chart.bar.fill")
-        levelImageView.tintColor = .white
+        levelImageView.tintColor = .customSignature
         levelImageView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(10)
             make.right.equalToSuperview().inset(45)

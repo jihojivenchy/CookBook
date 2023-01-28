@@ -12,11 +12,12 @@ import FirebaseFirestore
 import SCLAlertView
 import NaverThirdPartyLogin
 import KakaoSDKUser
+import SideMenu
 
 final class SideMenuViewController: UIViewController {
     //MARK: - Properties
     private let db = Firestore.firestore()
-    private var userInformationData : UserInformationData = .init(name: "", email: "", login: "")
+    final var userInformationData : UserInformationData = .init(name: "", email: "", login: "")
     
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
@@ -32,7 +33,7 @@ final class SideMenuViewController: UIViewController {
     
     private let menuTableView = UITableView(frame: .zero, style: .grouped)
     
-    private var menuImageArray = ["list.bullet.rectangle.portrait", "person.badge.minus", "bell", "message", "rectangle.portrait.and.arrow.right"]
+    private var menuImageArray = ["list.bullet.rectangle.portrait", "person.badge.minus", "gearshape", "message", "rectangle.portrait.and.arrow.right"]
     private var menuTitleArray = ["작성한 글", "차단유저 관리", "설정", "피드백", "로그아웃"]
     
     private lazy var refresh : UIRefreshControl = {
@@ -55,8 +56,6 @@ final class SideMenuViewController: UIViewController {
         
         addSubViews()
         naviBarAppearance()
-        
-        getUsereData()
         
         menuTableView.refreshControl = refresh
         menuTableView.dataSource = self
@@ -82,7 +81,7 @@ final class SideMenuViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.backgroundColor = .customSignature
+        view.backgroundColor = .white
         
         view.addSubview(menuTableView)
         menuTableView.backgroundColor = .white
@@ -119,32 +118,7 @@ final class SideMenuViewController: UIViewController {
     }
     
     
-    //MARK: - DataMethod
-    private func getUsereData(){
-        
-        if let user = Auth.auth().currentUser {
-            
-            db.collection("Users").document("\(user.uid)").getDocument { qs, error in
-                if let e = error {
-                    print("Error 유저 데이터 가져오기 실패 \(e)")
-                }else{
-                    guard let userData = qs?.data() else {return} //해당 도큐먼트 안에 데이터가 있는지 확인
-                    
-                    guard let userEmailData = user.email else{return} //유저 이메일
-                    guard let userNameData = userData["NickName"] as? String else{return} //유저 닉네임
-                    guard let userLoginData = userData["login"] as? String else{return}
-                    
-                    self.userInformationData = UserInformationData(name: userNameData, email: userEmailData, login: userLoginData)
-                    
-                    DispatchQueue.main.async {
-                        self.menuTableView.reloadData()
-                    }
-                }
-            }
-        }else{
-            self.userInformationData = UserInformationData(name: "로그인", email: "로그인이 필요합니다.", login: "")
-        }
-    }
+//MARK: - DataMethod
     
 }
 
@@ -172,6 +146,7 @@ extension SideMenuViewController : UITableViewDataSource {
         
         customHeaderView.nameLabel.text = self.userInformationData.name
         customHeaderView.emailLabel.text = self.userInformationData.email
+        customHeaderView.delegate = self
         
         return customHeaderView
     }
@@ -191,8 +166,12 @@ extension SideMenuViewController : UITableViewDelegate {
         }else if indexPath.row == 1 {
             
         }else if indexPath.row == 2 {
+            self.navigationController?.pushViewController(SettingViewController(), animated: true)
             
         }else if indexPath.row == 3 {
+            let vc = FeedBackViewController()
+            vc.nickName = self.userInformationData.name
+            self.navigationController?.pushViewController(vc, animated: true)
             
         }else {
             if menuTitleArray[4] == "로그인" {
@@ -211,7 +190,7 @@ extension SideMenuViewController : UITableViewDelegate {
 extension SideMenuViewController {
     
     private func loginOrLogout(title : String, subMessage : String) {
-        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: "EF_watermelonSalad", size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: "EF_watermelonSalad", size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
+        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: KeyWord.CustomFontMedium, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: KeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
         let alert = SCLAlertView(appearance: appearence)
         
         alert.addButton("확인", backgroundColor: .customSignature, textColor: .white) {
@@ -271,6 +250,21 @@ extension SideMenuViewController {
         DispatchQueue.main.async {
             self.navigationController?.pushViewController(SocialLoginViewController(), animated: true)
         }
+    }
+    
+}
+
+extension SideMenuViewController : SideMenuHeaderTouchDelegate {
+    func tapHeaderView() {
+        if Auth.auth().currentUser != nil {
+            let vc = ProfileViewController()
+            vc.userInformationData = self.userInformationData
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+        }else{
+            CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
+        }
+        
     }
     
 }

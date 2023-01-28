@@ -124,7 +124,7 @@ final class SocialLoginViewController: UIViewController {
         titleLabel.text = "요리도감"
         titleLabel.textColor = .customSignature
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont(name: "EF_watermelonSalad", size: 35) //ChosunCentennial
+        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 35) //ChosunCentennial
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.left.right.equalToSuperview().inset(30)

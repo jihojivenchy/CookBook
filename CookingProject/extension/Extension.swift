@@ -10,10 +10,10 @@ import UIKit
 
 extension UIColor {
     
-    class var customGray: UIColor? { return UIColor(named: "회색") }
+    class var customGray: UIColor? { return UIColor(named: "customGray") }
     class var customPink: UIColor? { return UIColor(named: "핑크") }
     class var customPink2: UIColor? { return UIColor(named: "진핑크") }
-    class var customSignature: UIColor? { return UIColor(named: "signatureColor") }
+    class var customSignature: UIColor? { return UIColor(named: "signatureColor") } //signatureColor
     
 }
 
@@ -33,3 +33,15 @@ extension UIButton {
     
 }
 
+extension UITextField {
+    func textFieldBorderCustom(target : UITextField) {
+        
+        let border = UIView()
+        border.backgroundColor = .lightGray
+        border.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+        border.frame = CGRect(x: 0, y: 0, width: target.frame.width, height: 2)
+        
+        target.addSubview(border)
+        //특정 border line
+    }
+}

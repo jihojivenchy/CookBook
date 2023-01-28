@@ -13,19 +13,15 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         super.viewDidLoad()
         
         let homeNavigationController = UINavigationController(rootViewController: HomeViewController())
-        let tabBarFirstItem = UITabBarItem(title: "Home", image: UIImage(systemName: "flame"), tag: 0)
+        let tabBarFirstItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
         homeNavigationController.tabBarItem = tabBarFirstItem
-        
-        let setWritedNavigationController = UINavigationController(rootViewController: SaveCreatedDataViewController())
-        let tabBarSecondItem = UITabBarItem(title: "Set", image: UIImage(systemName: "flame"), tag: 1)
-        setWritedNavigationController.tabBarItem = tabBarSecondItem
         
         let menuNavigationController = UINavigationController(rootViewController: MyPageViewController())
         let tabBarFourthItem = UITabBarItem(title: "My", image: UIImage(systemName: "flame"), tag: 2)
         menuNavigationController.tabBarItem = tabBarFourthItem
         
         
-        self.viewControllers = [homeNavigationController, setWritedNavigationController, menuNavigationController]
+        self.viewControllers = [homeNavigationController, menuNavigationController]
         
         customTabBar()
     }
@@ -43,7 +39,6 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
     
     private func customTabBar() {
         self.tabBar.tintColor = .white
-        self.tabBar.backgroundColor = .customSignature
         self.tabBar.clipsToBounds = true
         self.tabBar.layer.masksToBounds = true
         self.tabBar.layer.cornerRadius = tabBar.frame.height * 0.41

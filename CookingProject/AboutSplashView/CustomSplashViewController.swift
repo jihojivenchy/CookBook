@@ -36,15 +36,17 @@ final class CustomSplashViewController: UIViewController {
         view.backgroundColor = .customSignature
         
         animationView.play()
+        animationView.loopMode = .loop
+        animationView.tintColor = .white
         animationView.snp.makeConstraints { make in
             make.height.equalTo(300)
         }
         
         
         titleLabel.text = "요리도감"
-        titleLabel.textColor = .black
+        titleLabel.textColor = .white
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont(name: "EF_watermelonSalad", size: 45)
+        titleLabel.font = UIFont(name: KeyWord.CustomFontBold, size: 30)
         titleLabel.snp.makeConstraints { make in
             make.height.equalTo(50)
         }
@@ -62,7 +64,7 @@ final class CustomSplashViewController: UIViewController {
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(350)
         }
-    
+        
     }
     
     private func goToMainView(){
