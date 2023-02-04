@@ -12,6 +12,7 @@ import FirebaseFirestore
 import FirebaseStorage
 import BSImagePicker
 import Photos
+import SCLAlertView
 
 final class WriteRecipeViewController: UIViewController {
 //MARK: - Properties
@@ -34,6 +35,7 @@ final class WriteRecipeViewController: UIViewController {
     
     final var sendedArray : [String] = ["", "", "", ""]
     final var userName = String()
+    final var selectedTime = String()
     final var ingredients = String()
     private var contentsArray : [String] = ["", "", "", "", "", "", "", "", "", ""] //textview 작성 내용을 담는 곳
     
@@ -44,13 +46,13 @@ final class WriteRecipeViewController: UIViewController {
     
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         self.addKeyboardNotifications()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tabBarController?.tabBar.isHidden = true
         naviBarAppearance()
         
         addSubViews()
@@ -65,15 +67,14 @@ final class WriteRecipeViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         self.removeKeyboardNotifications()
     }
     
 //MARK: - ViewMethod
     private func naviBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = .customGray
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.view.backgroundColor = .clear
         
         navigationController?.navigationBar.tintColor = .black
         navigationItem.backBarButtonItem = backButton
@@ -102,9 +103,12 @@ final class WriteRecipeViewController: UIViewController {
     
     
 //MARK: - ButtonMethod
-    
     @objc private func saveButtonPressed(_ sender : UIBarButtonItem) {
-        setUploadImage()
+        if self.photoImageArray.count != 0 {
+            self.setDataAlert()
+        }else{
+            CustomAlert.show(title: "오류", subMessage: "사진을 추가해주세요.")
+        }
     }
     
     
@@ -149,7 +153,6 @@ final class WriteRecipeViewController: UIViewController {
         // 키보드가 사라질 때 앱에게 알리는 메서드 제거
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-    
     
     
 }
@@ -277,7 +280,6 @@ extension WriteRecipeViewController : PhotoHeaderTouchDelegate {
             }
         }
     }
-
 }
 
 //delete image
@@ -301,10 +303,31 @@ extension WriteRecipeViewController : RecipeTextViewDelegate {
     }
 }
 
+//alert
+extension WriteRecipeViewController {
+    private func setDataAlert() {
+        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: KeyWord.CustomFont, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: KeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
+        let alert = SCLAlertView(appearance: appearence)
+        
+        alert.addButton("확인", backgroundColor: .customSignature, textColor: .white) {
+            self.setUploadImage()
+        }
+        
+        alert.addButton("취소", backgroundColor: .customSignature, textColor: .white) {
+            
+        }
+        
+        alert.showSuccess("저장",
+                          subTitle: "레시피를 저장하시겠습니까?",
+                          colorStyle: 0xFFB6B9,
+                          colorTextButton: 0xFFFFFF)
+    }
+}
+
 //Set Wrtied Recipe Data
 extension WriteRecipeViewController {
     private func setUploadImage() {
-        CustomLoadingView.shared.startLoading()
+        CustomLoadingView.shared.startLoading(alpha: 0.5)
         
         var completionCount = 0 //for문이 끝나는 시점을 알기 위해서.
         var saveUrlArray = [String](repeating: "", count: photoImageArray.count)  //image url들을 담는 공간
@@ -401,6 +424,9 @@ extension WriteRecipeViewController {
                                                       "ingredients" : self.ingredients,
                                                       "segment" : self.sendedArray[1],
                                                       "tema" : self.sendedArray[0],
+                                                      "heart" : "0",
+                                                      "heartPeople" : FieldValue.arrayUnion([]),
+                                                      "time" : self.selectedTime,
                                                       "contents" : FieldValue.arrayUnion(contents),
                                                       "user" : user.uid,
                                                       "date" : convertDate,
@@ -410,6 +436,7 @@ extension WriteRecipeViewController {
         
         DispatchQueue.main.async {
             CustomLoadingView.shared.stopLoading()
+            self.navigationController?.pushViewController(FinishViewController(), animated: true)
         }
     } //data 저장을 위한 method
     
@@ -418,3 +445,5 @@ extension WriteRecipeViewController {
         return resultArray
     }
 }
+
+

@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 import FirebaseFirestore
-import Firebase
+import FirebaseAuth
 
 final class ProfileViewController: UIViewController {
 //MARK: - Properties
@@ -57,17 +57,29 @@ final class ProfileViewController: UIViewController {
     
     private let userImageView = UIImageView()
     
-    private lazy var saveButton : UIBarButtonItem = {
-        let sb = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveButtonPressed(_:)))
+    
+    private lazy var saveButton : UIButton = {
+        let button = UIButton()
+        button.setTitle("저장하기", for: .normal)
+        button.titleLabel?.textColor = .white
+        button.titleLabel?.font = .boldSystemFont(ofSize: 16)
+        button.backgroundColor = .customSignature
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
+        button.addTarget(self, action: #selector(saveButtonPressed(_:)), for: .touchUpInside)
         
-        return sb
+        return button
     }()
     
 //MARK: - LifeCycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabBarController?.tabBar.isHidden = true
+        
         naviBarAppearance()
         viewChange()
         setUserInfomationData()
@@ -76,13 +88,12 @@ final class ProfileViewController: UIViewController {
 //MARK: - ViewMethod
     private func naviBarAppearance() {
         
-        navigationController?.navigationBar.tintColor = .customSignature
-        navigationItem.rightBarButtonItem = saveButton
+        navigationController?.navigationBar.tintColor = .black
     }
     
     private func viewChange() {
         
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(userImageView)
         userImageView.tintColor = .customSignature
@@ -96,7 +107,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(nickNameLabel)
         nickNameLabel.text = "닉네임"
         nickNameLabel.textColor = .customSignature
-        nickNameLabel.font = .boldSystemFont(ofSize: 14)
+        nickNameLabel.font = .boldSystemFont(ofSize: 12)
         nickNameLabel.snp.makeConstraints { make in
             make.top.equalTo(userImageView.snp_bottomMargin).offset(30)
             make.left.equalToSuperview().inset(20)
@@ -115,7 +126,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(emailLabel)
         emailLabel.text = "이메일"
         emailLabel.textColor = .customSignature
-        emailLabel.font = .boldSystemFont(ofSize: 14)
+        emailLabel.font = .boldSystemFont(ofSize: 12)
         emailLabel.snp.makeConstraints { make in
             make.top.equalTo(nickNameTextField.snp_bottomMargin).offset(30)
             make.left.equalToSuperview().inset(20)
@@ -134,7 +145,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(loginLabel)
         loginLabel.text = "로그인 정보"
         loginLabel.textColor = .customSignature
-        loginLabel.font = .boldSystemFont(ofSize: 14)
+        loginLabel.font = .boldSystemFont(ofSize: 12)
         loginLabel.snp.makeConstraints { make in
             make.top.equalTo(emailTextField.snp_bottomMargin).offset(30)
             make.left.equalToSuperview().inset(20)
@@ -149,6 +160,13 @@ final class ProfileViewController: UIViewController {
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(50)
         }
+        
+        view.addSubview(saveButton)
+        saveButton.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().inset(30)
+            make.left.right.equalToSuperview().inset(20)
+            make.height.equalTo(55)
+        }
      
     }
     
@@ -159,7 +177,7 @@ final class ProfileViewController: UIViewController {
     private func textFieldBorderCustom(target : UITextField) {
         
         let border = UIView()
-        border.backgroundColor = .customSignature
+        border.backgroundColor = .customNavy
         border.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
         border.frame = CGRect(x: 0, y: 0, width: nickNameTextField.frame.width, height: 2)
         target.addSubview(border)
@@ -181,11 +199,11 @@ final class ProfileViewController: UIViewController {
             self.loginTextField.text = "이메일 로그인"
             
         }
-    }
+    } //유저로그인 정보를 textfield에 보기 쉽게 넣어주는 역할.
     
 //MARK: - ButtonMethod
-    @objc private func saveButtonPressed(_ sender : UIBarButtonItem) {
-        
+    @objc private func saveButtonPressed(_ sender : UIButton) {
+        updateUserNickName()
     }
 }
 
@@ -197,23 +215,29 @@ extension ProfileViewController : UITextFieldDelegate {
         textField.endEditing(true)
         return true
     }
-    
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//
-//        if let char = string.cString(using: String.Encoding.utf8) {
-//            let isBackSpace = strcmp(char, "\\b")
-//            if isBackSpace == -92 {
-//                return true
-//            }
-//        }//백스페이스는 감지할 수 있도록 하는 코드
-//
-//        guard let text = textField.text else {return false}
-//
-//        // 제한 글자수 이상을 입력한 이후에는 작동이멈춤.
-//        if text.count > 8 {
-//            return false
-//        }
-//
-//        return true
-//    }
+}
+
+//프로필 변경
+extension ProfileViewController {
+    private func updateUserNickName() {
+        guard let user = Auth.auth().currentUser else{return}
+        guard let name = nickNameTextField.text else{return}
+        
+        if name != self.userInformationData.name { //닉네임에 변경사항이 있을 때
+            
+            if name == "" {
+                CustomAlert.show(title: "오류", subMessage: "닉네임을 작성해주세요.")
+            }else{
+                db.collection("Users").document(user.uid).updateData(["NickName" : name])
+                
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+            
+        }
+        
+        
+        
+    }
 }

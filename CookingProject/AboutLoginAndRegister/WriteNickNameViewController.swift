@@ -69,7 +69,7 @@ final class WriteNickNameViewController: UIViewController {
 //MARK: - ViewMethod
     
     private func addSubViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(progressBar)
         progressBar.backgroundColor = .lightGray
@@ -86,8 +86,8 @@ final class WriteNickNameViewController: UIViewController {
         view.addSubview(titleLabel)
         titleLabel.text = "닉네임 작성과 함께 약관에 \n동의해주세요"
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .black
-        titleLabel.font = .boldSystemFont(ofSize: 25)
+        titleLabel.textColor = .customNavy
+        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(15)
             make.left.right.equalToSuperview().inset(15)
@@ -118,7 +118,7 @@ final class WriteNickNameViewController: UIViewController {
         
         view.addSubview(agreeLabel)
         agreeLabel.text = "개인정보 이용 및 수집 동의(필수)"
-        agreeLabel.textColor = .black
+        agreeLabel.textColor = .customNavy
         agreeLabel.font = .systemFont(ofSize: 15)
         agreeLabel.snp.makeConstraints { make in
             make.centerY.equalTo(checkBoxButton)

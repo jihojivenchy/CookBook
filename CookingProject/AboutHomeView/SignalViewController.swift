@@ -7,7 +7,7 @@
 
 import UIKit
 import SnapKit
-import Firebase
+import FirebaseAuth
 import FirebaseFirestore
 
 class SignalViewController : UIViewController {

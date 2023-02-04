@@ -66,6 +66,7 @@ final class WriteTitleViewController: UIViewController {
     
     final var sendedArray : [String] = ["", "", "", ""]
     final var userName = String()
+    final var selectedTime = String()
     
 //MARK: - LifeCycle
     override func viewDidLoad() {
@@ -210,6 +211,7 @@ final class WriteTitleViewController: UIViewController {
                 let vc = WriteRecipeViewController()
                 vc.sendedArray = self.sendedArray
                 vc.userName = self.userName
+                vc.selectedTime = self.selectedTime
                 vc.ingredients = ingreText
                 
                 self.navigationController?.pushViewController(vc, animated: true)

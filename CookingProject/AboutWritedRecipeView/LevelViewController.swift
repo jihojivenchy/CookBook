@@ -33,7 +33,6 @@ final class LevelViewController: UIViewController {
     }()
     private let levelArray : [String] = ["초급", "중급", "고급"]
     
-    
     private lazy var nextButton : UIButton = {
         let button = UIButton()
         button.setTitle("다음", for: .normal)
@@ -47,8 +46,28 @@ final class LevelViewController: UIViewController {
         return button
     }()
     
+    private let timeView = UIView()
+    
+    private lazy var timeButton : UIButton = {
+        let config = UIImage.SymbolConfiguration(pointSize: 15, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "alarm.fill", withConfiguration: config)
+        
+        let button = UIButton()
+        button.setTitle(" 조리시간", for: .normal)
+        button.setTitleColor(.customNavy, for: .normal)
+        button.setImage(image, for: .normal)
+        button.tintColor = .customNavy
+        button.titleLabel?.font = UIFont(name: KeyWord.CustomFont, size: 16)
+        button.addTarget(self, action: #selector(timeButtonPressed(_:)), for: .touchUpInside)
+        button.backgroundColor = .white
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
+        
+        return button
+    }()
     
     final var sendedArray : [String] = ["", "", "", ""]
+    final var selectedTime = String()
     final var userName = String()
     
 //MARK: - LifeCycle
@@ -101,14 +120,15 @@ final class LevelViewController: UIViewController {
         }
         
         view.addSubview(levelLabel)
-        levelLabel.text = "레시피의 난이도를 선택해주세요"
+        levelLabel.text = "레시피의 난이도와 조리시간을 선택해주세요."
         levelLabel.textColor = .black
         levelLabel.textAlignment = .center
+        levelLabel.numberOfLines = 2
         levelLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
         levelLabel.snp.makeConstraints { make in
-            make.top.equalTo(progressBar.snp_bottomMargin).offset(40)
+            make.top.equalTo(progressBar.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(20)
-            make.height.equalTo(30)
+            make.height.equalTo(50)
         }
         
         view.addSubview(levelCollectionView)
@@ -119,10 +139,16 @@ final class LevelViewController: UIViewController {
             make.height.equalTo(100)
         }
         
+        view.addSubview(timeButton)
+        timeButton.snp.makeConstraints { make in
+            make.top.equalTo(levelCollectionView.snp_bottomMargin).offset(50)
+            make.left.right.equalToSuperview().inset(25)
+            make.height.equalTo(55)
+        }
+        
         view.addSubview(nextButton)
-        nextButton.alpha = 0.6
         nextButton.snp.makeConstraints { make in
-            make.top.equalTo(levelCollectionView.snp_bottomMargin).offset(70)
+            make.top.equalTo(timeButton.snp_bottomMargin).offset(80)
             make.left.right.equalToSuperview().inset(25)
             make.height.equalTo(55)
         }
@@ -146,25 +172,43 @@ final class LevelViewController: UIViewController {
     }
     
 //MARK: - ButtonMethod
-    
-    @objc private func nextButtonPressed(_ sender : UIButton){
-        let state = nextButton.alpha
-        
-        if state == 1.0 {
-            let vc = WriteTitleViewController()
-            vc.sendedArray = self.sendedArray
-            vc.userName = self.userName
+    @objc private func timeButtonPressed(_ sender : UIButton){
+        UIView.animate(withDuration: 0.1, animations: {
+            self.timeButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
             
-            self.navigationController?.pushViewController(vc, animated: true)
-        }else{
-            CustomAlert.show(title: "난이도 선택", subMessage: "선택 후 진행이 가능합니다.")
-        }
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.timeButton.transform = CGAffineTransform.identity
+            }
+        })
+
+        let vc = SelectedTimeViewController()
+        vc.modalPresentationStyle = .custom
+        vc.delegate = self
+        vc.selectedTime = self.selectedTime
+        self.present(vc, animated: true)
     }
     
-    
-    //MARK: - DataMethod
-    
-    
+    @objc private func nextButtonPressed(_ sender : UIButton){
+        let level = self.sendedArray[1]
+        
+        if level == "" {
+            CustomAlert.show(title: "오류", subMessage: "난이도 선택 후 진행이 가능합니다.")
+        }else{
+            
+            if selectedTime == "" {
+                CustomAlert.show(title: "오류", subMessage: "조리시간 입력 후 진행이 가능합니다.")
+                
+            }else{
+                let vc = WriteTitleViewController()
+                vc.sendedArray = self.sendedArray
+                vc.userName = self.userName
+                vc.selectedTime = self.selectedTime
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
     
 }
 //MARK: - Extension
@@ -203,8 +247,13 @@ extension LevelViewController : UICollectionViewDataSource, UICollectionViewDele
 
 extension LevelViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.nextButton.alpha = 1
         self.sendedArray[1] = levelArray[indexPath.row]
     }
 }
 
+extension LevelViewController : SelectedTimeDelegate{
+    func result(time: String) {
+        self.selectedTime = time
+        self.timeButton.setTitle(" \(time)", for: .normal)
+    }
+}

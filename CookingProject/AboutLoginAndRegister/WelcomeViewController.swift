@@ -16,7 +16,7 @@ final class WelcomeViewController: UIViewController {
     private let progressBar = UIProgressView()
     private let titleLabel = UILabel()
     
-    private let animationView = AnimationView(name: "dance")
+    private let animationView = AnimationView(name: "finish")
     
     private lazy var goToHomeButton : UIButton = {
         let button = UIButton()
@@ -32,7 +32,7 @@ final class WelcomeViewController: UIViewController {
     }()
     
     
-    //MARK: - LifeCycle
+//MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -44,7 +44,7 @@ final class WelcomeViewController: UIViewController {
     //MARK: - ViewMethod
     
     private func addSubViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(progressBar)
         progressBar.progress = 1
@@ -60,8 +60,8 @@ final class WelcomeViewController: UIViewController {
         view.addSubview(titleLabel)
         titleLabel.text = "\(nickName)님 요리도감에 오신 걸\n환영합니다!"
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .black
-        titleLabel.font = .boldSystemFont(ofSize: 25)
+        titleLabel.textColor = .customNavy
+        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(15)
             make.left.right.equalToSuperview().inset(15)
@@ -72,7 +72,7 @@ final class WelcomeViewController: UIViewController {
         animationView.play()
         animationView.loopMode = .loop
         animationView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottomMargin).offset(80)
+            make.top.equalTo(titleLabel.snp.bottomMargin).offset(60)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(300)
         }

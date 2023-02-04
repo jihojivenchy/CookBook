@@ -41,7 +41,7 @@ final class SettingViewController: UIViewController {
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        tabBarController?.tabBar.isHidden = true
     }
     
     override func viewDidLoad() {
@@ -49,7 +49,6 @@ final class SettingViewController: UIViewController {
         //앱 환경설정에 갔다가 foreground로 돌아설 때 시점을 캐치해서 버튼 타이틀 변경.
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         
-        tabBarController?.tabBar.isHidden = true
         naviBarAppearance()
         addSubViews()
         
@@ -71,7 +70,7 @@ final class SettingViewController: UIViewController {
     }
     
     private func addSubViews(){
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(notificationButton)
         notificationButton.snp.makeConstraints { make in

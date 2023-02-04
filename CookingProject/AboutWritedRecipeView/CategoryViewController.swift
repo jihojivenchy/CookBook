@@ -52,10 +52,15 @@ final class CategoryViewController: UIViewController {
     final var userName = String()
     
 //MARK: - LifeCycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        tabBarController?.tabBar.isHidden = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tabBarController?.tabBar.isHidden = true
         naviBarAppearance()
         
         addSubViews()

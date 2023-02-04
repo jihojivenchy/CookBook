@@ -139,7 +139,7 @@ class ComunicationViewController: TabmanViewController {
                     guard let data = querySnapshot?.data() else{return}
                     guard let userNickName = data["NickName"] as? String else{return}
                     
-                    self.db.collection("\(user.uid).self").addDocument(data: ["user" : userUID,
+                    self.db.collection("\(user.uid).block").addDocument(data: ["user" : userUID,
                                                                          "userNickName" : userNickName])
                 }
             }

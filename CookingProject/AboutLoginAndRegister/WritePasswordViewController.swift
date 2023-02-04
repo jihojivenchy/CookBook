@@ -56,7 +56,7 @@ final class WritePasswordViewController: UIViewController {
     //MARK: - ViewMethod
     
     private func addSubViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(progressBar)
         progressBar.backgroundColor = .lightGray
@@ -73,8 +73,8 @@ final class WritePasswordViewController: UIViewController {
         view.addSubview(titleLabel)
         titleLabel.text = "로그인에 사용할 비밀번호를 \n작성해주세요"
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .black
-        titleLabel.font = .boldSystemFont(ofSize: 25)
+        titleLabel.textColor = .customNavy
+        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(15)
             make.left.right.equalToSuperview().inset(15)
@@ -158,7 +158,7 @@ final class WritePasswordViewController: UIViewController {
         guard let password = pwCheckTextField.text else{return}
         
         if check == "비밀번호가 일치합니다." {
-            CustomLoadingView.shared.startLoading()
+            CustomLoadingView.shared.startLoading(alpha: 0.5)
             self.firebaseRegister(email: self.email, password: password, nickName: self.nickName)
         }else{
             CustomAlert.show(title: "오류", subMessage: "비밀번호를 확인해주세요.")

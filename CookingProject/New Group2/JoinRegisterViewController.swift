@@ -123,7 +123,6 @@ class JoinRegisterViewController : UIViewController {
     }()
     
 //MARK: - LifeCycle
-    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isHidden = true

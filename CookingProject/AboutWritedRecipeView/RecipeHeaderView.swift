@@ -17,7 +17,7 @@ final class RecipeHeaderView: UIView {
     
     private let stackView = UIStackView()
     private let progressBar = UIProgressView()
-    private let introduceLabel = UILabel()
+    private let explainLabel = UILabel()
     private let subTitleLabel = UILabel()
     
     private let photoCollectionView : UICollectionView = {
@@ -88,12 +88,12 @@ final class RecipeHeaderView: UIView {
             make.height.equalTo(7)
         }
         
-        self.addSubview(introduceLabel)
-        introduceLabel.text = "사진과 조리과정을 작성해주세요."
-        introduceLabel.textColor = .black
-        introduceLabel.textAlignment = .center
-        introduceLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
-        introduceLabel.snp.makeConstraints { make in
+        self.addSubview(explainLabel)
+        explainLabel.text = "사진과 조리과정을 작성해주세요."
+        explainLabel.textColor = .black
+        explainLabel.textAlignment = .center
+        explainLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        explainLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(30)
@@ -105,7 +105,7 @@ final class RecipeHeaderView: UIView {
         subTitleLabel.textAlignment = .center
         subTitleLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
         subTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(introduceLabel.snp_bottomMargin).offset(20)
+            make.top.equalTo(explainLabel.snp_bottomMargin).offset(20)
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(20)
         }

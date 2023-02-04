@@ -26,7 +26,7 @@ final class SideMenuTableViewCell: UITableViewCell {
     }
     
     private func addSubViews() {
-        self.backgroundColor = .white
+        self.backgroundColor = .clear
         
         addSubview(menuImageView)
         menuImageView.tintColor = .customSignature
@@ -37,7 +37,7 @@ final class SideMenuTableViewCell: UITableViewCell {
         }
         
         addSubview(menuLabel)
-        menuLabel.textColor = .black
+        menuLabel.textColor = .customNavy
         menuLabel.font = UIFont(name: KeyWord.CustomFont, size: 15)
         menuLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()

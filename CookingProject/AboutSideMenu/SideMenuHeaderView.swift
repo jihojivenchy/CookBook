@@ -36,10 +36,10 @@ final class SideMenuHeaderView : UIView {
     
     private func addSubViews() {
 
-        self.backgroundColor = .customSignature
+        self.backgroundColor = .clear
         
         addSubview(userImageView)
-        userImageView.tintColor = .white
+        userImageView.tintColor = .customSignature
         userImageView.image = UIImage(systemName: "person.circle")
         userImageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -48,14 +48,14 @@ final class SideMenuHeaderView : UIView {
         }
         
         
-        nameLabel.textColor = .white
+        nameLabel.textColor = .customNavy
         nameLabel.font = UIFont(name: KeyWord.CustomFont, size: 18)
         nameLabel.snp.makeConstraints { make in
             make.height.equalTo(20)
         }
         
         
-        emailLabel.textColor = .white
+        emailLabel.textColor = .customNavy
         emailLabel.font = UIFont(name: KeyWord.CustomFont, size: 13)
         emailLabel.snp.makeConstraints { make in
             make.height.equalTo(20)

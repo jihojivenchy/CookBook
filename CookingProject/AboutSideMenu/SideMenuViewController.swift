@@ -27,6 +27,7 @@ final class SideMenuViewController: UIViewController {
     
     private lazy var dismissButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(dismissButtonPressed(_:)))
+        sb.tintColor = .customSignature
         
         return sb
     }()
@@ -67,24 +68,21 @@ final class SideMenuViewController: UIViewController {
     //MARK: - ViewMethod
     
     private func naviBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        
-        appearance.backgroundColor = .customSignature
-        self.navigationItem.standardAppearance = appearance
-        self.navigationItem.scrollEdgeAppearance = appearance
         self.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.clipsToBounds = true
-        self.navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.view.backgroundColor = .clear
+        
         self.navigationItem.backBarButtonItem = backButton
         self.navigationItem.leftBarButtonItem = dismissButton
     }
     
     private func addSubViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(menuTableView)
-        menuTableView.backgroundColor = .white
+        menuTableView.backgroundColor = .clear
         menuTableView.showsVerticalScrollIndicator = false
         menuTableView.snp.makeConstraints { make in
             make.top.bottom.left.right.equalTo(view.safeAreaLayoutGuide)
@@ -92,7 +90,7 @@ final class SideMenuViewController: UIViewController {
     }
     
     private func checkLoginState() {
-        if Auth.auth().currentUser != nil { //유저가 로그인 상태가 아니라면 로그인 뷰로 고고
+        if Auth.auth().currentUser != nil {
             self.menuImageArray[4] = "rectangle.portrait.and.arrow.right"
             self.menuTitleArray[4] = "로그아웃"
             

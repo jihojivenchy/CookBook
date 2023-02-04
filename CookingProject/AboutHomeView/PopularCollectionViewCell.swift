@@ -55,7 +55,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         }
         
         addSubview(explainView)
-        explainView.backgroundColor = .white
+        explainView.backgroundColor = .customWhite
         explainView.clipsToBounds = true
         explainView.layer.cornerRadius = 7
         explainView.layer.masksToBounds = false
@@ -71,7 +71,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(foodLabel)
         foodLabel.text = "해물감자수제비"
-        foodLabel.textColor = .black
+        foodLabel.textColor = .customNavy
         foodLabel.textAlignment = .center
         foodLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
         foodLabel.snp.makeConstraints { make in
@@ -91,7 +91,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(nameLabel)
         nameLabel.text = "엄쉐프"
-        nameLabel.textColor = .black
+        nameLabel.textColor = .customNavy
         nameLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
         nameLabel.snp.makeConstraints { make in
             make.centerY.equalTo(personImageView)
@@ -111,7 +111,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(heartCountLabel)
         heartCountLabel.text = "3"
-        heartCountLabel.textColor = .black
+        heartCountLabel.textColor = .customNavy
         heartCountLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
         heartCountLabel.sizeToFit()
         heartCountLabel.snp.makeConstraints { make in
@@ -121,8 +121,8 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         
         explainView.addSubview(levelLabel)
         levelLabel.text = "중급"
-        levelLabel.textColor = .black
-        levelLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
+        levelLabel.textColor = .customNavy
+        levelLabel.font = .boldSystemFont(ofSize: 12)
         levelLabel.sizeToFit()
         levelLabel.snp.makeConstraints { make in
             make.centerY.equalTo(heartImageView)

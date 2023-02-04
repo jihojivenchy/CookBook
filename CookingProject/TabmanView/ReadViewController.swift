@@ -24,13 +24,11 @@ class ReadViewController : TabmanViewController {
     
     private let categoryTitleList = ["전체보기","한 식", "중 식", "양 식", "일 식", "간 식", "채 식", "퓨 전", "분 식", "안 주"]
     
-    //MARK: - LifeCycle
-    
+//MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         naviBarAppearance()
-        navigationTitleCustom()
         
         tabBarController?.tabBar.isHidden = true
         
@@ -69,12 +67,9 @@ class ReadViewController : TabmanViewController {
 //MARK: - ViewMethod
     private func naviBarAppearance(){
         let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .customPink
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
+        appearance.backgroundColor = .clear
+        navigationController?.navigationBar.tintColor = .black
         navigationItem.backBarButtonItem = backButton
-        
     }
     
     private func setBar() {
@@ -92,9 +87,9 @@ class ReadViewController : TabmanViewController {
         
         bar.buttons.customize { (button) in
             button.tintColor = .lightGray
-            button.selectedTintColor = .customPink2
-            button.font = UIFont(name: "EF_Diary", size: 16) ?? .systemFont(ofSize: 16)
-            button.selectedFont = UIFont(name: "EF_Diary", size: 20) ?? .systemFont(ofSize: 20)
+            button.selectedTintColor = .customSignature
+            button.font = UIFont(name: KeyWord.CustomFont, size: 15) ?? .systemFont(ofSize: 15)
+            button.selectedFont = UIFont(name: KeyWord.CustomFontMedium, size: 17) ?? .systemFont(ofSize: 17)
         }
         
         bar.indicator.tintColor = .customPink2
@@ -103,22 +98,6 @@ class ReadViewController : TabmanViewController {
         
     }
     
-    private func navigationTitleCustom() {
-        let titleName = UILabel()
-        titleName.text = "요리 도감"
-        titleName.font = UIFont(name: "EF_Diary", size: 20)
-        titleName.textAlignment = .center
-        titleName.textColor = .black
-        titleName.sizeToFit()
-        
-        let stackView = UIStackView(arrangedSubviews: [titleName])
-        stackView.axis = .horizontal
-        stackView.frame.size.width = titleName.frame.width
-        stackView.frame.size.height = titleName.frame.height
-        
-        navigationItem.titleView = stackView
-        
-    }
 //MARK: - ButtonMethod
     
 }

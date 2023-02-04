@@ -41,13 +41,13 @@ final class FindPasswordViewController: UIViewController {
     //MARK: - ViewMethod
     
     private func addSubViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(titleLabel)
         titleLabel.text = "비밀번호 재 설정 메일을 받을 \n아이디(이메일)를 입력해주세요."
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .black
-        titleLabel.font = .boldSystemFont(ofSize: 25)
+        titleLabel.textColor = .customNavy
+        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.left.right.equalToSuperview().inset(15)

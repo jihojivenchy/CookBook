@@ -77,13 +77,11 @@ final class FeedBackViewController: UIViewController {
     
 //MARK: - ViewMethod
     private func addSubViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(backGroudView)
         backGroudView.backgroundColor = .white
         backGroudView.clipsToBounds = true
-        backGroudView.layer.borderColor = UIColor.darkGray.cgColor
-        backGroudView.layer.borderWidth = 1
         backGroudView.layer.cornerRadius = 7
         backGroudView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
@@ -98,7 +96,7 @@ final class FeedBackViewController: UIViewController {
         
         view.addSubview(sendButton)
         sendButton.snp.makeConstraints { make in
-            make.top.equalTo(backGroudView.snp_bottomMargin).offset(30)
+            make.top.equalTo(backGroudView.snp_bottomMargin).offset(50)
             make.left.right.equalToSuperview().inset(25)
             make.height.equalTo(55)
         }
@@ -140,7 +138,7 @@ final class FeedBackViewController: UIViewController {
                 
                 DispatchQueue.main.async {
                     self.feedBackTextView.text = self.textViewHolder
-                    ToastMessage.shared.showToast(message: "전송이 완료되었습니다.", view: self.view)
+                    ToastMessage.shared.showToast(message: "전송이 완료되었습니다.", durationTime: 3, delayTime: 0.5, width: 200, view: self.view)
                 }
                 
             }

@@ -205,7 +205,7 @@ extension AllViewController : UICollectionViewDelegate, UICollectionViewDataSour
         let processor = DownsamplingImageProcessor(size: CGSize(width: collectionView.frame.width / 2 - 1, height: 170)) //이미지뷰 크기에 맞게 이미지다운샘플링
       
         cell.imageView.kf.indicatorType = .activity
-        cell.imageView.kf.setImage(with: url, placeholder: nil, options: [.processor(processor), .transition(.fade(0.7)), .cacheOriginalImage]) { result in
+        cell.imageView.kf.setImage(with: url, placeholder: nil, options: [.processor(processor), .transition(.fade(0.4)), .cacheOriginalImage]) { result in
             switch result{
             case .success(_):
                 print("success")

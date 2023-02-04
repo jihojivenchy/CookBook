@@ -14,9 +14,10 @@ final class ToastMessage {
         
     }
     
-    final func showToast(message: String, view: UIView) {
-        let toastLabel = UILabel(frame: CGRect(x: view.frame.size.width/2 - 100, y: view.frame.size.height-100, width: 200, height: 40))
-        toastLabel.backgroundColor = .customSignature?.withAlphaComponent(0.6)
+    final func showToast(message: String, durationTime : TimeInterval, delayTime : TimeInterval, width : CGFloat, view: UIView) {
+        let toastLabel = UILabel(frame: CGRect(x: view.frame.size.width/2 - (width / 2), y: view.frame.size.height-100,
+                                               width: width, height: 40))
+        toastLabel.backgroundColor = .customSignature
         toastLabel.textColor = UIColor.white
         toastLabel.font = .boldSystemFont(ofSize: 16)
         toastLabel.textAlignment = .center;
@@ -26,7 +27,7 @@ final class ToastMessage {
         toastLabel.clipsToBounds  =  true
         
         view.addSubview(toastLabel)
-        UIView.animate(withDuration: 3.0, delay: 0.1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: durationTime, delay: delayTime, options: .curveEaseOut, animations: {
             toastLabel.alpha = 0.0
         }, completion: {(isCompleted) in
             toastLabel.removeFromSuperview()

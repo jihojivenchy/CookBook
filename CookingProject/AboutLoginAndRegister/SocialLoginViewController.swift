@@ -118,7 +118,7 @@ final class SocialLoginViewController: UIViewController {
    
     private func addSubViews() {
         
-        view.backgroundColor = .white
+        view.backgroundColor = .customWhite
         
         view.addSubview(titleLabel)
         titleLabel.text = "요리도감"
@@ -261,7 +261,10 @@ final class SocialLoginViewController: UIViewController {
         self.view.endEditing(true)
     }
     
-    
+    private func randomString(length: Int) -> String {
+      let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+      return String((0..<length).map{ _ in letters.randomElement()! })
+    } //애플 로그인 하는 경우 닉네임을 랜덤코드로 뽑아줌.
     
     
 //MARK: - ButtonMethod
@@ -281,7 +284,7 @@ final class SocialLoginViewController: UIViewController {
         if email == "", password == "" {
             CustomAlert.show(title: "오류", subMessage: "양식에 맞게 작성해주세요.")
         }else{
-            CustomLoadingView.shared.startLoading()
+            CustomLoadingView.shared.startLoading(alpha: 0.5)
             firebaseLogin(email: email, password: password)
         }
     }
@@ -291,7 +294,7 @@ final class SocialLoginViewController: UIViewController {
     }
     
     @objc func naverLoginPressed(_ sender : UIButton) {
-        CustomLoadingView.shared.startLoading()
+        CustomLoadingView.shared.startLoading(alpha: 0.5)
         loginInstance?.requestThirdPartyLogin()
     }
     
@@ -309,7 +312,7 @@ final class SocialLoginViewController: UIViewController {
         authorizationController.performRequests()
         
         DispatchQueue.main.async {
-            CustomLoadingView.shared.startLoading()
+            CustomLoadingView.shared.startLoading(alpha: 0.5)
         }
     }
     
@@ -337,7 +340,7 @@ extension SocialLoginViewController : UITextFieldDelegate {
 //MARK: - KaKao Social Login
 extension SocialLoginViewController {
     private func kakaoInstallCheck() {
-        CustomLoadingView.shared.startLoading()
+        CustomLoadingView.shared.startLoading(alpha: 0.5)
         
         if (UserApi.isKakaoTalkLoginAvailable()) { //카톡 설치 확인
             
@@ -518,7 +521,7 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
                     
                     guard let user = authResult?.user else{return}
                     let email = user.email ?? "abcde@"
-                    let name = "마음이 따듯한 요리사"
+                    let name = self.randomString(length: 5)
                     
                     self.db.collection("Users").document(user.uid).setData(["NickName" : name,
                                                                             "email" : email,
@@ -575,7 +578,6 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
         
         return result
     }
-    
     
 }
 

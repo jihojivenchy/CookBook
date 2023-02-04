@@ -12,7 +12,7 @@ import Lottie
 final class CustomSplashViewController: UIViewController {
 //MARK: - Properties
     private let titleLabel = UILabel()
-    private let animationView = AnimationView(name: "cook")
+    private let animationView = AnimationView(name: "cookBook")
     
     private let stackView = UIStackView()
     
@@ -33,20 +33,20 @@ final class CustomSplashViewController: UIViewController {
     
     private func addSubViews() {
         
-        view.backgroundColor = .customSignature
+        view.backgroundColor = .customWhite
         
         animationView.play()
         animationView.loopMode = .loop
-        animationView.tintColor = .white
+        animationView.tintColor = .customNavy
         animationView.snp.makeConstraints { make in
             make.height.equalTo(300)
         }
         
         
         titleLabel.text = "요리도감"
-        titleLabel.textColor = .white
+        titleLabel.textColor = .customNavy
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont(name: KeyWord.CustomFontBold, size: 30)
+        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 35)
         titleLabel.snp.makeConstraints { make in
             make.height.equalTo(50)
         }

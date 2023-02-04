@@ -32,13 +32,13 @@ final class CustomLoadingView {
             make.center.equalToSuperview()
         }
         
-        backgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         backgroundView.isHidden = true
     }
     
-    final func startLoading() {
+    final func startLoading(alpha : CGFloat) {
         // Start the animation
         activityIndicator.startAnimating()
+        backgroundView.backgroundColor = UIColor.black.withAlphaComponent(alpha)
         backgroundView.isHidden = false
     }
     

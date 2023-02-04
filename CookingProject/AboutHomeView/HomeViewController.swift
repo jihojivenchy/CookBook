@@ -12,6 +12,7 @@ import FirebaseFirestore
 import AuthenticationServices
 import SideMenu
 import Lottie
+import Kingfisher
 
 final class HomeViewController: UIViewController{
 //MARK: - Properties
@@ -26,25 +27,25 @@ final class HomeViewController: UIViewController{
     
     private lazy var menuButton : UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(systemName: "text.alignleft"), style: .done, target: self, action: #selector(menuButtonPressed(_:)))
-        button.tintColor = .customSignature
+        button.tintColor = .customNavy
         
         return button
     }()
     
     private lazy var signalButton : UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(systemName: "bell"), style: .done, target: self, action: #selector(signalButtonPressed(_:)))
-        button.tintColor = .customSignature
+        button.tintColor = .customNavy
         
         return button
     }()
     
-    private let weatherImageView = UIImageView()
-    private let animationView = AnimationView(name: "cooking")
-    private let introduceView = UIView()
+    private let animationView = AnimationView(name: "prepare")
     private let introduceLabel = UILabel()
     private let subTitleLabel = UILabel()
     
     private let backGroundView = UIView()
+    private let backGroundView2 = UIView()
+    private let backGroundView3 = UIView()
     
     private let popularLabel = UILabel()
     private let popularCollectionView : UICollectionView = {
@@ -56,7 +57,7 @@ final class HomeViewController: UIViewController{
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
         
         let cView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        cView.backgroundColor = .white
+        cView.backgroundColor = .clear
         cView.tag = 0
         cView.showsHorizontalScrollIndicator = false
         cView.decelerationRate = .fast
@@ -89,12 +90,12 @@ final class HomeViewController: UIViewController{
     private var timer: Timer!
     private var currentIndex = 20
 
-    private let temaLabel = UILabel()
-    private let temaCollectionView : UICollectionView = {
+    private let categoryLabel = UILabel()
+    private let categoryCollectionView : UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         
         let cView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        cView.backgroundColor = .white
+        cView.backgroundColor = .clear
         cView.tag = 1
         cView.isScrollEnabled = false
         cView.showsVerticalScrollIndicator = false
@@ -102,11 +103,11 @@ final class HomeViewController: UIViewController{
         return cView
     }()
     
-    private let temaArray : [String] = ["한식", "중식", "양식", "일식", "간식", "채식", "퓨전", "분식", "안주"]
+    private let categoryArray : [String] = ["한식", "중식", "양식", "일식", "간식", "채식", "퓨전", "분식", "안주"]
     
     private let scrollView = UIScrollView()
     private let whiteView = UIView()
-
+    
 
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
@@ -120,7 +121,7 @@ final class HomeViewController: UIViewController{
         
         animationView.play()
     }
-    
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -152,13 +153,12 @@ final class HomeViewController: UIViewController{
     
 //MARK: - ViewMethod
     private func naviBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = .white
-        self.navigationItem.standardAppearance = appearance
-        self.navigationItem.scrollEdgeAppearance = appearance
+        
         self.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.clipsToBounds = true
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.view.backgroundColor = .clear
         
         self.navigationItem.backBarButtonItem = backButton
         self.navigationItem.leftBarButtonItem = menuButton
@@ -174,83 +174,85 @@ final class HomeViewController: UIViewController{
     
     private func addSubViews() {
         
-        view.backgroundColor = .white
+        view.backgroundColor = .customSignature
         
         view.addSubview(scrollView)
-        scrollView.backgroundColor = .white
+        scrollView.backgroundColor = .customGray
         scrollView.showsVerticalScrollIndicator = false
+        scrollView.clipsToBounds = true
+        scrollView.layer.cornerRadius = 30
+        scrollView.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
         scrollView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalTo(view.safeAreaInsets)
+            make.top.left.right.equalTo(view.safeAreaInsets)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(15)
         }
         
-        scrollView.addSubview(introduceLabel)
+        scrollView.addSubview(backGroundView)
+        viewBorderCustom()
+        backGroundView.backgroundColor = .clear
+        backGroundView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
+            make.left.right.equalTo(view)
+            make.height.equalTo(270)
+        }
+        
+        backGroundView.addSubview(introduceLabel)
         introduceLabel.lineBreakStrategy = .hangulWordPriority
-        introduceLabel.textColor = .customSignature
+        introduceLabel.textColor = .customNavy
         introduceLabel.numberOfLines = 2
         introduceLabel.font = UIFont(name: KeyWord.CustomFont, size: 30)
         introduceLabel.sizeToFit()
         introduceLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(30)
-            make.left.right.equalTo(view).inset(20)
+            make.top.equalToSuperview().inset(20)
+            make.left.right.equalToSuperview().inset(20)
         }
         
-        scrollView.addSubview(subTitleLabel)
-        subTitleLabel.textColor = .darkGray
+        backGroundView.addSubview(subTitleLabel)
+        subTitleLabel.textColor = .customNavy
         subTitleLabel.font = UIFont(name: KeyWord.CustomFont, size: 20)
         subTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(introduceLabel.snp_bottomMargin).offset(15)
-            make.left.right.equalTo(view).inset(20)
+            make.top.equalTo(introduceLabel.snp_bottomMargin).offset(20)
+            make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(30)
         }
         
-        scrollView.addSubview(animationView)
-        animationView.animationSpeed = 0.7
+        backGroundView.addSubview(animationView)
         animationView.loopMode = .loop
         animationView.backgroundColor = .clear
         animationView.snp.makeConstraints { make in
-            make.top.equalTo(subTitleLabel.snp_bottomMargin)
-            make.right.equalTo(view)
+            make.top.equalTo(subTitleLabel.snp_bottomMargin).offset(10)
+            make.right.equalToSuperview()
             make.width.equalTo(150)
-            make.height.equalTo(135)
+            make.height.equalTo(110)
         }
         
-        scrollView.addSubview(backGroundView)
-        backGroundView.backgroundColor = .white
-        backGroundView.clipsToBounds = true
-        backGroundView.layer.cornerRadius = 13
-        backGroundView.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMinYCorner, .layerMaxXMinYCorner)
-        backGroundView.layer.masksToBounds = false
-        backGroundView.layer.shadowOpacity = 1
-        backGroundView.layer.shadowColor = UIColor.darkGray.cgColor
-        backGroundView.layer.shadowOffset = CGSize(width: 0, height: 0)
-        backGroundView.layer.shadowRadius = 0.5
-        backGroundView.snp.makeConstraints { make in
-            make.top.equalTo(animationView.snp_bottomMargin).offset(10)
+        scrollView.addSubview(backGroundView2)
+        backGroundView2.backgroundColor = .clear
+        backGroundView2.snp.makeConstraints { make in
+            make.top.equalTo(backGroundView.snp_bottomMargin).offset(30)
             make.left.right.equalTo(view)
-            make.height.equalTo(930)
-            make.bottom.equalToSuperview()
+            make.height.equalTo(450)
         }
         
-        backGroundView.addSubview(popularLabel)
+        backGroundView2.addSubview(popularLabel)
         popularLabel.text = "추천 레시피"
-        popularLabel.textColor = .black
+        popularLabel.textColor = .customNavy
         popularLabel.textAlignment = .center
         popularLabel.font = UIFont(name: KeyWord.CustomFont, size: 22)
         popularLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(25)
-            make.left.right.equalTo(view).inset(20)
+            make.top.equalToSuperview().inset(20)
+            make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(40)
         }
         
-        backGroundView.addSubview(popularCollectionView)
+        backGroundView2.addSubview(popularCollectionView)
         popularCollectionView.snp.makeConstraints { make in
             make.top.equalTo(popularLabel.snp_bottomMargin).offset(30)
-            make.left.right.equalTo(view)
+            make.left.right.equalToSuperview()
             make.height.equalTo(300)
         }
         
-        backGroundView.addSubview(pageControl)
+        backGroundView2.addSubview(pageControl)
         pageControl.snp.makeConstraints { make in
             make.top.equalTo(popularCollectionView.snp_bottomMargin).offset(25)
             make.centerX.equalToSuperview()
@@ -258,25 +260,48 @@ final class HomeViewController: UIViewController{
             make.height.equalTo(10)
         }
         
-        backGroundView.addSubview(temaLabel)
-        temaLabel.text = "카테고리"
-        temaLabel.textColor = .black
-        temaLabel.textAlignment = .center
-        temaLabel.font = UIFont(name: KeyWord.CustomFont, size: 22)
-        temaLabel.snp.makeConstraints { make in
-            make.top.equalTo(pageControl.snp_bottomMargin).offset(70)
-            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(40)
+        scrollView.addSubview(backGroundView3)
+        backGroundView3.backgroundColor = .clear
+        backGroundView3.snp.makeConstraints { make in
+            make.top.equalTo(backGroundView2.snp_bottomMargin).offset(30)
+            make.left.right.equalTo(view)
+            make.height.equalTo(490)
+            make.bottom.equalToSuperview().inset(20)
         }
         
-        backGroundView.addSubview(temaCollectionView)
-        temaCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(temaLabel.snp_bottomMargin).offset(25)
-            make.left.right.equalTo(view).inset(15)
+        
+        backGroundView3.addSubview(categoryLabel)
+        categoryLabel.text = "카테고리"
+        categoryLabel.textColor = .customNavy
+        categoryLabel.textAlignment = .center
+        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 22)
+        categoryLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
+            make.left.right.equalToSuperview().inset(20)
+            make.height.equalTo(30)
+        }
+        
+        backGroundView3.addSubview(categoryCollectionView)
+        categoryCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(categoryLabel.snp_bottomMargin).offset(30)
+            make.left.right.equalToSuperview().inset(15)
             make.height.equalTo(360)
         }
         
         
+    }
+    
+    private func viewBorderCustom() {
+        
+        let border = UIView()
+        border.backgroundColor = .lightGray
+        border.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+        border.frame = CGRect(x: 0, y: 0, width: backGroundView.frame.width, height: 0.5)
+        border.clipsToBounds = true
+        border.layer.cornerRadius = 30
+        border.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
+        backGroundView.addSubview(border)
+        //특정 border line
     }
     
     private func setPopularCollection() {
@@ -286,9 +311,9 @@ final class HomeViewController: UIViewController{
     } //컬렉션뷰 필요한 코드 set
     
     private func setTemaCollection() {
-        temaCollectionView.register(TemaCollectionViewCell.self, forCellWithReuseIdentifier: TemaCollectionViewCell.identifier)
-        temaCollectionView.dataSource = self
-        temaCollectionView.delegate = self
+        categoryCollectionView.register(TemaCollectionViewCell.self, forCellWithReuseIdentifier: TemaCollectionViewCell.identifier)
+        categoryCollectionView.dataSource = self
+        categoryCollectionView.delegate = self
     }   //컬렉션뷰 필요한 코드 set
     
     private func setPageControlIndex() {
@@ -458,7 +483,7 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
         if collectionView.tag == 0 {
             return self.popularDataSource.count
         }else{
-            return self.temaArray.count
+            return self.categoryArray.count
         }
         
     }
@@ -479,8 +504,9 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
         }else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TemaCollectionViewCell.identifier, for: indexPath) as! TemaCollectionViewCell
             
-            cell.temaButton.setBackgroundImage(UIImage(named: self.temaArray[indexPath.row]), for: .normal)
-            cell.temaLabel.text = self.temaArray[indexPath.row]
+            cell.contentView.isUserInteractionEnabled = true
+            cell.temaButton.setBackgroundImage(UIImage(named: self.categoryArray[indexPath.row]), for: .normal)
+            cell.temaLabel.text = self.categoryArray[indexPath.row]
             
             return cell
         }
@@ -513,16 +539,25 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
 
 extension HomeViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = CategoryViewController()
-        vc.userName = self.userInformationData.name
-        self.navigationController?.pushViewController(vc, animated: true)
+        if collectionView.tag == 0 {
+            let vc = CategoryViewController()
+            vc.userName = self.userInformationData.name
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+        }else{
+            let vc = ShowRecipeViewController()
+            vc.selectedIndex = indexPath.row + 1
+            vc.nickName = self.userInformationData.name
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
     }
 }
 
 //유저 정보 가져오기
 extension HomeViewController {
     private func getUsereData(){
-        CustomLoadingView.shared.startLoading()
+        CustomLoadingView.shared.startLoading(alpha: 0.5)
         
         if let user = Auth.auth().currentUser {
             

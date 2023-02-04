@@ -31,12 +31,12 @@ final class TemaCollectionViewCell: UICollectionViewCell {
         temaButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(10)
             make.centerX.equalToSuperview()
-            make.width.equalTo(70)
-            make.height.equalTo(65)
+            make.width.equalTo(60)
+            make.height.equalTo(60)
         }
         
         addSubview(temaLabel)
-        temaLabel.textColor = .darkGray
+        temaLabel.textColor = .customNavy
         temaLabel.textAlignment = .center
         temaLabel.font = UIFont(name: KeyWord.CustomFont, size: 20)
         temaLabel.snp.makeConstraints { make in

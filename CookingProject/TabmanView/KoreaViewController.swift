@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 import Firebase
 import FirebaseFirestore
 import Kingfisher
@@ -46,7 +47,7 @@ class KoreaViewController : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewChange()
+        addSubViews()
         getUserBookUpdate()
 
         collectionView.register(CustomCell.self, forCellWithReuseIdentifier: CustomCell.identifier)
@@ -56,13 +57,12 @@ class KoreaViewController : UIViewController {
     
     
     //MARK: - ViewMethod
-    private func viewChange() {
+    private func addSubViews() {
         view.backgroundColor = .white
         view.addSubview(collectionView)
         collectionView.backgroundColor = .white
         collectionView.snp.makeConstraints { make in
-            make.top.bottom.equalTo(view.safeAreaInsets)
-            make.right.left.equalTo(view)
+            make.top.bottom.left.right.equalTo(view.safeAreaLayoutGuide)
         }
         
         collectionView.addSubview(indicatorView)
