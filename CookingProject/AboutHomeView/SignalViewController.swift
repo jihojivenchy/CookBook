@@ -10,7 +10,7 @@ import SnapKit
 import FirebaseAuth
 import FirebaseFirestore
 
-class SignalViewController : UIViewController {
+final class SignalViewController : UIViewController {
 //MARK: - Properties
     let db = Firestore.firestore()
     var userSignalModel : [UserSignalModel] = []
@@ -31,13 +31,66 @@ class SignalViewController : UIViewController {
         return sb
     }()
     
-    private lazy var indicatorView : UIActivityIndicatorView = {
-       let ia = UIActivityIndicatorView()
-        ia.hidesWhenStopped = true
-        ia.style = .large
+    private lazy var homeButton : UIButton = {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "house", withConfiguration: imageConfig)
+        var configuration = UIButton.Configuration.tinted()
+        configuration.image = image
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 5
+        configuration.title = "홈"
+        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.baseBackgroundColor = .clear
         
-        return ia
-    }()
+        let button = UIButton(configuration: configuration)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(homeButtonPressed(_:)), for: .touchUpInside)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
+        
+        return button
+    }() //customTabbar용
+    
+    private lazy var plusButton : UIButton = {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "plus.circle", withConfiguration: imageConfig)
+        var configuration = UIButton.Configuration.tinted()
+        configuration.image = image
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 5
+        configuration.title = "작성"
+        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.baseBackgroundColor = .clear
+        
+        let button = UIButton(configuration: configuration)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(plusButtonPressed(_:)), for: .touchUpInside)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
+        
+        return button
+    }() //customTabbar용
+    
+    private lazy var bellButton : UIButton = {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "bell", withConfiguration: imageConfig)
+        var configuration = UIButton.Configuration.tinted()
+        configuration.image = image
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 5
+        configuration.title = "알림"
+        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.baseBackgroundColor = .clear
+        
+        let button = UIButton(configuration: configuration)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(bellButtonPressed(_:)), for: .touchUpInside)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
+        
+        return button
+    }() //customTabbar용
+    
     
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
@@ -48,17 +101,14 @@ class SignalViewController : UIViewController {
         }
         
         getSignalDataUpdate()
-        tabBarController?.tabBar.isHidden = false
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        naviBarAppearance()
-        navigationTitleCustom()
-        
-        viewChange()
+        setCustomTabButton()
+        addSubViews()
         
         tableView.refreshControl = refresh
         tableView.dataSource = self
@@ -69,56 +119,62 @@ class SignalViewController : UIViewController {
         
     }
 //MARK: - ViewMethod
-    private func naviBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .customPink
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
-        
-        navigationItem.backBarButtonItem = backButton
-    }
     
-    private func viewChange() {
+    
+    private func addSubViews() {
         
-        view.backgroundColor = .white
+        view.backgroundColor = .customSignature
         
         view.addSubview(tableView)
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .customWhite
+        tableView.showsVerticalScrollIndicator = false
+        tableView.clipsToBounds = true
+        tableView.layer.cornerRadius = 30
+        tableView.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaInsets)
-            make.right.left.equalTo(view)
-            make.bottom.equalToSuperview()
-        }
-        
-        tableView.addSubview(indicatorView)
-        indicatorView.snp.makeConstraints { make in
-            make.center.equalTo(view)
-            make.width.height.equalTo(100)
+            make.top.left.right.equalTo(view.safeAreaInsets)
+            make.bottom.equalTo(view.safeAreaInsets).inset(80)
         }
     }
     
-    private func navigationTitleCustom() {
-        let titleName = UILabel()
-        titleName.text = "알림"
-        titleName.font = UIFont(name: "EF_Diary", size: 20)
-        titleName.textAlignment = .center
-        titleName.textColor = .black
-        titleName.sizeToFit()
-        
-        let stackView = UIStackView(arrangedSubviews: [titleName])
+    private func setCustomTabButton() {
+        let stackView = UIStackView()
+        view.addSubview(stackView)
+        stackView.backgroundColor = .clear
         stackView.axis = .horizontal
-        stackView.frame.size.width = titleName.frame.width
-        stackView.frame.size.height = titleName.frame.height
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+        stackView.spacing = 0
+        stackView.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaInsets).inset(15)
+            make.left.right.equalToSuperview().inset(15)
+            make.height.equalTo(60)
+        }
         
-        navigationItem.titleView = stackView
+        stackView.addArrangedSubview(homeButton)
+        stackView.addArrangedSubview(plusButton)
+        stackView.addArrangedSubview(bellButton)
         
-    }
+    }//탭바 안쓰고 이거 쓸거임.
     
     @objc private func reloadAction() {
         refresh.endRefreshing()
     }
     
+//MARK: - ButtonMethod
+    @objc private func homeButtonPressed(_ sender : UIButton) {
+        self.tabBarController?.selectedIndex = 0
+    }
+    
+    @objc private func plusButtonPressed(_ sender : UIButton) {
+        let vc = CategoryViewController()
+//        vc.userName = self.userInformationData.name
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func bellButtonPressed(_ sender : UIButton) {
+        self.tabBarController?.selectedIndex = 1
+    }
 //MARK: - DataMethod
     
     private func getBlockedUserData() {
@@ -150,7 +206,6 @@ class SignalViewController : UIViewController {
                 if let e = error{
                     print("Error user.uid collection find data : \(e)")
                 }else{
-                    self.indicatorView.startAnimating()
                     self.userSignalModel = []
                     if let snapshotDocuments = querySnapshot?.documents {
                         for doc in snapshotDocuments{
@@ -168,7 +223,7 @@ class SignalViewController : UIViewController {
                             }
                         }
                         DispatchQueue.main.async {
-                            self.indicatorView.stopAnimating()
+                            
                             self.tableView.reloadData()
                         }
                     }

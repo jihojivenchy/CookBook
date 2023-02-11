@@ -12139,7 +12139,7 @@
 		BF79ADD0EFFBA643924D0DB7921F722D /* workaround_cronet_compression_filter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = workaround_cronet_compression_filter.h; path = src/core/ext/filters/workarounds/workaround_cronet_compression_filter.h; sourceTree = "<group>"; };
 		BF7EC46BD664287D31DF61928F875DDD /* grpc_alts_credentials_options.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = grpc_alts_credentials_options.h; path = src/core/lib/security/credentials/alts/grpc_alts_credentials_options.h; sourceTree = "<group>"; };
 		BF895ED5D2A440CF29CBA61E37616CC7 /* hashtablez_sampler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = hashtablez_sampler.h; path = absl/container/internal/hashtablez_sampler.h; sourceTree = "<group>"; };
-		BF96B57ADE05E8909F823BDF6868B3E3 /* abseil */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = abseil; path = absl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF96B57ADE05E8909F823BDF6868B3E3 /* absl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = absl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF9EF461DBD0C0668E5BBAAA07DA0F4B /* iocp_windows.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = iocp_windows.h; path = src/core/lib/iomgr/iocp_windows.h; sourceTree = "<group>"; };
 		BFC38150403A80E6BFE30CE871195629 /* FIRStorageComponent.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FIRStorageComponent.m; path = FirebaseStorage/Sources/FIRStorageComponent.m; sourceTree = "<group>"; };
 		BFD2BC740C5AE96130136B2DC4BAAF2E /* is_epollexclusive_available.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = is_epollexclusive_available.h; path = src/core/lib/iomgr/is_epollexclusive_available.h; sourceTree = "<group>"; };
@@ -17510,7 +17510,7 @@
 		CD5CA136FF375B9979F21CAE3EDB86D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BF96B57ADE05E8909F823BDF6868B3E3 /* abseil */,
+				BF96B57ADE05E8909F823BDF6868B3E3 /* absl.framework */,
 				5D797E9A5C5782CE845840781FA1CC81 /* Alamofire */,
 				514D7742C6CBB0BDBD9984AEE97DDFDE /* BoringSSL-GRPC */,
 				1F08AE4B81A4E4ECE65672A185E38F78 /* BSImagePicker */,
@@ -21023,7 +21023,7 @@
 			);
 			name = abseil;
 			productName = absl;
-			productReference = BF96B57ADE05E8909F823BDF6868B3E3 /* abseil */;
+			productReference = BF96B57ADE05E8909F823BDF6868B3E3 /* absl.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		83CA882AD877ED964BDF66235E416BC1 /* KakaoSDKAuth */ = {
@@ -24730,11 +24730,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FCACAAB2A35BF514112322C9FE2B3A87 /* abseil.debug.xcconfig */;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = MNAZDR4A9U;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -24750,6 +24750,7 @@
 				MODULEMAP_FILE = "Target Support Files/abseil/abseil.modulemap";
 				PRODUCT_MODULE_NAME = absl;
 				PRODUCT_NAME = absl;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
@@ -26007,11 +26008,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E7EDEA715DB73F11ADDA76CE1546FE83 /* abseil.release.xcconfig */;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = MNAZDR4A9U;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -26027,6 +26028,7 @@
 				MODULEMAP_FILE = "Target Support Files/abseil/abseil.modulemap";
 				PRODUCT_MODULE_NAME = absl;
 				PRODUCT_NAME = absl;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";

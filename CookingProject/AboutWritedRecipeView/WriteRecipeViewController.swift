@@ -424,7 +424,7 @@ extension WriteRecipeViewController {
                                                       "ingredients" : self.ingredients,
                                                       "segment" : self.sendedArray[1],
                                                       "tema" : self.sendedArray[0],
-                                                      "heart" : "0",
+                                                      "comments" : 0,
                                                       "heartPeople" : FieldValue.arrayUnion([]),
                                                       "time" : self.selectedTime,
                                                       "contents" : FieldValue.arrayUnion(contents),

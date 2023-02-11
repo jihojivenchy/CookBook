@@ -62,14 +62,14 @@ final class MyPageViewController : UIViewController {
         super.viewWillAppear(animated)
         getUserNickNameData()
         
-        tabBarController?.tabBar.isHidden = false
+        
         navigationController?.navigationBar.prefersLargeTitles = false
 
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        tabBarController?.tabBar.isHidden = true
         naviBarAppearance()
         navigationTitleCustom()
         viewChange()
@@ -368,7 +368,7 @@ extension MyPageViewController : UITableViewDataSource {
 
 extension MyPageViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerVIew = SideMenuHeaderView()
+        
     
 //        if section == 0 {
 //            headerVIew.nameLabel.text = nickNameDefaults
@@ -437,13 +437,7 @@ extension MyPageViewController : UITableViewDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToMyBook"{
-            if let destinationVC = segue.destination as? MyBookViewController{
-                guard let user = Auth.auth().currentUser else{return}
-                guard let email = user.email else{return}
-                
-                destinationVC.userUid = user.uid
-                destinationVC.userEmail = email
-            }
+            
         }
     }
 }

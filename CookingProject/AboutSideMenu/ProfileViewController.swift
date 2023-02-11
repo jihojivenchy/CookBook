@@ -177,7 +177,7 @@ final class ProfileViewController: UIViewController {
     private func textFieldBorderCustom(target : UITextField) {
         
         let border = UIView()
-        border.backgroundColor = .customNavy
+        border.backgroundColor = .customSignature
         border.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
         border.frame = CGRect(x: 0, y: 0, width: nickNameTextField.frame.width, height: 2)
         target.addSubview(border)

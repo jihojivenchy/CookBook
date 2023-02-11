@@ -43,11 +43,6 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         foodImageView.backgroundColor = .white
         foodImageView.clipsToBounds = true
         foodImageView.layer.cornerRadius = 8
-        foodImageView.layer.masksToBounds = false
-        foodImageView.layer.shadowOpacity = 1
-        foodImageView.layer.shadowColor = UIColor.darkGray.cgColor
-        foodImageView.layer.shadowOffset = CGSize(width: 0, height: 0)
-        foodImageView.layer.shadowRadius = 2
         foodImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.left.right.equalToSuperview()
@@ -55,7 +50,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         }
         
         addSubview(explainView)
-        explainView.backgroundColor = .customWhite
+        explainView.backgroundColor = .white
         explainView.clipsToBounds = true
         explainView.layer.cornerRadius = 7
         explainView.layer.masksToBounds = false
@@ -70,7 +65,6 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         }
         
         explainView.addSubview(foodLabel)
-        foodLabel.text = "해물감자수제비"
         foodLabel.textColor = .customNavy
         foodLabel.textAlignment = .center
         foodLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
@@ -90,7 +84,6 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         }
         
         explainView.addSubview(nameLabel)
-        nameLabel.text = "엄쉐프"
         nameLabel.textColor = .customNavy
         nameLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
         nameLabel.snp.makeConstraints { make in
@@ -110,7 +103,6 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         }
         
         explainView.addSubview(heartCountLabel)
-        heartCountLabel.text = "3"
         heartCountLabel.textColor = .customNavy
         heartCountLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
         heartCountLabel.sizeToFit()
@@ -120,7 +112,6 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         }
         
         explainView.addSubview(levelLabel)
-        levelLabel.text = "중급"
         levelLabel.textColor = .customNavy
         levelLabel.font = .boldSystemFont(ofSize: 12)
         levelLabel.sizeToFit()

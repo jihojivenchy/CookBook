@@ -17,7 +17,7 @@ extension UIImageView {
         
         let cache = ImageCache.default
         cache.retrieveImage(forKey: urlString,
-                            options: [.processor(processor), .transition(.fade(0.4)), .cacheOriginalImage, .retryStrategy(retry)]) { result in
+                            options: [.scaleFactor(UIScreen.main.scale), .processor(processor), .transition(.fade(0.4)), .cacheOriginalImage, .retryStrategy(retry)]) { result in
             
             switch result {
             case .success(let cacheResult):
@@ -36,7 +36,11 @@ extension UIImageView {
                             guard let url = url else {return}
                             self.kf.setImage(with: url,
                                              placeholder: nil,
-                                             options: [.processor(processor), .transition(.fade(0.4)), .cacheOriginalImage, .retryStrategy(retry)])
+                                             options: [.scaleFactor(UIScreen.main.scale),
+                                                       .processor(processor),
+                                                       .transition(.fade(0.4)),
+                                                       .cacheOriginalImage,
+                                                       .retryStrategy(retry)])
                             
                         }
                     }

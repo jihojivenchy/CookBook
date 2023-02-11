@@ -1,19 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "free-icon-cook-book-6191748.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "free-icon-cook-book-6191748@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "free-icon-cook-book-6191748@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "chef.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

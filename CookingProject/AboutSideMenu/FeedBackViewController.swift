@@ -111,6 +111,8 @@ final class FeedBackViewController: UIViewController {
     }
     
     private func naviBarAppearance() {
+        self.navigationItem.largeTitleDisplayMode = .always
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "피드백"
     }

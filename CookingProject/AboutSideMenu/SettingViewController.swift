@@ -65,6 +65,8 @@ final class SettingViewController: UIViewController {
     
 //MARK: - ViewMethod
     private func naviBarAppearance() {
+        self.navigationItem.largeTitleDisplayMode = .always
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "설정"
     }

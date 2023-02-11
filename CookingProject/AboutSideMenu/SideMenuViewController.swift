@@ -18,6 +18,7 @@ final class SideMenuViewController: UIViewController {
     //MARK: - Properties
     private let db = Firestore.firestore()
     final var userInformationData : UserInformationData = .init(name: "", email: "", login: "")
+    final var pushDelegate : CellPushDelegate?
     
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
@@ -35,7 +36,7 @@ final class SideMenuViewController: UIViewController {
     private let menuTableView = UITableView(frame: .zero, style: .grouped)
     
     private var menuImageArray = ["list.bullet.rectangle.portrait", "person.badge.minus", "gearshape", "message", "rectangle.portrait.and.arrow.right"]
-    private var menuTitleArray = ["작성한 글", "차단유저 관리", "설정", "피드백", "로그아웃"]
+    private var menuTitleArray = ["나의 레시피", "차단유저 관리", "설정", "피드백", "로그아웃"]
     
     private lazy var refresh : UIRefreshControl = {
         let rf = UIRefreshControl()
@@ -80,6 +81,11 @@ final class SideMenuViewController: UIViewController {
     
     private func addSubViews() {
         view.backgroundColor = .customWhite
+//        view.clipsToBounds = true
+//        view.layer.cornerRadius = 30
+//        view.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMaxXMinYCorner, .layerMaxXMaxYCorner)
+//        view.layer.borderColor = UIColor.customSignature?.cgColor
+//        view.layer.borderWidth = 0.5
         
         view.addSubview(menuTableView)
         menuTableView.backgroundColor = .clear
@@ -110,7 +116,7 @@ final class SideMenuViewController: UIViewController {
     }
     
     
-    //MARK: - ButtonMethod
+//MARK: - ButtonMethod
     @objc private func dismissButtonPressed(_ sender : UIBarButtonItem) {
         self.dismiss(animated: true)
     }
@@ -160,16 +166,20 @@ extension SideMenuViewController : UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 {
-            self.navigationController?.pushViewController(MyBookViewController(), animated: true)
+            self.pushDelegate?.cellPressed(index: 0)
+            self.dismiss(animated: true)
+            
         }else if indexPath.row == 1 {
+            self.pushDelegate?.cellPressed(index: 1)
+            self.dismiss(animated: true)
             
         }else if indexPath.row == 2 {
-            self.navigationController?.pushViewController(SettingViewController(), animated: true)
+            self.pushDelegate?.cellPressed(index: 2)
+            self.dismiss(animated: true)
             
         }else if indexPath.row == 3 {
-            let vc = FeedBackViewController()
-            vc.nickName = self.userInformationData.name
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushDelegate?.cellPressed(index: 3)
+            self.dismiss(animated: true)
             
         }else {
             if menuTitleArray[4] == "로그인" {
@@ -255,9 +265,8 @@ extension SideMenuViewController {
 extension SideMenuViewController : SideMenuHeaderTouchDelegate {
     func tapHeaderView() {
         if Auth.auth().currentUser != nil {
-            let vc = ProfileViewController()
-            vc.userInformationData = self.userInformationData
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushDelegate?.cellPressed(index: 5)
+            self.dismiss(animated: true)
             
         }else{
             CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
@@ -265,4 +274,8 @@ extension SideMenuViewController : SideMenuHeaderTouchDelegate {
         
     }
     
+}
+
+protocol CellPushDelegate {
+    func cellPressed(index : Int)
 }

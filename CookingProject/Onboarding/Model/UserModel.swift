@@ -20,3 +20,8 @@ struct UserInformationData {
     var email : String
     var login : String
 }
+
+struct HeartClikedUserDataModel {
+    var name : String
+    var uid : String
+}

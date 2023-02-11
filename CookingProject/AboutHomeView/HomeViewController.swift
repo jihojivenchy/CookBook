@@ -32,12 +32,65 @@ final class HomeViewController: UIViewController{
         return button
     }()
     
-    private lazy var signalButton : UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(systemName: "bell"), style: .done, target: self, action: #selector(signalButtonPressed(_:)))
-        button.tintColor = .customNavy
+    private lazy var homeButton : UIButton = {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "house", withConfiguration: imageConfig)
+        var configuration = UIButton.Configuration.tinted()
+        configuration.image = image
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 5
+        configuration.title = "홈"
+        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.baseBackgroundColor = .clear
+        
+        let button = UIButton(configuration: configuration)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(homeButtonPressed(_:)), for: .touchUpInside)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
         
         return button
-    }()
+    }() //customTabbar용
+    
+    private lazy var plusButton : UIButton = {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "plus.circle", withConfiguration: imageConfig)
+        var configuration = UIButton.Configuration.tinted()
+        configuration.image = image
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 5
+        configuration.title = "작성"
+        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.baseBackgroundColor = .clear
+        
+        let button = UIButton(configuration: configuration)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(plusButtonPressed(_:)), for: .touchUpInside)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
+        
+        return button
+    }() //customTabbar용
+    
+    private lazy var bellButton : UIButton = {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .regular, scale: .default)
+        let image = UIImage(systemName: "bell", withConfiguration: imageConfig)
+        var configuration = UIButton.Configuration.tinted()
+        configuration.image = image
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 5
+        configuration.title = "알림"
+        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.baseBackgroundColor = .clear
+        
+        let button = UIButton(configuration: configuration)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(bellButtonPressed(_:)), for: .touchUpInside)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 7
+        
+        return button
+    }() //customTabbar용
     
     private let animationView = AnimationView(name: "prepare")
     private let introduceLabel = UILabel()
@@ -66,10 +119,7 @@ final class HomeViewController: UIViewController{
         return cView
     }()
     
-    private let popularImageArray : [String] = ["양식", "퓨전", "채식", "비빔밥", "맥주"]
-    private lazy var popularDataSource: [String] = {
-       popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray + popularImageArray
-    }()
+    private var popularRecipeDataArray : [RecipeDataModel] = []
     
     private var previousCellIndex : Int = 20 //지나간 cell은 다시 축소 이미지 animation 구현
     
@@ -87,7 +137,7 @@ final class HomeViewController: UIViewController{
     private var scrollToEnd: Bool = false  //무한 carousel을 구현할 때 다시 원점으로 돌아가게 해주도록 toggle 형식
     private var scrollToBegin: Bool = false //무한 carousel을 구현할 때 다시 원점으로 돌아가게 해주도록 toggle 형식
     
-    private var timer: Timer!
+    private var timer = Timer()
     private var currentIndex = 20
 
     private let categoryLabel = UILabel()
@@ -114,17 +164,18 @@ final class HomeViewController: UIViewController{
         super.viewWillAppear(animated)
         getUsereData()
         
-        tabBarController?.tabBar.isHidden = false
         navigationController?.navigationBar.isHidden = false
-        
-        timer = Timer.scheduledTimer(timeInterval: 4.0, target: self, selector: #selector(moveToNextCell), userInfo: nil, repeats: true)
-        
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
         animationView.play()
     }
    
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        getPopularRecipeData()
         
+        setCustomTabButton()
         addSubViews()
         naviBarAppearance()
         
@@ -132,21 +183,13 @@ final class HomeViewController: UIViewController{
         setTemaCollection()
         
         checkAppleLogin()
-        tabBarAppearance()
         
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        popularCollectionView.scrollToItem(at: IndexPath(item: 20, section: 0),
-                                            at: .centeredHorizontally,
-                                            animated: false)
+        self.tabBarController?.tabBar.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         //뷰가 사라질 때 타이머 종료
-        timer.invalidate()
         animationView.stop()
     }
     
@@ -154,7 +197,6 @@ final class HomeViewController: UIViewController{
 //MARK: - ViewMethod
     private func naviBarAppearance() {
         
-        self.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.clipsToBounds = true
         navigationController?.navigationBar.isTranslucent = true
@@ -162,14 +204,6 @@ final class HomeViewController: UIViewController{
         
         self.navigationItem.backBarButtonItem = backButton
         self.navigationItem.leftBarButtonItem = menuButton
-        self.navigationItem.rightBarButtonItem = signalButton
-    }
-    
-    private func tabBarAppearance() {
-        let tapAppearnce = UITabBarAppearance()
-        tapAppearnce.backgroundColor = .customSignature
-        tabBarController?.tabBar.standardAppearance = tapAppearnce
-        tabBarController?.tabBar.scrollEdgeAppearance = tapAppearnce
     }
     
     private func addSubViews() {
@@ -184,7 +218,7 @@ final class HomeViewController: UIViewController{
         scrollView.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
         scrollView.snp.makeConstraints { make in
             make.top.left.right.equalTo(view.safeAreaInsets)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(15)
+            make.bottom.equalTo(view.safeAreaInsets).inset(80)
         }
         
         scrollView.addSubview(backGroundView)
@@ -304,6 +338,26 @@ final class HomeViewController: UIViewController{
         //특정 border line
     }
     
+    private func setCustomTabButton() {
+        let stackView = UIStackView()
+        view.addSubview(stackView)
+        stackView.backgroundColor = .clear
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+        stackView.spacing = 0
+        stackView.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaInsets).inset(15)
+            make.left.right.equalToSuperview().inset(15)
+            make.height.equalTo(60)
+        }
+        
+        stackView.addArrangedSubview(homeButton)
+        stackView.addArrangedSubview(plusButton)
+        stackView.addArrangedSubview(bellButton)
+        
+    }//탭바 안쓰고 이거 쓸거임.
+    
     private func setPopularCollection() {
         popularCollectionView.register(PopularCollectionViewCell.self, forCellWithReuseIdentifier: PopularCollectionViewCell.identifier)
         popularCollectionView.dataSource = self
@@ -339,6 +393,7 @@ final class HomeViewController: UIViewController{
     @objc private func menuButtonPressed(_ sender : UIBarButtonItem) {
         let vc = SideMenuViewController()
         vc.userInformationData = self.userInformationData
+        vc.pushDelegate = self
         
         let sideView = SideMenuNavigation(rootViewController: vc)
         
@@ -350,15 +405,22 @@ final class HomeViewController: UIViewController{
         self.navigationController?.pushViewController(SignalViewController(), animated: true)
     }
     
+    @objc private func homeButtonPressed(_ sender : UIButton) {
+        self.tabBarController?.selectedIndex = 0
+    }
     
-    private func showClickedIndex(number : Int) {
-        let vc = ReadViewController()
-        vc.defaltPageNumber = number
-        
+    @objc private func plusButtonPressed(_ sender : UIButton) {
+        let vc = CategoryViewController()
+        vc.userName = self.userInformationData.name
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    @objc private func bellButtonPressed(_ sender : UIButton) {
+        self.tabBarController?.selectedIndex = 1
+    }
+    
 //MARK: - Timer
-    @objc func moveToNextCell() {
+    @objc private func moveToNextCell() {
         pageIndex += 1
         
         if pageIndex > 4 {
@@ -481,7 +543,7 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if collectionView.tag == 0 {
-            return self.popularDataSource.count
+            return self.popularRecipeDataArray.count * 9
         }else{
             return self.categoryArray.count
         }
@@ -493,7 +555,15 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
         if collectionView.tag == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularCollectionViewCell.identifier, for: indexPath) as! PopularCollectionViewCell
             
-            cell.foodImageView.image = UIImage(named: self.popularDataSource[indexPath.row])
+            let url = popularRecipeDataArray[indexPath.row % 5].url //이미지 url이 저장되어 있는 배열에서 하나씩 가져오기.
+            
+            cell.foodImageView.setImage(with: url, width: 250, height: 265)
+            
+            cell.foodLabel.text = popularRecipeDataArray[indexPath.row % 5].title
+            cell.nameLabel.text = popularRecipeDataArray[indexPath.row % 5].chefName
+            cell.heartCountLabel.text = "\(popularRecipeDataArray[indexPath.row % 5].heartPeople.count)"
+            cell.levelLabel.text = popularRecipeDataArray[indexPath.row % 5].level
+            
             
             if indexPath.row != self.previousCellIndex {
                 cell.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
@@ -540,31 +610,58 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
 extension HomeViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.tag == 0 {
-            let vc = CategoryViewController()
-            vc.userName = self.userInformationData.name
+            let vc = RecipeViewController()
+            vc.myName = self.userInformationData.name
+            vc.recipeData = self.popularRecipeDataArray[indexPath.row % 5]
             self.navigationController?.pushViewController(vc, animated: true)
             
         }else{
             let vc = ShowRecipeViewController()
             vc.selectedIndex = indexPath.row + 1
-            vc.nickName = self.userInformationData.name
+            vc.myName = self.userInformationData.name
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
     }
 }
 
+//side메뉴에서 cell을 누르면 이곳에서 navi push 진행
+extension HomeViewController : CellPushDelegate {
+    func cellPressed(index: Int) {
+        switch index {
+        case 0:    //마이 레시피.
+            let vc = MyRecipeViewController()
+            vc.nickName = self.userInformationData.name
+            self.navigationController?.pushViewController(vc, animated: true)
+
+        case 1:    //차단유저관리
+            print("block")
+            
+        case 2:    //설정
+            self.navigationController?.pushViewController(SettingViewController(), animated: true)
+            
+        case 3:    //피드백
+            let vc = FeedBackViewController()
+            vc.nickName = self.userInformationData.name
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+        default:   //header(마이페이지)
+            let vc = ProfileViewController()
+            vc.userInformationData = self.userInformationData
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+        }
+    }
+}
+
 //유저 정보 가져오기
 extension HomeViewController {
     private func getUsereData(){
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
-        
         if let user = Auth.auth().currentUser {
             
             db.collection("Users").document("\(user.uid)").getDocument { qs, error in
                 if let e = error {
                     print("Error 유저 데이터 가져오기 실패 \(e)")
-                    CustomLoadingView.shared.stopLoading()
                 }else{
                     guard let userData = qs?.data() else {return} //해당 도큐먼트 안에 데이터가 있는지 확인
                     
@@ -576,14 +673,12 @@ extension HomeViewController {
                     
                     DispatchQueue.main.async {
                         self.setIntroduceText(name: self.userInformationData.name)
-                        CustomLoadingView.shared.stopLoading()
                     }
                 }
             }
         }else{
-            self.setIntroduceText(name: "유저")
+            self.setIntroduceText(name: "회원")
             self.userInformationData = .init(name: "로그인", email: "로그인이 필요합니다.", login: "")
-            CustomLoadingView.shared.stopLoading()
         }
     }
     
@@ -613,3 +708,52 @@ extension HomeViewController {
         }
     } //유저에게 전하는 메세지 시간에 따라 변경
 }
+
+//추천 레시피에 올라올 레시피들 가져오기
+extension HomeViewController {
+    private func getPopularRecipeData() {
+        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        
+        db.collection("전체보기").order(by: "heartPeople", descending: true).limit(to: 5).addSnapshotListener { qs, error in
+            if let e = error {
+                print("Error 좋아요 레시피 가져오기 실패 : \(e)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                self.popularRecipeDataArray = []
+                self.timer.invalidate() //timer 초기화. 중복 가능성 제거.
+                
+                guard let snapshotDocuments = qs?.documents else{return}
+                
+                for doc in snapshotDocuments{
+                    let data = doc.data()   //도큐먼트 안에 데이터에 접근
+                    
+                    guard let titleData = data["Title"] as? String else{return}
+                    guard let chefNameData = data["userNickName"] as? String else{return}
+                    guard let heartPeopleData = data["heartPeople"] as? [String] else{return}
+                    guard let levelData = data["segment"] as? String else{return}
+                    guard let timeData = data["time"] as? String else{return}
+                    guard let dateData = data["date"] as? String else{return}
+                    guard let categoryData = data["tema"] as? String else{return}
+                    guard let urlData = data["url"] as? [String] else{return}
+                    
+                    let findData = RecipeDataModel(title: titleData, chefName: chefNameData, heartPeople: heartPeopleData, level: levelData, time: timeData, date: dateData, url: urlData[0], category: categoryData, documentID: doc.documentID)
+                    
+                    self.popularRecipeDataArray.append(findData)
+                }
+                
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                    self.popularCollectionView.reloadData()
+                    self.popularCollectionView.scrollToItem(at: IndexPath(item: 20, section: 0),
+                                                        at: .centeredHorizontally,
+                                                        animated: false)
+                    self.timer = Timer.scheduledTimer(timeInterval: 4.0, target: self, selector: #selector(self.moveToNextCell), userInfo: nil, repeats: true)
+                }
+            }
+        }
+    }
+}
+
+

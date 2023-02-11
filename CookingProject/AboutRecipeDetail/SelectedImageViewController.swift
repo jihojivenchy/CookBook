@@ -11,9 +11,7 @@ import Firebase
 import Kingfisher
 
 class SelectedImageViewController: UIViewController {
-
 //MARK: - Properties
-    
     var urlDataArray : [String] = []
     var indexPathNumber = 0
     
