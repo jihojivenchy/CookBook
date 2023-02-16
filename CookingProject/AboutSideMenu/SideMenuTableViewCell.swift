@@ -38,7 +38,7 @@ final class SideMenuTableViewCell: UITableViewCell {
         
         addSubview(menuLabel)
         menuLabel.textColor = .customNavy
-        menuLabel.font = UIFont(name: KeyWord.CustomFont, size: 15)
+        menuLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 15)
         menuLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.equalTo(menuImageView.snp_rightMargin).offset(20)

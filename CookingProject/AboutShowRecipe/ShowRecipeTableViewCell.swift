@@ -33,6 +33,7 @@ final class ShowRecipeTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubViews()
+        setSingleTapGesture()
         setDoublTapGesture()
     }
     
@@ -63,7 +64,7 @@ final class ShowRecipeTableViewCell: UITableViewCell {
         
         backGroundView.addSubview(foodNameLable)
         foodNameLable.textColor = .customNavy
-        foodNameLable.font = UIFont(name: KeyWord.CustomFont, size: 18)
+        foodNameLable.font = UIFont(name: FontKeyWord.CustomFont, size: 18)
         foodNameLable.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(15)
             make.left.equalTo(foodImageView.snp_rightMargin).offset(30)
@@ -82,7 +83,7 @@ final class ShowRecipeTableViewCell: UITableViewCell {
         
         backGroundView.addSubview(chefNameLabel)
         chefNameLabel.textColor = .customNavy
-        chefNameLabel.font = UIFont(name: KeyWord.CustomFont, size: 14)
+        chefNameLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
         chefNameLabel.snp.makeConstraints { make in
             make.centerY.equalTo(personImageView)
             make.left.equalTo(personImageView.snp_rightMargin).offset(15)
@@ -101,7 +102,7 @@ final class ShowRecipeTableViewCell: UITableViewCell {
         
         backGroundView.addSubview(heartCountLabel)
         heartCountLabel.textColor = .customNavy
-        heartCountLabel.font = UIFont(name: KeyWord.CustomFont, size: 14)
+        heartCountLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
         heartCountLabel.snp.makeConstraints { make in
             make.centerY.equalTo(heartImageView)
             make.left.equalTo(heartImageView.snp_rightMargin).offset(15)
@@ -121,7 +122,7 @@ final class ShowRecipeTableViewCell: UITableViewCell {
         
         backGroundView.addSubview(foodLevelLabel)
         foodLevelLabel.textColor = .customNavy
-        foodLevelLabel.font = UIFont(name: KeyWord.CustomFont, size: 14)
+        foodLevelLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
         foodLevelLabel.sizeToFit()
         foodLevelLabel.snp.makeConstraints { make in
             make.centerY.equalTo(levelImageView)
@@ -139,7 +140,7 @@ final class ShowRecipeTableViewCell: UITableViewCell {
         
         backGroundView.addSubview(timeLabel)
         timeLabel.textColor = .customNavy
-        timeLabel.font = UIFont(name: KeyWord.CustomFont, size: 14)
+        timeLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
         timeLabel.sizeToFit()
         timeLabel.snp.makeConstraints { make in
             make.centerY.equalTo(timeImageView)
@@ -147,11 +148,27 @@ final class ShowRecipeTableViewCell: UITableViewCell {
         }
     }
     
+//cell을 한번 터치했을 때, 두번 터치했을 때 인식이 달라야 한다. 따라서 이미지뷰를 제외한 나머지 영역을 한번터치했을 때 디테일 레시피로 이동.
+//이미지 뷰가 있는 곳을 두번 터치했을 때는 좋아요 누른 효과가 나타나도록.
+    
+    private func setSingleTapGesture() {
+        let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(cellTapped))
+        singleTapGestureRecognizer.numberOfTapsRequired = 1
+        self.addGestureRecognizer(singleTapGestureRecognizer)
+    }
+    
     private func setDoublTapGesture() {
         let doubleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
         doubleTapGestureRecognizer.numberOfTapsRequired = 2
         self.addGestureRecognizer(doubleTapGestureRecognizer)
+    }
+    
+    @objc func cellTapped(_ sender: UITapGestureRecognizer) {
+        let location = sender.location(in: self)
         
+        if !self.foodImageView.frame.contains(location) { //imageview에 해당하지 않는 부분만.
+            tapDelegate?.singleTab(index: self.indexRow)
+        }
     }
         
     @objc private func doubleTapped() {
@@ -164,4 +181,6 @@ final class ShowRecipeTableViewCell: UITableViewCell {
 
 protocol RecipeCellDoublTabDelegate {
     func doubleTab(index : Int)
+    
+    func singleTab(index : Int)
 }

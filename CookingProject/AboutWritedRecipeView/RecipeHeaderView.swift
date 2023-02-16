@@ -92,7 +92,7 @@ final class RecipeHeaderView: UIView {
         explainLabel.text = "사진과 조리과정을 작성해주세요."
         explainLabel.textColor = .black
         explainLabel.textAlignment = .center
-        explainLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        explainLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         explainLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(20)
@@ -103,7 +103,7 @@ final class RecipeHeaderView: UIView {
         subTitleLabel.text = "추가한 사진갯수와 동일하게 양식이 생성됩니다."
         subTitleLabel.textColor = .darkGray
         subTitleLabel.textAlignment = .center
-        subTitleLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        subTitleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         subTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(explainLabel.snp_bottomMargin).offset(20)
             make.left.right.equalToSuperview().inset(20)
@@ -128,7 +128,7 @@ final class RecipeHeaderView: UIView {
             label.textAlignment = .center
             label.textColor = .black
             label.backgroundColor = .clear
-            label.font = UIFont(name: KeyWord.CustomFont, size: 11)
+            label.font = UIFont(name: FontKeyWord.CustomFont, size: 11)
             label.clipsToBounds = true
             label.layer.cornerRadius = 7
             

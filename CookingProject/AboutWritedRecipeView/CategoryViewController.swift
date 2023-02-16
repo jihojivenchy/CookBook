@@ -103,7 +103,7 @@ final class CategoryViewController: UIViewController {
         categoryLabel.text = "카테고리를 선택해주세요"
         categoryLabel.textColor = .black
         categoryLabel.textAlignment = .center
-        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        categoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         categoryLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(30)
             make.left.right.equalTo(view).inset(20)
@@ -114,7 +114,7 @@ final class CategoryViewController: UIViewController {
         subTitleLabel.text = "선택한 카테고리란에 레시피가 올라갑니다."
         subTitleLabel.textColor = .darkGray
         subTitleLabel.textAlignment = .center
-        subTitleLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        subTitleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         subTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(categoryLabel.snp_bottomMargin).offset(20)
             make.left.right.equalTo(view).inset(20)

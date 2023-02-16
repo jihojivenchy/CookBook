@@ -67,7 +67,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         explainView.addSubview(foodLabel)
         foodLabel.textColor = .customNavy
         foodLabel.textAlignment = .center
-        foodLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        foodLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         foodLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(10)
             make.left.right.equalToSuperview().inset(15)

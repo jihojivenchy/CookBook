@@ -34,7 +34,7 @@ final class RecipeTableViewCell: UITableViewCell {
         
         addSubview(stepLabel)
         stepLabel.textColor = .black
-        stepLabel.font = UIFont(name: KeyWord.CustomFont, size: 18)
+        stepLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 18)
         stepLabel.sizeToFit()
         stepLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)

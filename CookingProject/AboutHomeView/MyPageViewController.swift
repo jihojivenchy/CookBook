@@ -256,7 +256,7 @@ final class MyPageViewController : UIViewController {
                 }else{
                     guard let userData = snapshot?.data() else {return} //해당 도큐먼트 안에 데이터가 있는지 확인
                     
-                    if let saveData = userData["NickName"] as? String{ //"NickName" 필드에 데이터가 있는지 확인
+                    if let saveData = userData["myName"] as? String{ //"NickName" 필드에 데이터가 있는지 확인
                         self.nickNameDefaults = saveData
                         self.registerID = user.email ?? "error"
                         DispatchQueue.main.async {
@@ -291,7 +291,7 @@ final class MyPageViewController : UIViewController {
                     for doc in snapshotDocument{
                         let data = doc.data()
                         
-                        guard let imageFileName = data["imageFile"] as? [String] else{return}
+                        guard let imageFileName = data[DataKeyWord.imageFile] as? [String] else{return}
                         self.deleteUserImageFile(title: imageFileName)
                         
                         doc.reference.delete()

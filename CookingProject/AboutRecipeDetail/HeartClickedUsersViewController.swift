@@ -111,10 +111,6 @@ final class HeartClickedUsersViewController: UIViewController {
     }//좋아요를 눌렀는지 안눌렀는지 체크.
     
 //MARK: - ButtonMethod
-    @objc private func dismissButtonPressed(_ sender : UIBarButtonItem) {
-        self.dismiss(animated: true)
-        
-    }
     
     @objc private func heartButtonPressed(_ sender : UIBarButtonItem){
         guard let user = Auth.auth().currentUser else{return}
@@ -141,36 +137,39 @@ final class HeartClickedUsersViewController: UIViewController {
 //MARK: - DataMethod
     private func updateHeartPeopleData() {
         let path = db.collection("전체보기").document(documentID)
-        path.updateData(["heartPeople" : self.heartUserUidArray])
+        path.updateData([DataKeyWord.heartPeople : self.heartUserUidArray])
         
     }
     
     private func getHeartUserName() {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
-        var count = 0
-        
-        for i in heartUserUidArray {
-            db.collection("Users").document(i).getDocument { qs, error in
-                if let e = error{
-                    print("Error 유저 닉네임 정보가져오기 실패 :\(e)")
-                    DispatchQueue.main.async {
-                        CustomLoadingView.shared.stopLoading()
-                    }
-                }else{
-                    
-                    if let data = qs?.data() {
-                        guard let nickNameData = data["NickName"] as? String else{return}
-                        
-                        self.heartUserNameArray.append(nickNameData)
-                    }
-                    
-                    if count == self.heartUserUidArray.count - 1 { //반복문의 마지막을 찾아서 reload
+        if heartUserUidArray.count != 0 {
+            CustomLoadingView.shared.startLoading(alpha: 0.5)
+            var count = 0
+            
+            self.heartUserNameArray = [String](repeating: "", count: heartUserUidArray.count)
+            
+            for (index, i) in heartUserUidArray.enumerated() {
+                db.collection("Users").document(i).getDocument { qs, error in
+                    if let e = error{
+                        print("Error 유저 닉네임 정보가져오기 실패 :\(e)")
                         DispatchQueue.main.async {
                             CustomLoadingView.shared.stopLoading()
-                            self.heartUsersTableView.reloadData()
                         }
                     }else{
-                        count += 1
+                        if let data = qs?.data() {
+                            guard let userNameData = data[DataKeyWord.myName] as? String else{return}
+                        
+                            self.heartUserNameArray[index] = userNameData
+                        }
+                        
+                        if count == self.heartUserUidArray.count - 1 { //반복문의 마지막을 찾아서 reload
+                            DispatchQueue.main.async {
+                                CustomLoadingView.shared.stopLoading()
+                                self.heartUsersTableView.reloadData()
+                            }
+                        }else{
+                            count += 1
+                        }
                     }
                 }
             }
@@ -190,6 +189,7 @@ extension HeartClickedUsersViewController : UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: HeartClickedUserTableViewCell.identifier, for: indexPath) as! HeartClickedUserTableViewCell
         
         cell.nameLabel.text = heartUserNameArray[indexPath.row]
+        cell.accessoryType = .disclosureIndicator
         
         let backgroundView = UIView()
         backgroundView.backgroundColor = UIColor.white
@@ -204,9 +204,11 @@ extension HeartClickedUsersViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let vc = OtherUserProfileViewController()
-        vc.nickName = self.heartUserNameArray[indexPath.row]
+        let vc = MyRecipeViewController()
+        vc.myName = self.myName
+        vc.userName = self.heartUserNameArray[indexPath.row]
         vc.userUid = self.heartUserUidArray[indexPath.row]
+
         
         self.navigationController?.pushViewController(vc, animated: true)
     }

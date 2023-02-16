@@ -24,6 +24,7 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
     
     final let dateLabel = UILabel()
     
+    final let deleteModeCheckBox = UIImageView()
     final var indexRow = Int()
     
     override init(frame: CGRect) {
@@ -60,7 +61,7 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
         
         backGroundView.addSubview(foodNameLable)
         foodNameLable.textColor = .customNavy
-        foodNameLable.font = UIFont(name: KeyWord.CustomFont, size: 18)
+        foodNameLable.font = UIFont(name: FontKeyWord.CustomFont, size: 18)
         foodNameLable.snp.makeConstraints { make in
             make.top.equalTo(foodImageView.snp_bottomMargin).offset(20)
             make.left.right.equalToSuperview().inset(10)
@@ -78,7 +79,7 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
         
         backGroundView.addSubview(categoryLabel)
         categoryLabel.textColor = .customNavy
-        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 14)
+        categoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
         categoryLabel.snp.makeConstraints { make in
             make.centerY.equalTo(categoryImageView)
             make.left.equalTo(categoryImageView.snp_rightMargin).offset(12)
@@ -97,7 +98,7 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
         
         backGroundView.addSubview(heartCountLabel)
         heartCountLabel.textColor = .customNavy
-        heartCountLabel.font = UIFont(name: KeyWord.CustomFont, size: 14)
+        heartCountLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
         heartCountLabel.snp.makeConstraints { make in
             make.centerY.equalTo(heartImageView)
             make.left.equalTo(heartImageView.snp_rightMargin).offset(12)
@@ -107,11 +108,23 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
         
         backGroundView.addSubview(dateLabel)
         dateLabel.textColor = .gray
-        dateLabel.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        dateLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         dateLabel.snp.makeConstraints { make in
             make.top.equalTo(heartImageView.snp_bottomMargin).offset(20)
             make.left.right.equalToSuperview().inset(10)
             make.height.equalTo(15)
+        }
+        
+        backGroundView.addSubview(deleteModeCheckBox)
+        deleteModeCheckBox.image = UIImage(systemName: "checkmark.circle")
+        deleteModeCheckBox.tintColor = .customSignature
+//        deleteModeCheckBox.backgroundColor = .white
+//        deleteModeCheckBox.clipsToBounds = true
+//        deleteModeCheckBox.layer.cornerRadius = 25
+        deleteModeCheckBox.isHidden = true
+        deleteModeCheckBox.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+            make.width.height.equalTo(60)
         }
     }
 }

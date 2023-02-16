@@ -124,7 +124,7 @@ final class SocialLoginViewController: UIViewController {
         titleLabel.text = "요리도감"
         titleLabel.textColor = .customSignature
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 35) //ChosunCentennial
+        titleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 35) //ChosunCentennial
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.left.right.equalToSuperview().inset(30)
@@ -523,13 +523,22 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
                     let email = user.email ?? "abcde@"
                     let name = self.randomString(length: 5)
                     
-                    self.db.collection("Users").document(user.uid).setData(["NickName" : name,
-                                                                            "email" : email,
-                                                                            "login" : "appleLogin"])
-                    
-                    DispatchQueue.main.async {
-                        CustomLoadingView.shared.stopLoading()
-                        self.navigationController?.popViewController(animated: true)
+                    self.db.collection("Users").document(user.uid).setData([DataKeyWord.myName : name,
+                                                                               "email" : email,
+                                                                               "login" : "appleLogin"]) { err in
+                        
+                        if let e = err {
+                            print("Error 업데이트 실패 : \(e)")
+                            
+                            self.db.collection("Users").document(user.uid).setData([DataKeyWord.myName : name,
+                                                                                       "email" : email,
+                                                                                       "login" : "appleLogin"])
+                        }else{
+                            DispatchQueue.main.async {
+                                CustomLoadingView.shared.stopLoading()
+                                self.navigationController?.popViewController(animated: true)
+                            }
+                        }
                     }
                 }
             }
@@ -624,7 +633,7 @@ extension SocialLoginViewController {
                 print("회원가입 성공")
                 guard let userUID = result?.user.uid else{return}
                 //유저 데이터에 로그인했던 방법과 닉네임을 저장
-                self.db.collection("Users").document(userUID).setData(["NickName" : nickName,
+                self.db.collection("Users").document(userUID).setData([DataKeyWord.myName : nickName,
                                                                        "email" : email,
                                                                        "login" : login])
                 

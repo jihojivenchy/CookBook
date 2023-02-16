@@ -72,7 +72,7 @@ final class ShowRecipeHeaderView: UIView {
         
         addSubview(categoryLabel)
         categoryLabel.textColor = .customNavy
-        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 27)
+        categoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 27)
         categoryLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.left.right.equalToSuperview().inset(20)
@@ -81,7 +81,7 @@ final class ShowRecipeHeaderView: UIView {
         
         addSubview(subTitleLabel)
         subTitleLabel.textColor = .darkGray
-        subTitleLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        subTitleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         subTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(categoryLabel.snp_bottomMargin).offset(20)
             make.left.right.equalToSuperview().inset(20)

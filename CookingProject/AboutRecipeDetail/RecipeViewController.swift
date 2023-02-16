@@ -11,17 +11,20 @@ import FirebaseAuth
 import FirebaseStorage
 import FirebaseFirestore
 import Kingfisher
+import SCLAlertView
 
 final class RecipeViewController: UIViewController {
 //MARK: - Properties
+    private let storage = Storage.storage()
     private let db = Firestore.firestore()
-    final var recipeData : RecipeDataModel = .init(title: "", chefName: "", heartPeople: [], level: "", time: "", date: "", url: "", category: "", documentID: ""){
+    
+    final var recipeData : RecipeDataModel = .init(foodName: "", userName: "", heartPeople: [], foodLevel: "", foodTime: "", writedDate: "", url: "", foodCategory: "", documentID: ""){
         didSet{
             self.getRecipeData()
         }
     }  //기본적으로 가지고 있던 정보들.
     
-    private var detailRecipeData = DetailRecipeModel(urlArray: [], contentsArray: [], ingredients: "", userNickName: "", userUID: "", comments: 0) //나머지 가지고 올 정보들.
+    private var detailRecipeData = DetailRecipeModel(urlArray: [], contents: [], ingredients: "", userUID: "", commentCount: 0) //나머지 가지고 올 정보들.
     
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
@@ -32,12 +35,6 @@ final class RecipeViewController: UIViewController {
     private lazy var dismissButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(dismissButtonPressed(_:)))
         sb.tintColor = .customSignature
-        
-        return sb
-    }()
-    
-    private lazy var menuButton : UIBarButtonItem = {
-        let sb = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .done, target: self, action: #selector(menuButtonPressed(_:)))
         
         return sb
     }()
@@ -78,7 +75,6 @@ final class RecipeViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .customNavy
         
         self.navigationItem.backBarButtonItem = backButton
-        self.navigationItem.rightBarButtonItem = menuButton
     }
     
     private func addSubViews() {
@@ -106,7 +102,7 @@ final class RecipeViewController: UIViewController {
     private func getRecipeData() {
         CustomLoadingView.shared.startLoading(alpha: 0.5)
         
-        db.collection("전체보기").document(recipeData.documentID).getDocument { dos, error in
+        db.collection("전체보기").document(recipeData.documentID).addSnapshotListener{ dos, error in
             if let e = error {
                 print("Error 레시피 데이터 가져오기 실패 : \(e)")
                 
@@ -116,21 +112,23 @@ final class RecipeViewController: UIViewController {
             }else{
                 if let data = dos?.data() {
                     
-                    guard var urlData = data["url"] as? [String] else{return}
-                    guard let contentsData = data["contents"] as? [String] else{return}
-                    guard let ingredientData = data["ingredients"] as? String else{return}
-                    guard let userNickNameData = data["userNickName"] as? String else{return}
-                    guard let userUIDData = data["user"] as? String else{return}
-                    guard let commentsData = data["comments"] as? Int else{return}
+                    guard var urlData = data[DataKeyWord.url] as? [String] else{return}
+                    guard let contentsData = data[DataKeyWord.contents] as? [String] else{return}
+                    guard let ingredientData = data[DataKeyWord.ingredients] as? String else{return}
+                    guard let userUIDData = data[DataKeyWord.userUID] as? String else{return}
+                    guard let commentCountData = data[DataKeyWord.commentCount] as? Int else{return}
                     
                     urlData.removeFirst()
                     urlData.append(self.recipeData.url)
                     
-                    self.detailRecipeData = DetailRecipeModel(urlArray: urlData, contentsArray: contentsData, ingredients: ingredientData, userNickName: userNickNameData, userUID: userUIDData, comments: commentsData)
+                    self.detailRecipeData = DetailRecipeModel(urlArray: urlData, contents: contentsData, ingredients: ingredientData, userUID: userUIDData, commentCount: commentCountData)
+                    
+                    
                 }
                 
                 DispatchQueue.main.async {
                     CustomLoadingView.shared.stopLoading()
+                    self.checkUserState() //현재 레시피와 내 정보를 비교.
                     self.recipeTableView.reloadData()
                 }
             }
@@ -141,7 +139,7 @@ final class RecipeViewController: UIViewController {
 //MARK: - Extension
 extension RecipeViewController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return detailRecipeData.contentsArray.count
+        return detailRecipeData.contents.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -149,7 +147,7 @@ extension RecipeViewController : UITableViewDataSource {
         
         cell.contentView.isUserInteractionEnabled = false
         
-        let content = detailRecipeData.contentsArray[indexPath.row]
+        let content = detailRecipeData.contents[indexPath.row]
         cell.recipeTextView.text = content
         
         
@@ -175,8 +173,8 @@ extension RecipeViewController : UITableViewDataSource {
         let recipeHeaderView = DetailRecipeHeaderView()
         
         recipeHeaderView.delegate = self
-        recipeHeaderView.name = detailRecipeData.userNickName
-        recipeHeaderView.commentsCount = detailRecipeData.comments
+        recipeHeaderView.name = recipeData.userName
+        recipeHeaderView.commentsCount = detailRecipeData.commentCount
         recipeHeaderView.recipeData = recipeData
         recipeHeaderView.ingredientsTextView.text = detailRecipeData.ingredients
         
@@ -208,17 +206,18 @@ extension RecipeViewController : RecipeHeaderDelegate {
     }
     
     func userButtonPressed() {
-        let vc = OtherUserProfileViewController()
-        vc.nickName = detailRecipeData.userNickName
+        let vc = MyRecipeViewController()
+        vc.myName = self.myName
+        vc.userName = recipeData.userName
         vc.userUid = detailRecipeData.userUID
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func commentsButtonPressed() {
-        let vc = OtherUserProfileViewController()
-        vc.nickName = detailRecipeData.userNickName
-        vc.userUid = detailRecipeData.userUID
+        let vc = CommentsViewController()
+        vc.recipeDocumentID = recipeData.documentID
+        vc.myName = self.myName
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -231,3 +230,123 @@ extension RecipeViewController : HeartButtonClickedDelegate {
         self.recipeTableView.reloadData()
     }
 }
+
+extension RecipeViewController {
+    private func checkUserState() {
+        if let user = Auth.auth().currentUser{ //먼저 로그인 체크.
+            
+            if detailRecipeData.userUID == user.uid { //현재 페이지의 유저정보와 내 정보를 비교.
+                let deleteAction = UIAction(title: "삭제하기",image: UIImage(systemName: "trash"), attributes: .destructive, handler: { _ in self.deleteRecipeAlert()})
+                
+                let editAction = UIAction(title: "수정하기",image: UIImage(systemName: "pencil"), handler: { _ in self.goToModifyRecipe()})
+                
+                let menu = UIMenu(title: "", identifier: nil, options: .displayInline, children: [editAction, deleteAction])
+                
+                let menuButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), primaryAction: .none, menu: menu)
+                self.navigationItem.rightBarButtonItem = menuButton
+                
+            }else{
+                self.navigationItem.rightBarButtonItem = .none
+            }
+            
+        }else{
+            self.navigationItem.rightBarButtonItem = .none
+        }
+    }//현재 페이지의 정보가 내정보인지 다른 유저의 정보인지 체크
+    
+    //레시피 수정
+    private func goToModifyRecipe() {
+        
+    }
+    
+}
+
+//데이터 삭제 관련.
+extension RecipeViewController {
+    //레시피 데이터 삭제할지 한번 더 물어보기.
+    private func deleteRecipeAlert() {
+        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: FontKeyWord.CustomFont, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: FontKeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
+        let alert = SCLAlertView(appearance: appearence)
+        
+        alert.addButton("확인", backgroundColor: .customSignature, textColor: .white) {
+            self.deleteRecipeData()
+        }
+        
+        alert.addButton("취소", backgroundColor: .customSignature, textColor: .white) {
+            
+        }
+        
+        alert.showSuccess("삭제",
+                          subTitle: "레시피를 삭제하시겠습니까?",
+                          colorStyle: 0xFFB6B9,
+                          colorTextButton: 0xFFFFFF)
+    }
+    
+    //레시피 데이터삭제
+    private func deleteRecipeData() {
+        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        
+        let documentID = self.recipeData.documentID
+        
+        db.collection("전체보기").document(documentID).getDocument { qs, error in
+            if let e = error {
+                print("Error 삭제 전 레시피 데이터 가져오기 실패 : \(e)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                if let data = qs?.data() {
+                    
+                    guard let imageFileNameData = data[DataKeyWord.imageFile] as? [String] else{return}
+                    
+                    self.deleteImageData(files: imageFileNameData)
+                    self.deleteCommentsData(documentID: documentID)
+                    self.db.collection("전체보기").document(documentID).delete()
+                }
+            }
+        }
+    }
+    
+    //이미지 데이터 삭제
+    private func deleteImageData(files : [String]) {
+        for i in files {
+            
+            let desertRef = storage.reference().child(i)
+            
+            desertRef.delete { error in
+                if let e = error{
+                    print("Error delete file : \(e)")
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                    }
+                }else{
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                        self.navigationController?.popViewController(animated: true)
+                        print("이미지 삭제완료.")
+                    }
+                }
+            }
+        }
+    }
+    
+    //댓글 데이터 삭제.
+    private func deleteCommentsData(documentID : String) {
+        db.collection("전체보기").document(documentID).collection("댓글").getDocuments { qs, error in
+            if let e = error{
+                print("Error find message data : \(e)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                guard let snapShotDocuments = qs?.documents else{return}
+                
+                for doc in snapShotDocuments {
+                    self.db.collection("전체보기").document(documentID).collection("댓글").document(doc.documentID).delete()
+                }
+            }
+        }
+    }
+}
+
+

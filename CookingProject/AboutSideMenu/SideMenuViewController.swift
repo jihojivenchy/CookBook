@@ -166,8 +166,13 @@ extension SideMenuViewController : UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 {
-            self.pushDelegate?.cellPressed(index: 0)
-            self.dismiss(animated: true)
+            if Auth.auth().currentUser != nil { //login 체크
+                self.pushDelegate?.cellPressed(index: 0)
+                self.dismiss(animated: true)
+                
+            }else{
+                CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
+            }
             
         }else if indexPath.row == 1 {
             self.pushDelegate?.cellPressed(index: 1)
@@ -198,7 +203,7 @@ extension SideMenuViewController : UITableViewDelegate {
 extension SideMenuViewController {
     
     private func loginOrLogout(title : String, subMessage : String) {
-        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: KeyWord.CustomFontMedium, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: KeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
+        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: FontKeyWord.CustomFontMedium, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: FontKeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
         let alert = SCLAlertView(appearance: appearence)
         
         alert.addButton("확인", backgroundColor: .customSignature, textColor: .white) {

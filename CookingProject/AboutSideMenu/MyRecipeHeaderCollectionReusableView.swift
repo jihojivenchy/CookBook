@@ -41,7 +41,7 @@ final class MyRecipeHeaderCollectionReusableView: UICollectionReusableView {
         
         addSubview(categoryLabel)
         categoryLabel.textColor = .customNavy
-        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 27)
+        categoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 27)
         categoryLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(15)
             make.left.right.equalToSuperview().inset(20)
@@ -50,7 +50,7 @@ final class MyRecipeHeaderCollectionReusableView: UICollectionReusableView {
         
         addSubview(subTitleLabel)
         subTitleLabel.textColor = .darkGray
-        subTitleLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        subTitleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         subTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(categoryLabel.snp_bottomMargin).offset(20)
             make.left.right.equalToSuperview().inset(20)
@@ -59,7 +59,7 @@ final class MyRecipeHeaderCollectionReusableView: UICollectionReusableView {
         
         addSubview(countLabel)
         countLabel.textColor = .customNavy
-        countLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        countLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         countLabel.textAlignment = .center
         
         addSubview(stackView)
@@ -95,7 +95,7 @@ final class MyRecipeHeaderCollectionReusableView: UICollectionReusableView {
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 5
         configuration.title = title
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 16)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 16)
         configuration.baseBackgroundColor = .clear
         
         //set button

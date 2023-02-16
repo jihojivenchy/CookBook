@@ -12,7 +12,7 @@ import Kingfisher
 final class DetailRecipeHeaderView: UIView {
     static let identifier = "DetailRecipeHeader"
     final var delegate : RecipeHeaderDelegate?
-    final var recipeData : RecipeDataModel = RecipeDataModel(title: "", chefName: "", heartPeople: [], level: "", time: "", date: "", url: "", category: "", documentID: "") {
+    final var recipeData : RecipeDataModel = RecipeDataModel(foodName: "", userName: "", heartPeople: [], foodLevel: "", foodTime: "", writedDate: "", url: "", foodCategory: "", documentID: "") {
         didSet{
             addSubViews()
         }
@@ -35,7 +35,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
         configuration.title = "\(recipeData.heartPeople.count)개"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
         let button = UIButton(configuration: configuration)
@@ -46,7 +46,7 @@ final class DetailRecipeHeaderView: UIView {
         button.backgroundColor = .customSignature
         
         return button
-    }()
+    }() //heart누른 유저들 보여주는 뷰로 이동하는 버튼
     
     private lazy var categoryButton : UIButton = {
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular, scale: .default)
@@ -55,8 +55,8 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
-        configuration.title = recipeData.category
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.title = recipeData.foodCategory
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
         let button = UIButton(configuration: configuration)
@@ -75,8 +75,8 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
-        configuration.title = recipeData.level
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.title = recipeData.foodLevel
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
         let button = UIButton(configuration: configuration)
@@ -95,8 +95,8 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
-        configuration.title = recipeData.time
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.title = recipeData.foodTime
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
         let button = UIButton(configuration: configuration)
@@ -116,7 +116,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.imagePlacement = .leading
         configuration.imagePadding = 7
         configuration.title = self.name
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 16)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 16)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -136,7 +136,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 5
         configuration.title = "댓글 \(self.commentsCount)개"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 16)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 16)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -198,9 +198,9 @@ final class DetailRecipeHeaderView: UIView {
         }
         
         backGroundView.addSubview(titleFoodName)
-        titleFoodName.text = recipeData.title
+        titleFoodName.text = recipeData.foodName
         titleFoodName.textColor = .customNavy
-        titleFoodName.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        titleFoodName.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         titleFoodName.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(30)
             make.left.right.equalToSuperview().inset(15)
@@ -228,7 +228,7 @@ final class DetailRecipeHeaderView: UIView {
         backGroundView.addSubview(ingredientsLabel)
         ingredientsLabel.text = "재료"
         ingredientsLabel.textColor = .black
-        ingredientsLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        ingredientsLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         ingredientsLabel.snp.makeConstraints { make in
             make.top.equalTo(firstStackView.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(15)

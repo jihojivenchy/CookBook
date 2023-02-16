@@ -13,7 +13,6 @@ import FirebaseFirestore
 final class FeedBackViewController: UIViewController {
 //MARK: - Properties
     private let db = Firestore.firestore()
-    final var nickName = String() //피드백보낼 때 유저 정보.
     
     private lazy var sendButton : UIButton = {
         let button = UIButton()
@@ -129,22 +128,20 @@ final class FeedBackViewController: UIViewController {
         
         guard let contents = feedBackTextView.text else{return}
         
-        if Auth.auth().currentUser != nil {
+        if let user = Auth.auth().currentUser{
             
             if contents == textViewHolder {
                 CustomAlert.show(title: "오류", subMessage: "내용을 작성해주세요.")
                 
             }else{
-                db.collection("FeedBack").addDocument(data: ["name" : self.nickName,
+                db.collection("FeedBack").addDocument(data: [DataKeyWord.userUID : user.uid,
                                                              "contents" : contents])
                 
                 DispatchQueue.main.async {
                     self.feedBackTextView.text = self.textViewHolder
                     ToastMessage.shared.showToast(message: "전송이 완료되었습니다.", durationTime: 3, delayTime: 0.5, width: 200, view: self.view)
                 }
-                
             }
-          
         }else{
             CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
         }

@@ -48,7 +48,7 @@ final class HeartClickedUserTableViewCell: UITableViewCell {
         
         backGroundView.addSubview(nameLabel)
         nameLabel.textColor = .customNavy
-        nameLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        nameLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         nameLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.equalTo(personImageView.snp_rightMargin).offset(15)

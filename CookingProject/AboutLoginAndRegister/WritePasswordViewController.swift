@@ -74,7 +74,7 @@ final class WritePasswordViewController: UIViewController {
         titleLabel.text = "로그인에 사용할 비밀번호를 \n작성해주세요"
         titleLabel.numberOfLines = 2
         titleLabel.textColor = .customNavy
-        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        titleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(15)
             make.left.right.equalToSuperview().inset(15)
@@ -216,7 +216,7 @@ extension WritePasswordViewController {
                 guard let userUID = result?.user.uid else{return}
                 
                 //유저 데이터에 로그인했던 방법과 닉네임을 저장
-                self.db.collection("Users").document(userUID).setData(["NickName" : nickName,
+                self.db.collection("Users").document(userUID).setData([DataKeyWord.myName : nickName,
                                                                        "email" : email,
                                                                        "login" : "firebase"])
                 

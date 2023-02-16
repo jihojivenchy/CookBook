@@ -8,22 +8,21 @@
 import Foundation
 
 struct RecipeDataModel {
-    var title : String
-    var chefName : String
+    var foodName : String
+    var userName : String
     var heartPeople : [String]
-    var level : String
-    var time : String
-    var date : String
+    var foodLevel : String
+    var foodTime : String
+    var writedDate : String
     var url : String
-    var category : String
+    var foodCategory : String
     var documentID : String
 }
 
 struct DetailRecipeModel {
     var urlArray : [String]
-    var contentsArray : [String]
+    var contents : [String]
     var ingredients : String
-    var userNickName : String
     var userUID : String
-    var comments : Int
+    var commentCount : Int
 }

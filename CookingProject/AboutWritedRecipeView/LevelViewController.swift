@@ -57,7 +57,7 @@ final class LevelViewController: UIViewController {
         button.setTitleColor(.customNavy, for: .normal)
         button.setImage(image, for: .normal)
         button.tintColor = .customNavy
-        button.titleLabel?.font = UIFont(name: KeyWord.CustomFont, size: 16)
+        button.titleLabel?.font = UIFont(name: FontKeyWord.CustomFont, size: 16)
         button.addTarget(self, action: #selector(timeButtonPressed(_:)), for: .touchUpInside)
         button.backgroundColor = .white
         button.clipsToBounds = true
@@ -124,7 +124,7 @@ final class LevelViewController: UIViewController {
         levelLabel.textColor = .black
         levelLabel.textAlignment = .center
         levelLabel.numberOfLines = 2
-        levelLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        levelLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         levelLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(20)
@@ -163,7 +163,7 @@ final class LevelViewController: UIViewController {
             label.textAlignment = .center
             label.textColor = .black
             label.backgroundColor = .clear
-            label.font = UIFont(name: KeyWord.CustomFont, size: 11)
+            label.font = UIFont(name: FontKeyWord.CustomFont, size: 11)
             label.clipsToBounds = true
             label.layer.cornerRadius = 7
             

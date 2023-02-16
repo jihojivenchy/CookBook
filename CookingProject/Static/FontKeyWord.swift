@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct KeyWord {
+struct FontKeyWord {
     static let CustomFont = "DalseoDarling"
     static let CustomFontMedium = "DalseoHealingMedium"
     static let CustomFontBold = "DalseoHealingBold"

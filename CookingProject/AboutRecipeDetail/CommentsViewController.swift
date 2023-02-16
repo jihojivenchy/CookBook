@@ -1,120 +1,147 @@
 //
-//  CommentsViewController.swift
+//  CommentsTestViewController.swift
 //  CookingProject
 //
-//  Created by 엄지호 on 2022/07/22.
+//  Created by 엄지호 on 2023/02/12.
 //
 
 import UIKit
 import SnapKit
-import Firebase
+import FirebaseAuth
 import FirebaseFirestore
 
-class CommentsViewController: UIViewController {
+final class CommentsViewController: UIViewController {
 //MARK: - Properties
     private let db = Firestore.firestore()
-    private var commentsModel : [CommentsModel] = []
-    private var cutOffUserModel : [String] = []
     
+    private var blockUserArray : [String] = [] //차단유저
+    private var commentsDataArray : [CommentsDataModel] = [] //댓글
     
-    private let tableView = UITableView(frame: .zero, style: .grouped)
-    private var commentNumber = 1
+    final var recipeDocumentID = String() //현재 레시피 도큐먼트아이디
+    final var myName = String()
     
-    private lazy var writeTextfield : UITextField = {
-        let wt = UITextField()
-        wt.attributedPlaceholder = NSAttributedString(string: "댓글을 남겨보세요", attributes: [NSAttributedString.Key.foregroundColor : UIColor.customGray ?? UIColor.lightGray]) //placeholder의 컬러를 바꿔주는 코드
-        wt.leftView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 10.0, height: 0.0)) //패딩
-        wt.leftViewMode = .always
-        wt.layer.cornerRadius = 15
-        wt.layer.borderWidth = 1
-        wt.layer.borderColor = UIColor.customGray?.cgColor
-        wt.clipsToBounds = true
-        wt.clearButtonMode = .always
-        wt.textColor = .black
-       
-        return wt
-    }()
+    private var blockCommentCount = Int() //블락된 댓글이 몇개인지 센다. 이유는 차단유저리스트가 있는 유저가 댓글을 남길 시에 댓글 카운트를 갱신해주어야하는데 필요
+    private var commentIndexSection = Int()     //대댓글을 어떤 댓글에 남길 것인지 섹션번호기억.
+    private var childMode : Bool = false //대댓글을 남기는 건지, 그냥 댓글을 남기는 건지 모드를 나눔.
+    private let childCommentLabel = UILabel() //대댓글 남길 때 표시해주기위함.
     
-    private lazy var sendButton : UIButton = {
-        let sb = UIButton()
-        sb.setImage(UIImage(systemName: "arrow.up"), for: .normal)
-        sb.tintColor = .white
-        sb.backgroundColor = .customPink
-        sb.layer.borderColor = UIColor.customPink?.cgColor
-        sb.layer.borderWidth = 1
-        sb.layer.cornerRadius = 15
-        sb.addTarget(self, action: #selector(findNickName(_:)), for: .touchUpInside)
+    private lazy var backButton : UIBarButtonItem = {
+        let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
         
         return sb
     }()
     
+    private let commentsTableView = UITableView()
+    
+    private lazy var commentsTextView : UITextView = {
+        let tv = UITextView()
+        tv.returnKeyType = .next
+        tv.clipsToBounds = true
+        tv.layer.cornerRadius = 10
+        tv.font = .systemFont(ofSize: 18)
+        tv.textColor = .black
+        tv.tintColor = .black
+        tv.backgroundColor = .white
+        tv.delegate = self
+        
+        return tv
+    }()
+    
+    private lazy var sendButton : UIButton = {
+        let button = UIButton()
+        button.setTitle("전송", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
+        button.addTarget(self, action: #selector(sendButtonPressed(_:)), for: .touchUpInside)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 10
+        button.backgroundColor = .customSignature
+        
+        return button
+    }() //heart누른 유저들 보여주는 뷰로 이동하는 버튼
+    
+    private lazy var refresh : UIRefreshControl = {
+        let rf = UIRefreshControl()
+        rf.tintColor = .customSignature
+        rf.addTarget(self, action: #selector(reloadAction(_:)), for: .valueChanged)
+        
+        return rf
+    }()
+    
 //MARK: - LifeCycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.addKeyboardNotifications()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        viewChange()
-        tableView.register(ComunicationCell.self, forCellReuseIdentifier: ComunicationCell.cellIdentifier)
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.rowHeight = UITableView.automaticDimension
         
+        CustomLoadingView.shared.startLoading(alpha: 0.3)
+        getBlockedUserData()
+        getCommentsData()
+        addSubViews()
+        naviBarAppearance()
+        
+        commentsTableView.refreshControl = refresh
+        commentsTableView.dataSource = self
+        commentsTableView.delegate = self
+        commentsTableView.register(CommentsTableViewCell.self, forCellReuseIdentifier: CommentsTableViewCell.identifier)
+        commentsTableView.register(ChildCommentTableViewCell.self, forCellReuseIdentifier: ChildCommentTableViewCell.identifier)
+        commentsTableView.estimatedRowHeight = 120
+        commentsTableView.rowHeight = UITableView.automaticDimension
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.removeKeyboardNotifications()
+    }
+    
+    //MARK: - ViewMethod
+    private func naviBarAppearance() {
+        navigationItem.title = "댓글"
+        navigationItem.backBarButtonItem = backButton
+    }
+    
+    private func addSubViews() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap(sender:))))//개체들이 모두 스크롤뷰 위에 존재하기 때문에 스크롤뷰 특성 상 touchBegan함수가 실행되지 않는다. 따라서 스크롤뷰에 대한 핸들러 캐치를 등록해주어야 한다.
+        view.backgroundColor = .customWhite
         
-        keyboardChange()
+        view.addSubview(commentsTableView)
+        commentsTableView.backgroundColor = .clear
+        commentsTableView.showsVerticalScrollIndicator = false
+        commentsTableView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(60)
+        }
         
-    }
-    
-    
-    
-//MARK: - ViewMethod
-    private func keyboardChange() {
-        
-        //키보드가 위로올라 올 때 텍스트필드를 가리는것을 방지하기 위한 코드
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-
-    }
-    
-    @objc private func keyboardWillShow(_ sender: NSNotification) {
-        if let keyboardFrame: NSValue = sender.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                let keyboardRectangle = keyboardFrame.cgRectValue
-                let keyboardHeight = keyboardRectangle.height
-                self.view.frame.origin.y -= keyboardHeight
-            }
-
-    }
-    
-    @objc private func keyboardWillHide(_ sender: Notification) {
-        self.view.frame.origin.y = 0   //키보드가 내려가면서 뷰를 원상복귀
-    }
-    
-    
-    private func viewChange() {
-        view.backgroundColor = .white
-        uploadMessageData()
-        
-        view.addSubview(writeTextfield)
-        writeTextfield.snp.makeConstraints { make in
-            make.bottom.equalTo(view.safeAreaInsets).inset(30)
-            make.left.equalTo(view).inset(10)
+        view.addSubview(commentsTextView)
+        commentsTextView.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.left.equalToSuperview().inset(10)
+            make.right.equalToSuperview().inset(70)
             make.height.equalTo(40)
-            make.right.equalTo(view).inset(50)
         }
         
         view.addSubview(sendButton)
         sendButton.snp.makeConstraints { make in
-            make.bottom.equalTo(view.safeAreaInsets).inset(30)
-            make.left.equalTo(writeTextfield.snp_rightMargin).offset(10)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.left.equalTo(commentsTextView.snp_rightMargin).offset(15)
+            make.right.equalToSuperview().inset(10)
             make.height.equalTo(40)
-            make.right.equalTo(view).inset(10)
         }
         
-        view.addSubview(tableView)
-        tableView.backgroundColor = .white
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaInsets)
-            make.left.right.equalTo(view)
-            make.bottom.equalTo(writeTextfield.snp_topMargin).offset(-10)
+        view.addSubview(childCommentLabel)
+        childCommentLabel.alpha = 0
+        childCommentLabel.textColor = .white
+        childCommentLabel.textAlignment = .center
+        childCommentLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 13)
+        childCommentLabel.backgroundColor = .gray
+        childCommentLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(30)
         }
     }
     
@@ -122,344 +149,555 @@ class CommentsViewController: UIViewController {
         if sender.state == .ended {
             view.endEditing(true) // todo...
         }
-        sender.cancelsTouchesInView = false
     }//스크롤뷰 터치 시에 endEditing 발생
- 
-//MARK: - DataMethod
-    private func getBlockedUserData() {
-        if let user = Auth.auth().currentUser{
-            db.collection("\(user.uid).self").addSnapshotListener { querySnapshot, error in
-                if let e = error{
-                    print("Error find Cut-Off User Data : \(e)")
-                }else{
-                    if let snapShotDocuments = querySnapshot?.documents{
-                        for doc in snapShotDocuments{
-                            let data = doc.data()
-                            if let userUid = data["user"] as? String{
-                                
-                                self.cutOffUserModel.append(userUid)
-                                
-                            }
-                        }
-                    }
-                }
-            }
+    
+    @objc private func reloadAction(_ sender : UIRefreshControl) {
+        commentsTableView.reloadData()
+        refresh.endRefreshing()
+    }
+    
+    private func showChildCommentLabel(text : String) {
+        childCommentLabel.text = text
+        self.childCommentLabel.isHidden = false
+        UIView.transition(with: childCommentLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.childCommentLabel.alpha = 1
+        })
+    }
+    
+    private func hideChildCommentLabel() {
+        UIView.transition(with: childCommentLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.childCommentLabel.alpha = 0
+        }, completion: { _ in
+            self.childCommentLabel.isHidden = true
+        })
+    }
+    
+//MARK: - ButtonMethod
+    @objc private func sendButtonPressed(_ seder : UIButton) {
+        //textview 제자리
+        commentsTextView.endEditing(true)
+        commentsTextView.snp.updateConstraints { (make) in
+            make.height.equalTo(40)
         }
-    }
-    
-    private func uploadMessageData() { //해당 글의 도큐먼트아이디를 가져온 후 하위 컬렉션인 댓글 데이터를 가져오기.
-        getBlockedUserData()
         
-        guard let savedTitle = UserDefaults.standard.string(forKey: "selectedTitle") else{return}
-        guard let savedDate = UserDefaults.standard.string(forKey: "selectedDate") else{return}
+        guard let comment = commentsTextView.text else{return}
         
-        db.collection("전체보기").whereField("Title", isEqualTo: savedTitle).whereField("date", isEqualTo: savedDate).getDocuments { querySnapshot, error in
-            if let e = error {
-                print("Error find data : \(e)")
-            }else{
-                if let snapshotDocument = querySnapshot?.documents{
-                    for doc in snapshotDocument{
-                        
-                        self.db.collection("전체보기").document(doc.documentID).collection("댓글").order(by: "timeStamp", descending: false).addSnapshotListener { snapshot, error in
-                            if let e2 = error{
-                                print("Error find message data : \(e2)")
-                            }else{
-                                self.commentsModel = []
-                                if let snap = snapshot?.documents{ //도큐먼트 접근
-                                    for docs in snap{
-                                        let data = docs.data() //도큐먼트 내 데이터에 접근
-                                        
-                                        if let senderData = data["sender"] as? String, let messageData = data["message"] as? String, let dateData = data["date"] as? String, let nickNameData = data["usernickName"] as? String, let documentIdData = data["documentId"] as? String {
-                                            //가져오기 성공했을 때 UserModel에 추가
-                                            
-                                            let findData = CommentsModel(userId: senderData, messages: messageData, saveDate: dateData, nickName: nickNameData, documentId: documentIdData)
-                                            
-                                            if self.cutOffUserModel.contains(senderData){ //가져온 데이터가 차단한 유저라면 추가하지 않음.
-                                            }else{
-                                                self.commentsModel.append(findData)
-                                            }
-                                        }
-                                    }
-                                    DispatchQueue.main.async {
-                                        self.tableView.reloadData()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-        
-    @objc private func findNickName(_ sender : UIButton) {
-        if let user = Auth.auth().currentUser{
-            db.collection("Users").document(user.uid).getDocument { querySnapshot, error in
-                if let e = error{
-                    print("Error find user nickname : \(e)")
-                }else{
-                    guard let userData = querySnapshot?.data() else {return}
-                    
-                    if let userNickName = userData["NickName"] as? String{
-                        self.sendButtonPressed(userNickName: userNickName)
-                    }
-                }
-            }
-        }else{
-            loginAlert()
-        }
-    }
-    
-    private func sendButtonPressed(userNickName : String) {
-        
-        let date = Date()
-        let formatDate = DateFormatter()
-        formatDate.dateFormat = "yyyy-MM-dd HH:mm"
-        let convertDate = formatDate.string(from: date) //date형식 원하는 형태로 format
-        
-        guard let savedTitle = UserDefaults.standard.string(forKey: "selectedTitle") else{return}
-        guard let savedDate = UserDefaults.standard.string(forKey: "selectedDate") else{return}
-        
-        if let user = Auth.auth().currentUser{
-            if let message = writeTextfield.text{
-                if message != ""{
-                    db.collection("전체보기").whereField("Title", isEqualTo: savedTitle).whereField("date", isEqualTo: savedDate).getDocuments { querySnapshot, error in
-                        if let e = error {
-                            print("Error find data : \(e)")
-                        }else{
-                            if let snapshotDocument = querySnapshot?.documents{
-                                for doc in snapshotDocument{
-                                    let data = doc.data()
-                                    
-                                    if let userData = data["user"] as? String, let writedDate = data["date"] as? String{
-                                        self.userSignalData(userUID: userData, title: savedTitle, date: convertDate, writedDate: writedDate, userNickName: userNickName)
-                                    }
-                                    
-                                    self.db.collection("전체보기").document(doc.documentID).collection("댓글").addDocument(data: ["sender" : user.uid,
-                                                            "date" : convertDate,
-                                                            "message" : message,
-                                                            "usernickName" : userNickName,
-                                                            "documentId" : doc.documentID,
-                                                            "timeStamp" : Date().timeIntervalSince1970])
-                                    
-                                }
-                                DispatchQueue.main.async {
-                                    self.writeTextfield.text = ""
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    private func userSignalData(userUID : String, title : String, date : String, writedDate : String, userNickName : String) {
-        if let user = Auth.auth().currentUser{
-            if userUID != user.uid{ //만약 글의 주인정보와 댓글을 단 사람정보가 다를 경우 글 주인이름으로 컬렉션달림.
-                db.collection(userUID).addDocument(data: ["Title" : title,
-                                                          "sendedUser" : user.uid,
-                                                          "ownerUser" : userUID,
-                                                          "date" : date,
-                                                          "writedDate" : writedDate,
-                                                          "userNickName" : userNickName])
-            }else{
-                print("정보가 다르다.")
-            }
-        }else{
-            
-        }
-    }
-    
-    private func loginAlert() {
-        let alert = UIAlertController(title: "로그인이 필요합니다", message: nil, preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: "확인", style: .default, handler: nil)
-        alertAction.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        alert.addAction(alertAction)
-        present(alert, animated: true, completion: nil)
-    }
-    
-    private func deleteAlert(indexPath : IndexPath) {
-        let alert = UIAlertController(title: "댓글", message: "삭제하시겠습니까?", preferredStyle: .alert)
-        
-        let alertAction = UIAlertAction(title: "삭제", style: .default) { action in
-            guard let saveDocumentId = UserDefaults.standard.string(forKey: "selectedDocument") else{return}
-            guard let saveMessage = UserDefaults.standard.string(forKey: "selectedMessage") else{return}
-            
-            self.deleteMethod(saveDocumentId: saveDocumentId, saveMessage: saveMessage)
-            self.commentsModel.remove(at: indexPath.row)
-            self.tableView.deleteRows(at: [indexPath], with: .fade)
-        }
-        alertAction.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        
-        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        cancel.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        alert.addAction(alertAction)
-        alert.addAction(cancel)
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    private func deleteMethod(saveDocumentId : String, saveMessage : String) { //댓글 삭제 기능
-        db.collection("전체보기").document(saveDocumentId).collection("댓글").whereField("message", isEqualTo: saveMessage).getDocuments { querySnapshot, error in
-            if let e = error {
-                print("Error getDocument : \(e)")
-            }else{
-                if let snapshotDocument = querySnapshot?.documents{
-                    for doc in snapshotDocument{
-                        doc.reference.delete()
-                    }
-                }
+        if let user = Auth.auth().currentUser { //login check
+            //댓글을 작성했는지 파악
+            if comment != "" {
                 
-            }
-        }
-        
-    }
-    
-    private func userBlockAlert(userUid : String){ //차단기능
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        let alertAction = UIAlertAction(title: "작성자 차단하기", style: .default) { action in
-            self.saveBlockUserData(userUID: userUid)
-        }
-        alertAction.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        
-        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        cancel.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        alert.addAction(alertAction)
-        alert.addAction(cancel)
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    private func deleteAndBlockUserAlert(indexPath : IndexPath , userUid : String) { //글의 주인은 댓글단 유저차단, 댓글 삭제 모든 권한을 가진다.
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        
-        let alertAction = UIAlertAction(title: "댓글 삭제", style: .default) { action in
-            self.deleteAlert(indexPath: indexPath)
-        }
-        alertAction.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        let alertAction2 = UIAlertAction(title: "작성자 차단하기", style: .default) { action in
-            self.saveBlockUserData(userUID: userUid)
-        }
-        alertAction2.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        cancel.setValue(UIColor.black, forKey: "titleTextColor")
-        
-        alert.addAction(alertAction)
-        alert.addAction(alertAction2)
-        alert.addAction(cancel)
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    private func saveBlockUserData(userUID : String) {
-        
-        if let user = Auth.auth().currentUser{
-            db.collection("Users").document(userUID).getDocument { querySnapshot, error in
-                if let e = error{
-                    print("Error get user nickname data : \(e)")
-                }else{
-                    guard let data = querySnapshot?.data() else{return}
-                    guard let userNickName = data["NickName"] as? String else{return}
+                //대댓글을 남긴것인지, 댓글을 남긴것인지 체크.
+                if childMode {
+                    self.childMode = false
+                    let commentDocumenID = commentsDataArray[self.commentIndexSection].commentDocumentID //어떤 댓글에 대댓글을 달았는지 도큐먼트.
+                    self.setChildComments(userUID: user.uid, comment: comment, commentDocumentID: commentDocumenID)
                     
-                    self.db.collection("\(user.uid).block").addDocument(data: ["user" : userUID,
-                                                                         "userNickName" : userNickName])
+                }else{//댓글데이터 저장.
+                    self.setCommentsData(uid: user.uid, comment: comment)
                 }
             }
-        }
-    }//유저 차단 기능
 
+        }else{ //로그인 안됨.
+            CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
+        }
+        
+    }
+    
+//MARK: - KeyBoardMethod
+    private func addKeyboardNotifications(){
+        // 키보드가 나타날 때 앱에게 알리는 메서드 추가
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification , object: nil)
+        
+        // 키보드가 사라질 때 앱에게 알리는 메서드 추가
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc private func keyboardWillShow(_ noti: NSNotification){
+        if let keyboardFrame: NSValue = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            
+            commentsTableView.snp.updateConstraints { make in
+                make.bottom.equalTo(view.safeAreaLayoutGuide).inset(keyboardHeight + 60)
+            }
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.commentsTextView.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
+                self.sendButton.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
+            })
+            
+        }
+    }
+
+    // 키보드가 사라졌다는 알림을 받으면 실행할 메서드
+    @objc private func keyboardWillHide(_ noti: NSNotification){
+        // 키보드의 높이만큼 화면을 내려준다.
+        commentsTableView.snp.updateConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(60)
+        }
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.commentsTextView.transform = .identity
+            self.sendButton.transform = .identity
+        })
+        self.hideChildCommentLabel()
+    }
+
+    // 노티피케이션을 제거하는 메서드
+    private func removeKeyboardNotifications(){
+        // 키보드가 나타날 때 앱에게 알리는 메서드 제거
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification , object: nil)
+        // 키보드가 사라질 때 앱에게 알리는 메서드 제거
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
 }
 
 //MARK: - Extension
+extension CommentsViewController : UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let size = textView.contentSize
+        let newHeight = max(size.height, 40)
+        textView.snp.updateConstraints { (make) in
+            make.height.equalTo(newHeight)
+        }
+    }
+}
+
 extension CommentsViewController : UITableViewDataSource {
-    //cell
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return self.commentsDataArray.count
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return commentsModel.count
+        
+        return self.commentsDataArray[section].childComments.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ComunicationCell.cellIdentifier, for: indexPath) as! ComunicationCell
         
-        cell.backgroundColor = .white
-        cell.selectionStyle = .none
-        cell.inputLabel.text = commentsModel[indexPath.row].messages
-        cell.timeLable.text = commentsModel[indexPath.row].saveDate
-        cell.idLabel.text = commentsModel[indexPath.row].nickName
-        cell.userUidLabel.text = commentsModel[indexPath.row].userId
-        cell.documentIdLabel.text = commentsModel[indexPath.row].documentId
-        
-        cell.idImage.image = UIImage(named: "요리사")
-        
-        return cell
-    }
-    
-    //header
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let cHeaderView = ComunicationHeader()
-        cHeaderView.label1.text = "달린댓글(\(commentsModel.count))"
-    
-        return cHeaderView
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        return 40
-    }
-    
-}
-
-extension CommentsViewController : UITableViewDelegate{
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let selectedItem = tableView.cellForRow(at: indexPath) as? ComunicationCell else{return}
-        guard let selectedUserUid = selectedItem.userUidLabel.text else{return}
-        
-        guard let ownerUid = UserDefaults.standard.string(forKey: "userUID") else{return} //글 주인을 확인하는 코드.
-        
-        if let selectedMessage = selectedItem.inputLabel.text{
-            UserDefaults.standard.set(selectedMessage, forKey: "selectedMessage")
-        }//댓글 삭제할 때 맞는 데이터 찾아오기 위해 message저장
-        
-        if let selectedDocument = selectedItem.documentIdLabel.text{
-            UserDefaults.standard.set(selectedDocument, forKey: "selectedDocument")
-        } //댓글 삭제할 때 맞는 데이터 찾아오기 위해 도큐먼트저장
-        
-        
-        if let user = Auth.auth().currentUser{
+        if indexPath.row == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: CommentsTableViewCell.identifier, for: indexPath) as! CommentsTableViewCell
             
-            if user.uid == selectedUserUid{//해당 댓글이 내가 작성한 댓글일 때
-                deleteAlert(indexPath : indexPath)
-                
-            }else if user.uid == ownerUid{ //해당 글이 내 글일 때
-                deleteAndBlockUserAlert(indexPath: indexPath, userUid: selectedUserUid)
-            }else{
-                userBlockAlert(userUid: selectedUserUid)
+            cell.userNameLabel.text = commentsDataArray[indexPath.section].userName
+            cell.commentLabel.text = commentsDataArray[indexPath.section].comment
+            cell.dateLabel.text = commentsDataArray[indexPath.section].date
+            cell.index = indexPath.section
+            cell.delegate = self
+            
+            cell.contentView.isUserInteractionEnabled = false
+            cell.selectionStyle = .none
+            
+            return cell
+        }else{
+            let cell = tableView.dequeueReusableCell(withIdentifier: ChildCommentTableViewCell.identifier, for: indexPath) as! ChildCommentTableViewCell
+    
+            if commentsDataArray[indexPath.section].childComments.count >= indexPath.row {
+                //section indexpath.row가 0인 cell들은 댓글로 표현, 나머지는 대댓글로 들어가야 하기 때문에 -1 해줌.
+                cell.userNameLabel.text = commentsDataArray[indexPath.section].childComments[indexPath.row - 1].userName
+                cell.commentLabel.text = commentsDataArray[indexPath.section].childComments[indexPath.row - 1].comment
+                cell.dateLabel.text = commentsDataArray[indexPath.section].childComments[indexPath.row - 1].date
+                cell.section = indexPath.section
+                cell.index = indexPath.row - 1
+                cell.ChildCommentDelegate = self
             }
-        }else{ //로그인 필요
-            loginAlert()
+            
+            cell.contentView.isUserInteractionEnabled = false
+            cell.selectionStyle = .none
+            
+            return cell
         }
         
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
+}
+
+extension CommentsViewController : UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         
-        
-        tableView.deselectRow(at: indexPath, animated: true) //cell을 클릭했을 때 애니메이션 구현
     }
 }
 
-extension CommentsViewController : UITextFieldDelegate {
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//댓글 데이터 관련 처리
+extension CommentsViewController {
+    private func getBlockedUserData() {
+        guard let user = Auth.auth().currentUser else{return}
         
-        textField.endEditing(true)
-        return true
+        db.collection("\(user.uid).block").addSnapshotListener { querySnapshot, error in
+            if let e = error{
+                print("Error 차단한 유저 데이터 가져오기 실패 : \(e)")
+            }else{
+                guard let snapShotDocuments = querySnapshot?.documents else{return}
+                
+                for doc in snapShotDocuments{
+                    let data = doc.data()
+                    
+                    if let userUid = data[DataKeyWord.userUID] as? String{
+                        self.blockUserArray.append(userUid)
+                    }
+                }
+            }
+        }
+    } //차단한 유저 데이터 가져오기.
+    
+    private func getCommentsData() {
+        db.collection("전체보기").document(recipeDocumentID).collection("댓글").order(by: "timeStamp", descending: false).addSnapshotListener { qs, error in
+            if let e = error{
+                print("Error 댓글 데이터 과거시간(내림차순) 순대로 가져오기 실패 : \(e)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                self.commentsDataArray = []
+                var blockCount = 0 //인덱스에 맞게 대댓글 데이터를 가져와야하는데, 차단한 유저가 생기면 인덱스가 어긋나는 현상이 생김. 그래서 카운트를 세어주고, 블락 카운트만큼 빼준 인덱스를 넣어주어야 함
+                
+                guard let snapShotDocuments = qs?.documents else{return}
+                
+                for (index, doc) in snapShotDocuments.enumerated() {
+                    let data = doc.data()
+                    
+                    guard let commentData = data[DataKeyWord.comment] as? String else{return}
+                    guard let dateData = data[DataKeyWord.writedDate] as? String else{return}
+                    guard let userUIDData = data[DataKeyWord.userUID] as? String else{return}
+                    guard let userNameData = data[DataKeyWord.userName] as? String else{return}
+                    
+                    
+                    if self.blockUserArray.contains(userUIDData){ //가져온 데이터가 차단한 유저라면 추가하지 않음.
+                        blockCount += 1
+                    }else{
+                        self.getChildCommentData(commentDocumentID: doc.documentID, index: index - blockCount)
+                        
+                        let findData = CommentsDataModel(comment: commentData, childComments: [], date: dateData, userUID: userUIDData, userName: userNameData, commentDocumentID: doc.documentID)
+                        self.commentsDataArray.append(findData)
+                        
+                    }
+                }
+                DispatchQueue.main.async {
+                    self.blockCommentCount = blockCount
+                    CustomLoadingView.shared.stopLoading()
+                    self.commentsTableView.reloadData()
+                }
+            }
+            
+        }
+    }//댓글데이터가져오기.
+    
+    private func getChildCommentData(commentDocumentID : String, index : Int) {
+        let childRef = db.collection("전체보기").document(recipeDocumentID).collection("댓글").document(commentDocumentID).collection("답글").order(by: "timeStamp", descending: false)
+        
+        childRef.addSnapshotListener { qs, error in
+            if let e = error {
+                print("Error 대댓글 데이터 가져오기 실패 : \(e.localizedDescription)")
+            }else{
+                guard let snapShotDocuments = qs?.documents else{return}
+                self.commentsDataArray[index].childComments = [] //대댓글 데이터 초기화
+                
+                for doc in snapShotDocuments {
+                    let data = doc.data()
+                    
+                    guard let commentData = data[DataKeyWord.comment] as? String else{return}
+                    guard let dateData = data[DataKeyWord.writedDate] as? String else{return}
+                    guard let userUIDData = data[DataKeyWord.userUID] as? String else{return}
+                    guard let userNameData = data[DataKeyWord.userName] as? String else{return}
+                    
+                    if self.blockUserArray.contains(userUIDData){ //가져온 데이터가 차단한 유저라면 추가하지 않음.
+                    }else{
+                        let findData = ChildCommentsDataModel(comment: commentData, date: dateData, userUID: userUIDData, userName: userNameData, childDocumentID: doc.documentID)
+                        
+                        self.commentsDataArray[index].childComments.append(findData)
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    print("childComment end")
+                    self.commentsTableView.reloadData()
+                }
+            }
+        }
+    }
+    
+    private func setCommentsData(uid : String, comment : String) {
+        let formatDate = DateFormatter()
+        formatDate.dateFormat = "yyyy-MM-dd HH:mm"
+        let convertDate = formatDate.string(from: Date()) //date형식 원하는 형태로 format
+        
+        //댓글 갯수 갱신하기 위해 임의로 넣어줌.(어차피 데이터에 수정사항 생기면 데이터 가져오면서 배열 초기화)
+        self.commentsDataArray.append(CommentsDataModel(comment: comment, childComments: [], date: convertDate, userUID: uid, userName: self.myName, commentDocumentID: ""))
+        
+        db.collection("전체보기").document(recipeDocumentID).collection("댓글").addDocument(data:
+                                                                [DataKeyWord.comment : comment,
+                                                                 DataKeyWord.writedDate : convertDate,
+                                                                 DataKeyWord.userUID : uid,
+                                                                 DataKeyWord.userName : self.myName,
+                                                                 "timeStamp" : Date().timeIntervalSince1970])
+        if blockUserArray.isEmpty { //블락유저가 없을 때,
+            db.collection("전체보기").document(recipeDocumentID).updateData([DataKeyWord.commentCount : self.commentsDataArray.count])
+            
+        }else{ //블락유저가 있을 때, 차단된 댓글 갯수 +해서 댓글 갯수 갱신.
+            db.collection("전체보기").document(recipeDocumentID).updateData([DataKeyWord.commentCount : self.commentsDataArray.count + self.blockCommentCount])
+        }
+        
+        DispatchQueue.main.async {
+            self.commentsTextView.text = ""  //text 초기화
+            
+            if self.commentsDataArray.count > 3{
+                let indexPath = IndexPath(row: 0, section: self.commentsDataArray.count - 2)
+                self.commentsTableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        }
+    }//댓글 데이터 저장
+}
+
+//댓글 안의 메뉴버튼 클릭했을 때 처리
+extension CommentsViewController : CommentMenuButtonDelegate {
+    //답글달기 버튼 클릭.(delegateMethod)
+    func childButtonClicked(index: Int) {
+        let userName = commentsDataArray[index].userName
+        
+        self.commentIndexSection = index
+        self.childMode = true
+        self.showChildCommentLabel(text: "\(userName)님에게 답글을 남기는 중..")
+        
+        self.commentsTextView.becomeFirstResponder()
+    }
+    
+    
+    //menuButton 클릭(delegateMethod)
+    func menuButtonClicked(index: Int) {
+        if let user = Auth.auth().currentUser{//login check
+            
+            if commentsDataArray[index].userUID == user.uid {
+                self.modifyAndDeleteComment(index: index)
+                
+            }else{
+                self.blockAndReportComment(myUID: user.uid,
+                                           userUID: commentsDataArray[index].userUID,
+                                           userName: commentsDataArray[index].userName)
+            }
+                
+                
+        }else{
+            CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
+        }
+    }
+    
+    
+    
+    //내가 작성한 댓글 수정이나 삭제
+    private func modifyAndDeleteComment(index : Int){
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let modifyAction = UIAlertAction(title: "수정하기", style: .default) { action in
+            self.modifyComment(index: index)
+        }
+        modifyAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        let deleteAction = UIAlertAction(title: "삭제하기", style: .default) { action in
+            self.deleteComment(index: index)
+        }
+        deleteAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancel.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        alert.addAction(modifyAction)
+        alert.addAction(deleteAction)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    //댓글 수정
+    private func modifyComment(index : Int){
+        let vc = ModifyCommentViewController()
+        vc.recipeDocumentID = self.recipeDocumentID
+        vc.commentData = self.commentsDataArray[index]
+        vc.commentsTextView.text = self.commentsDataArray[index].comment
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    //댓글 삭제
+    private func deleteComment(index : Int) {
+        //해당 댓글 데이터 삭제
+        db.collection("전체보기").document(recipeDocumentID).collection("댓글").document(self.commentsDataArray[index].commentDocumentID).delete()
+        
+        self.commentsDataArray.remove(at: index)
+        
+        //해당 레시피 댓글갯수 수정.
+        if blockUserArray.isEmpty { //블락유저가 없을 때,
+            db.collection("전체보기").document(recipeDocumentID).updateData([DataKeyWord.commentCount : self.commentsDataArray.count])
+            
+        }else{ //블락유저가 있을 때, 차단된 댓글 갯수 +해서 댓글 갯수 갱신.
+            db.collection("전체보기").document(recipeDocumentID).updateData([DataKeyWord.commentCount : self.commentsDataArray.count + self.blockCommentCount])
+        }
+        
+    }
+    
+    //댓글 작성자 차단이나 신고
+    private func blockAndReportComment(myUID : String, userUID : String, userName : String){
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let blockAction = UIAlertAction(title: "작성자 차단하기", style: .default) { action in
+            self.db.collection("\(myUID).block").addDocument(data:
+                                                              [DataKeyWord.userUID : userUID,
+                                                               DataKeyWord.userName: userName])
+            
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
+        blockAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        let reportAction = UIAlertAction(title: "작성자 신고하기", style: .default) { action in
+            let vc = FeedBackViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        reportAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancel.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        alert.addAction(blockAction)
+        alert.addAction(reportAction)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+}
+
+//대댓글 관련처리
+extension CommentsViewController : ChildCommentMenuDelegate {
+    //대댓글 달기.
+    private func setChildComments(userUID : String, comment : String, commentDocumentID : String) {
+        let formatDate = DateFormatter()
+        formatDate.dateFormat = "yyyy-MM-dd HH:mm"
+        let convertDate = formatDate.string(from: Date()) //date형식 원하는 형태로 format
+        
+        let childRef = db.collection("전체보기").document(recipeDocumentID).collection("댓글").document(commentDocumentID).collection("답글")
+        
+        childRef.addDocument(data: [DataKeyWord.comment : comment,
+                                    DataKeyWord.writedDate : convertDate,                                            DataKeyWord.userUID : userUID,                                                DataKeyWord.userName : self.myName,
+                                    "timeStamp" : Date().timeIntervalSince1970]) { error in
+            if let e = error{
+                print("Error 대댓글 데이터 저장 실패 : \(e.localizedDescription)")
+            }else{
+                DispatchQueue.main.async {
+                    self.commentsTextView.text = ""  //text 초기화
+                    let indexPath = IndexPath(row: 0, section: self.commentIndexSection)
+                    self.commentsTableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                }
+            }
+        }
+    }
+    
+    //대댓글 메뉴버튼 클릭
+    func ChildCommentMenuClicked(section : Int, index : Int) {
+        if let user = Auth.auth().currentUser{//login check
+            
+            let childCommentIndex = commentsDataArray[section].childComments[index] //어디 댓글 섹션의 몇번 대댓글 인덱스인지
+            
+            //해당 대댓글이 내가 작성한 것인지 판단.
+            if childCommentIndex.userUID == user.uid {
+                self.ModiAndDeleteChildAlert(section: section, index: index)
+                
+            }else{
+                self.blockAndReportChildAlert(myUID: user.uid,
+                                              userUID: childCommentIndex.userUID,
+                                              userName: childCommentIndex.userName)
+            }
+             
+        }else{
+            CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
+        }
+    }
+     
+    //대댓글 수정이나 삭제 alert
+    private func ModiAndDeleteChildAlert(section : Int, index : Int){
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let modifyAction = UIAlertAction(title: "수정하기", style: .default) { action in
+            self.modifyChildComment(section: section, index: index)
+        }
+        modifyAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        let deleteAction = UIAlertAction(title: "삭제하기", style: .default) { action in
+            self.deleteChildComment(section: section, index: index)
+        }
+        deleteAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancel.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        alert.addAction(modifyAction)
+        alert.addAction(deleteAction)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    //대댓글 수정
+    private func modifyChildComment(section : Int, index : Int){
+        let vc = ModifyCommentViewController()
+        vc.recipeDocumentID = self.recipeDocumentID
+        vc.commentData = self.commentsDataArray[section]
+        vc.commentsTextView.text = self.commentsDataArray[section].childComments[index].comment
+        vc.childDocumentIndex = index
+        vc.childMode = true
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    //대댓글 삭제
+    private func deleteChildComment(section : Int, index : Int) {
+        //해당 댓글 데이터 삭제
+        let commentDocumentID = self.commentsDataArray[section].commentDocumentID
+        let childDocumentID = self.commentsDataArray[section].childComments[index].childDocumentID
+        
+        db.collection("전체보기").document(recipeDocumentID).collection("댓글").document(commentDocumentID).collection("답글").document(childDocumentID).delete()
+    }
+    
+    //댓글 작성자 차단이나 신고
+    private func blockAndReportChildAlert(myUID : String, userUID : String, userName : String){
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let blockAction = UIAlertAction(title: "작성자 차단하기", style: .default) { action in
+            self.db.collection("\(myUID).block").addDocument(data:
+                                                              [DataKeyWord.userUID : userUID,
+                                                               DataKeyWord.userName: userName])
+            
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
+        blockAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        let reportAction = UIAlertAction(title: "작성자 신고하기", style: .default) { action in
+            let vc = FeedBackViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        reportAction.setValue(UIColor.red, forKey: "titleTextColor")
+        
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancel.setValue(UIColor.black, forKey: "titleTextColor")
+        
+        alert.addAction(blockAction)
+        alert.addAction(reportAction)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil)
     }
 }
+

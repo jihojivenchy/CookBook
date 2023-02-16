@@ -49,14 +49,14 @@ final class SideMenuHeaderView : UIView {
         
         
         nameLabel.textColor = .customNavy
-        nameLabel.font = UIFont(name: KeyWord.CustomFont, size: 18)
+        nameLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 18)
         nameLabel.snp.makeConstraints { make in
             make.height.equalTo(20)
         }
         
         
         emailLabel.textColor = .customNavy
-        emailLabel.font = UIFont(name: KeyWord.CustomFont, size: 13)
+        emailLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 13)
         emailLabel.snp.makeConstraints { make in
             make.height.equalTo(20)
         }

@@ -122,7 +122,7 @@ final class WriteTitleViewController: UIViewController {
         introduceLabel.text = "제목과 재료를 작성해주세요."
         introduceLabel.textColor = .black
         introduceLabel.textAlignment = .center
-        introduceLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        introduceLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         introduceLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(20)
@@ -132,7 +132,7 @@ final class WriteTitleViewController: UIViewController {
         view.addSubview(titleLabel)
         titleLabel.text = "제목"
         titleLabel.textColor = .black
-        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 15)
+        titleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 15)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(introduceLabel.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(27)
@@ -150,7 +150,7 @@ final class WriteTitleViewController: UIViewController {
         view.addSubview(ingredientsLabel)
         ingredientsLabel.text = "재료"
         ingredientsLabel.textColor = .black
-        ingredientsLabel.font = UIFont(name: KeyWord.CustomFont, size: 15)
+        ingredientsLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 15)
         ingredientsLabel.snp.makeConstraints { make in
             make.top.equalTo(titleTextField.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview().inset(27)
@@ -181,7 +181,7 @@ final class WriteTitleViewController: UIViewController {
             label.textAlignment = .center
             label.textColor = .black
             label.backgroundColor = .clear
-            label.font = UIFont(name: KeyWord.CustomFont, size: 11)
+            label.font = UIFont(name: FontKeyWord.CustomFont, size: 11)
             label.clipsToBounds = true
             label.layer.cornerRadius = 7
             

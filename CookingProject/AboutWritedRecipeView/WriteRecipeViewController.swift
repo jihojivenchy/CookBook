@@ -104,6 +104,8 @@ final class WriteRecipeViewController: UIViewController {
     
 //MARK: - ButtonMethod
     @objc private func saveButtonPressed(_ sender : UIBarButtonItem) {
+        self.view.endEditing(true)
+        
         if self.photoImageArray.count != 0 {
             self.setDataAlert()
         }else{
@@ -259,7 +261,7 @@ extension WriteRecipeViewController : PhotoHeaderTouchDelegate {
                 
                 var thumbnail = UIImage()
                 imageManager.requestImage(for: asset[i],
-                                          targetSize: CGSize(width: 80, height: 80),
+                                          targetSize: CGSize(width: 150, height: 150),
                                           contentMode: .aspectFill,
                                           options: option) { result, info in
                     
@@ -300,13 +302,14 @@ extension WriteRecipeViewController : RecipeTextViewDelegate {
     
     func sendText(index: Int, text: String) {
         self.contentsArray[index] = text
+        print(contentsArray)
     }
 }
 
 //alert
 extension WriteRecipeViewController {
     private func setDataAlert() {
-        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: KeyWord.CustomFont, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: KeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
+        let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: FontKeyWord.CustomFont, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: FontKeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
         let alert = SCLAlertView(appearance: appearence)
         
         alert.addButton("확인", backgroundColor: .customSignature, textColor: .white) {
@@ -362,39 +365,9 @@ extension WriteRecipeViewController {
                             }
                             
                         }else{
-                            
                             guard let urlString = url?.absoluteString else{return}
                             
-                            if index == 0 {
-                                saveUrlArray[0] = urlString
-                                
-                            }else if index == 1 {
-                                saveUrlArray[1] = urlString
-                                
-                            }else if index == 2 {
-                                saveUrlArray[2] = urlString
-                                
-                            }else if index == 3 {
-                                saveUrlArray[3] = urlString
-                                
-                            }else if index == 4 {
-                                saveUrlArray[4] = urlString
-                                
-                            }else if index == 5 {
-                                saveUrlArray[5] = urlString
-                                
-                            }else if index == 6 {
-                                saveUrlArray[6] = urlString
-                                
-                            }else if index == 7 {
-                                saveUrlArray[7] = urlString
-                                
-                            }else if index == 8 {
-                                saveUrlArray[8] = urlString
-                                
-                            }else{
-                                saveUrlArray[9] = urlString
-                            }
+                            saveUrlArray[index] = urlString //index에 맞게 url데이터 넣어주기. 이미지 순서 엉킴.
                             
                             fileTitleArray.append(filePath)
                             
@@ -420,19 +393,19 @@ extension WriteRecipeViewController {
         
         guard let user = Auth.auth().currentUser else{return}
         
-        self.db.collection("전체보기").addDocument(data: ["Title" : self.sendedArray[2],
-                                                      "ingredients" : self.ingredients,
-                                                      "segment" : self.sendedArray[1],
-                                                      "tema" : self.sendedArray[0],
-                                                      "comments" : 0,
-                                                      "heartPeople" : FieldValue.arrayUnion([]),
-                                                      "time" : self.selectedTime,
-                                                      "contents" : FieldValue.arrayUnion(contents),
-                                                      "user" : user.uid,
-                                                      "date" : convertDate,
-                                                      "userNickName" : self.userName,
-                                                      "url" : FieldValue.arrayUnion(url),
-                                                      "imageFile" : FieldValue.arrayUnion(imageFileTitle)])
+        self.db.collection("전체보기").addDocument(data: [DataKeyWord.foodName : self.sendedArray[2],
+                                                      DataKeyWord.ingredients : self.ingredients,
+                                                      DataKeyWord.foodLevel : self.sendedArray[1],
+                                                      DataKeyWord.foodCategory : self.sendedArray[0],
+                                                      DataKeyWord.commentCount : 0,
+                                                      DataKeyWord.heartPeople : FieldValue.arrayUnion([]),
+                                                      DataKeyWord.foodTime : self.selectedTime,
+                                                      DataKeyWord.contents : FieldValue.arrayUnion(contents),
+                                                      DataKeyWord.userUID : user.uid,
+                                                      DataKeyWord.writedDate : convertDate,
+                                                      DataKeyWord.userName : self.userName,
+                                                      DataKeyWord.url : FieldValue.arrayUnion(url),
+                                                      DataKeyWord.imageFile : FieldValue.arrayUnion(imageFileTitle)])
         
         DispatchQueue.main.async {
             CustomLoadingView.shared.stopLoading()

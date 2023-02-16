@@ -52,7 +52,7 @@ final class ShowRecipeCollectionViewCell: UICollectionViewCell {
         backGroundView.addSubview(categoryLabel)
         categoryLabel.textColor = .customNavy
         categoryLabel.textAlignment = .center
-        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 17)
+        categoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
         categoryLabel.snp.makeConstraints { make in
             make.top.equalTo(categoryImageView.snp_bottomMargin).offset(15)
             make.centerX.equalToSuperview()

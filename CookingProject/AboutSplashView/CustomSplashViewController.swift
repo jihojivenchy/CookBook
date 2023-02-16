@@ -46,7 +46,7 @@ final class CustomSplashViewController: UIViewController {
         titleLabel.text = "요리도감"
         titleLabel.textColor = .customNavy
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 35)
+        titleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 35)
         titleLabel.snp.makeConstraints { make in
             make.height.equalTo(50)
         }

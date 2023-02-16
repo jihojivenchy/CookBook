@@ -16,8 +16,8 @@ final class ProfileViewController: UIViewController {
     
     final var userInformationData : UserInformationData = .init(name: "", email: "", login: "")
     
-    private let nickNameLabel = UILabel()
-    private lazy var nickNameTextField : UITextField = {
+    private let nameLabel = UILabel()
+    private lazy var nameTextField : UITextField = {
         let tf = UITextField()
         tf.backgroundColor = .clear
         tf.clearButtonMode = .always
@@ -104,21 +104,21 @@ final class ProfileViewController: UIViewController {
             make.width.height.equalTo(70)
         }
         
-        view.addSubview(nickNameLabel)
-        nickNameLabel.text = "닉네임"
-        nickNameLabel.textColor = .customSignature
-        nickNameLabel.font = .boldSystemFont(ofSize: 12)
-        nickNameLabel.snp.makeConstraints { make in
+        view.addSubview(nameLabel)
+        nameLabel.text = "닉네임"
+        nameLabel.textColor = .customSignature
+        nameLabel.font = .boldSystemFont(ofSize: 12)
+        nameLabel.snp.makeConstraints { make in
             make.top.equalTo(userImageView.snp_bottomMargin).offset(30)
             make.left.equalToSuperview().inset(20)
             make.width.equalTo(100)
             make.height.equalTo(30)
         }
         
-        view.addSubview(nickNameTextField)
-        textFieldBorderCustom(target: nickNameTextField)
-        nickNameTextField.snp.makeConstraints { make in
-            make.top.equalTo(nickNameLabel.snp_bottomMargin)
+        view.addSubview(nameTextField)
+        textFieldBorderCustom(target: nameTextField)
+        nameTextField.snp.makeConstraints { make in
+            make.top.equalTo(nameLabel.snp_bottomMargin)
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(50)
         }
@@ -128,7 +128,7 @@ final class ProfileViewController: UIViewController {
         emailLabel.textColor = .customSignature
         emailLabel.font = .boldSystemFont(ofSize: 12)
         emailLabel.snp.makeConstraints { make in
-            make.top.equalTo(nickNameTextField.snp_bottomMargin).offset(30)
+            make.top.equalTo(nameTextField.snp_bottomMargin).offset(30)
             make.left.equalToSuperview().inset(20)
             make.width.equalTo(100)
             make.height.equalTo(30)
@@ -179,13 +179,13 @@ final class ProfileViewController: UIViewController {
         let border = UIView()
         border.backgroundColor = .customSignature
         border.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-        border.frame = CGRect(x: 0, y: 0, width: nickNameTextField.frame.width, height: 2)
+        border.frame = CGRect(x: 0, y: 0, width: nameTextField.frame.width, height: 2)
         target.addSubview(border)
         //특정 border line
     }
     
     private func setUserInfomationData() {
-        self.nickNameTextField.text = userInformationData.name
+        self.nameTextField.text = userInformationData.name
         self.emailTextField.text = userInformationData.email
         
         switch userInformationData.login {
@@ -211,7 +211,6 @@ final class ProfileViewController: UIViewController {
 extension ProfileViewController : UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         textField.endEditing(true)
         return true
     }
@@ -221,23 +220,81 @@ extension ProfileViewController : UITextFieldDelegate {
 extension ProfileViewController {
     private func updateUserNickName() {
         guard let user = Auth.auth().currentUser else{return}
-        guard let name = nickNameTextField.text else{return}
+        guard let name = nameTextField.text else{return}
         
         if name != self.userInformationData.name { //닉네임에 변경사항이 있을 때
             
             if name == "" {
                 CustomAlert.show(title: "오류", subMessage: "닉네임을 작성해주세요.")
             }else{
-                db.collection("Users").document(user.uid).updateData(["NickName" : name])
+                CustomLoadingView.shared.startLoading(alpha: 0.5)
                 
+                db.collection("Users").document(user.uid).updateData([DataKeyWord.myName : name]) { error in
+                    if let e = error{
+                        print("Error 유저 이름 업데이트 실패 : \(e.localizedDescription)")
+                    }else{
+                        DispatchQueue.main.async {
+                            CustomLoadingView.shared.stopLoading()
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                    }
+                }
+                self.updateRecipeNickName(changedName: name, userUID: user.uid)
+                
+                
+            }
+        }
+    }
+    
+    private func updateRecipeNickName(changedName : String, userUID : String) {
+        
+        db.collection("전체보기").getDocuments { qs, error in
+            if let e = error {
+                print("Error 내 레시피 정보 가져오기 : \(e)")
                 DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                if let snapShotDocuments = qs?.documents {
+                    
+                    for doc in snapShotDocuments {
+                        let data = doc.data()
+                        
+                        guard let userUIDData = data[DataKeyWord.userUID] as? String else{return print("faile")}
+                        
+                        if userUID == userUIDData { //해당 도큐먼트의 주인이 나일 때, 닉네임 부분 변경
+                            self.db.collection("전체보기").document(doc.documentID).updateData([DataKeyWord.userName : changedName])
+                        }
+                        
+                        //댓글에서 내 닉네임 수정.
+                        self.updateCommentsName(documentID: doc.documentID, changedName: changedName, userUID: userUID)
+                    }
+                }else{
+                    print("해당 데이터 없음.")
                 }
             }
-            
         }
-        
-        
-        
+    }
+    
+    private func updateCommentsName(documentID : String, changedName : String, userUID : String) {
+        //댓글데이터에서 내가 작성한 댓글 데이터들 중 이름부분 모두 변경된 이름으로 변경
+        self.db.collection("전체보기").document(documentID).collection("댓글").whereField(DataKeyWord.userUID, isEqualTo: userUID).getDocuments { qs, error in
+            if let e = error {
+                print("Error 내 레시피 정보 가져오기 : \(e)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                
+                if let snapShotDocuments = qs?.documents{
+                    for doc in snapShotDocuments{
+                        self.db.collection("전체보기").document(documentID).collection("댓글").document(doc.documentID).updateData([DataKeyWord.userName : changedName])
+                    }
+                    
+                }else{
+                    print("해당 도큐먼트 없음.")
+                }
+            }
+        }
     }
 }

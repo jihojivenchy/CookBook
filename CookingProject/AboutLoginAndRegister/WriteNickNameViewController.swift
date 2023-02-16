@@ -87,7 +87,7 @@ final class WriteNickNameViewController: UIViewController {
         titleLabel.text = "닉네임 작성과 함께 약관에 \n동의해주세요"
         titleLabel.numberOfLines = 2
         titleLabel.textColor = .customNavy
-        titleLabel.font = UIFont(name: KeyWord.CustomFont, size: 25)
+        titleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(progressBar.snp_bottomMargin).offset(15)
             make.left.right.equalToSuperview().inset(15)

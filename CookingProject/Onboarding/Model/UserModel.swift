@@ -7,14 +7,6 @@
 
 import UIKit
 
-struct UserModel {
-    var title : String
-    var segment : String
-    var userName : String
-    var saveDate : String
-    var userUid : String
-}
-
 struct UserInformationData {
     var name : String
     var email : String
@@ -24,4 +16,10 @@ struct UserInformationData {
 struct HeartClikedUserDataModel {
     var name : String
     var uid : String
+}
+
+struct BlockUserModel {
+    var userUID : String
+    var userName : String
+    var documentID : String
 }

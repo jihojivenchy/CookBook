@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ComunicationCell: UITableViewCell {
+final class ComunicationCell: UITableViewCell {
     static let cellIdentifier = "CustomTextviewCell"
 
     let idLabel = UILabel()
@@ -19,14 +19,14 @@ class ComunicationCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        viewInit()
+        addSubViews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func viewInit() {
+    private func addSubViews() {
         
         addSubview(idImage)
 //        idImage.layer.borderColor = UIColor.black.cgColor

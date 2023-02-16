@@ -13,7 +13,7 @@ import FirebaseFirestore
 final class SignalViewController : UIViewController {
 //MARK: - Properties
     let db = Firestore.firestore()
-    var userSignalModel : [UserSignalModel] = []
+    
     private var cutOffUserModel : [String] = []
     
     private lazy var refresh : UIRefreshControl = {
@@ -39,7 +39,7 @@ final class SignalViewController : UIViewController {
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
         configuration.title = "홈"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -59,7 +59,7 @@ final class SignalViewController : UIViewController {
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
         configuration.title = "작성"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -79,7 +79,7 @@ final class SignalViewController : UIViewController {
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
         configuration.title = "알림"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -96,7 +96,7 @@ final class SignalViewController : UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if Auth.auth().currentUser == nil{
-            userSignalModel = []
+            
             tableView.reloadData()
         }
         
@@ -206,18 +206,18 @@ final class SignalViewController : UIViewController {
                 if let e = error{
                     print("Error user.uid collection find data : \(e)")
                 }else{
-                    self.userSignalModel = []
+                    
                     if let snapshotDocuments = querySnapshot?.documents {
                         for doc in snapshotDocuments{
                             let data = doc.data()
                             
                             if let titleData = data["Title"] as? String, let senderData = data["sendedUser"] as? String, let ownerData = data["ownerUser"] as? String, let dateData = data["date"] as? String, let writedDateData = data["writedDate"] as? String, let nickNameData = data["userNickName"] as? String{
                                 
-                                let findDataModel = UserSignalModel(title: titleData, senderUser: senderData, ownerUser: ownerData, date: dateData, writedDate: writedDateData, nickName: nickNameData)
+                                
                                 
                                 if self.cutOffUserModel.contains(senderData){ //가져온 데이터가 차단한 유저라면 추가하지 않음.
                                 }else{
-                                    self.userSignalModel.append(findDataModel)
+                                    
                                 }
                                 
                             }
@@ -238,16 +238,11 @@ final class SignalViewController : UIViewController {
 extension SignalViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userSignalModel.count
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: NotificationCell.cellName, for: indexPath) as! NotificationCell
-        cell.labelImage.image = UIImage(named: "요리사")
-        cell.cellLabel.text = "\(userSignalModel[indexPath.row].nickName)님께서 회원님의 \"\(userSignalModel[indexPath.row].title)\" 글에 댓글을 남겼습니다."
-        cell.timeLabel.text = userSignalModel[indexPath.row].date
-        cell.titleLabel.text = userSignalModel[indexPath.row].title
-        cell.writeDateLabel.text = userSignalModel[indexPath.row].writedDate
         
         
         return cell

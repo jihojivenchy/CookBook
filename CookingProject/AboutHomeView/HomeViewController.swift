@@ -40,7 +40,7 @@ final class HomeViewController: UIViewController{
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
         configuration.title = "홈"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -60,7 +60,7 @@ final class HomeViewController: UIViewController{
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
         configuration.title = "작성"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -80,7 +80,7 @@ final class HomeViewController: UIViewController{
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
         configuration.title = "알림"
-        configuration.attributedTitle?.font = UIFont(name: KeyWord.CustomFont, size: 12)
+        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .clear
         
         let button = UIButton(configuration: configuration)
@@ -172,13 +172,12 @@ final class HomeViewController: UIViewController{
    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        getPopularRecipeData()
-        
+//        getPopularRecipeData()
+//        CustomLoadingView.shared.startLoading(alpha: 0.3)
         setCustomTabButton()
         addSubViews()
         naviBarAppearance()
-        
+
         setPopularCollection()
         setTemaCollection()
         
@@ -234,7 +233,7 @@ final class HomeViewController: UIViewController{
         introduceLabel.lineBreakStrategy = .hangulWordPriority
         introduceLabel.textColor = .customNavy
         introduceLabel.numberOfLines = 2
-        introduceLabel.font = UIFont(name: KeyWord.CustomFont, size: 30)
+        introduceLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 30)
         introduceLabel.sizeToFit()
         introduceLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
@@ -243,7 +242,7 @@ final class HomeViewController: UIViewController{
         
         backGroundView.addSubview(subTitleLabel)
         subTitleLabel.textColor = .customNavy
-        subTitleLabel.font = UIFont(name: KeyWord.CustomFont, size: 20)
+        subTitleLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 20)
         subTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(introduceLabel.snp_bottomMargin).offset(20)
             make.left.right.equalToSuperview().inset(20)
@@ -269,10 +268,10 @@ final class HomeViewController: UIViewController{
         }
         
         backGroundView2.addSubview(popularLabel)
-        popularLabel.text = "추천 레시피"
+        popularLabel.text = "인기 레시피"
         popularLabel.textColor = .customNavy
         popularLabel.textAlignment = .center
-        popularLabel.font = UIFont(name: KeyWord.CustomFont, size: 22)
+        popularLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 22)
         popularLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.left.right.equalToSuperview().inset(20)
@@ -308,7 +307,7 @@ final class HomeViewController: UIViewController{
         categoryLabel.text = "카테고리"
         categoryLabel.textColor = .customNavy
         categoryLabel.textAlignment = .center
-        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 22)
+        categoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 22)
         categoryLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.left.right.equalToSuperview().inset(20)
@@ -543,7 +542,7 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if collectionView.tag == 0 {
-            return self.popularRecipeDataArray.count * 9
+            return self.popularRecipeDataArray.count * 11
         }else{
             return self.categoryArray.count
         }
@@ -559,10 +558,10 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
             
             cell.foodImageView.setImage(with: url, width: 250, height: 265)
             
-            cell.foodLabel.text = popularRecipeDataArray[indexPath.row % 5].title
-            cell.nameLabel.text = popularRecipeDataArray[indexPath.row % 5].chefName
+            cell.foodLabel.text = popularRecipeDataArray[indexPath.row % 5].foodName
+            cell.nameLabel.text = popularRecipeDataArray[indexPath.row % 5].userName
             cell.heartCountLabel.text = "\(popularRecipeDataArray[indexPath.row % 5].heartPeople.count)"
-            cell.levelLabel.text = popularRecipeDataArray[indexPath.row % 5].level
+            cell.levelLabel.text = popularRecipeDataArray[indexPath.row % 5].foodLevel
             
             
             if indexPath.row != self.previousCellIndex {
@@ -630,19 +629,22 @@ extension HomeViewController : CellPushDelegate {
     func cellPressed(index: Int) {
         switch index {
         case 0:    //마이 레시피.
+            guard let user = Auth.auth().currentUser else{return}
             let vc = MyRecipeViewController()
-            vc.nickName = self.userInformationData.name
+            vc.myName = self.userInformationData.name
+            vc.userName = self.userInformationData.name
+            vc.userUid = user.uid
             self.navigationController?.pushViewController(vc, animated: true)
 
         case 1:    //차단유저관리
-            print("block")
+            let vc = ManageBlockUsersViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
             
         case 2:    //설정
             self.navigationController?.pushViewController(SettingViewController(), animated: true)
             
         case 3:    //피드백
             let vc = FeedBackViewController()
-            vc.nickName = self.userInformationData.name
             self.navigationController?.pushViewController(vc, animated: true)
             
         default:   //header(마이페이지)
@@ -666,7 +668,7 @@ extension HomeViewController {
                     guard let userData = qs?.data() else {return} //해당 도큐먼트 안에 데이터가 있는지 확인
                     
                     guard let userEmailData = user.email else{return} //유저 이메일
-                    guard let userNameData = userData["NickName"] as? String else{return} //유저 닉네임
+                    guard let userNameData = userData["myName"] as? String else{return} //유저 닉네임
                     guard let userLoginData = userData["login"] as? String else{return}
                     
                     self.userInformationData = UserInformationData(name: userNameData, email: userEmailData, login: userLoginData)
@@ -714,7 +716,7 @@ extension HomeViewController {
     private func getPopularRecipeData() {
         CustomLoadingView.shared.startLoading(alpha: 0.5)
         
-        db.collection("전체보기").order(by: "heartPeople", descending: true).limit(to: 5).addSnapshotListener { qs, error in
+        db.collection("전체보기").order(by: DataKeyWord.heartPeople, descending: true).limit(to: 5).addSnapshotListener { qs, error in
             if let e = error {
                 print("Error 좋아요 레시피 가져오기 실패 : \(e)")
                 DispatchQueue.main.async {
@@ -729,16 +731,16 @@ extension HomeViewController {
                 for doc in snapshotDocuments{
                     let data = doc.data()   //도큐먼트 안에 데이터에 접근
                     
-                    guard let titleData = data["Title"] as? String else{return}
-                    guard let chefNameData = data["userNickName"] as? String else{return}
-                    guard let heartPeopleData = data["heartPeople"] as? [String] else{return}
-                    guard let levelData = data["segment"] as? String else{return}
-                    guard let timeData = data["time"] as? String else{return}
-                    guard let dateData = data["date"] as? String else{return}
-                    guard let categoryData = data["tema"] as? String else{return}
-                    guard let urlData = data["url"] as? [String] else{return}
+                    guard let foodNameData = data[DataKeyWord.foodName] as? String else{return}
+                    guard let userNameData = data[DataKeyWord.userName] as? String else{return}
+                    guard let heartPeopleData = data[DataKeyWord.heartPeople] as? [String] else{return}
+                    guard let levelData = data[DataKeyWord.foodLevel] as? String else{return}
+                    guard let timeData = data[DataKeyWord.foodTime] as? String else{return}
+                    guard let dateData = data[DataKeyWord.writedDate] as? String else{return}
+                    guard let categoryData = data[DataKeyWord.foodCategory] as? String else{return}
+                    guard let urlData = data[DataKeyWord.url] as? [String] else{return}
                     
-                    let findData = RecipeDataModel(title: titleData, chefName: chefNameData, heartPeople: heartPeopleData, level: levelData, time: timeData, date: dateData, url: urlData[0], category: categoryData, documentID: doc.documentID)
+                    let findData = RecipeDataModel(foodName: foodNameData, userName: userNameData, heartPeople: heartPeopleData, foodLevel: levelData, foodTime: timeData, writedDate: dateData, url: urlData[0], foodCategory: categoryData, documentID: doc.documentID)
                     
                     self.popularRecipeDataArray.append(findData)
                 }

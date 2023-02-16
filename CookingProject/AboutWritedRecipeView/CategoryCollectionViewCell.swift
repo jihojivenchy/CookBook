@@ -38,7 +38,7 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
         backGroundView.addSubview(categoryLabel)
         categoryLabel.textAlignment = .center
         categoryLabel.textColor = .black
-        categoryLabel.font = UIFont(name: KeyWord.CustomFont, size: 16)
+        categoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 16)
         categoryLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(10)
         }
