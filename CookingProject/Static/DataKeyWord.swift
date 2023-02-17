@@ -13,7 +13,7 @@ struct DataKeyWord {
     static let foodName = "foodName"            //음식이름
     static let commentCount = "commentCount"    //댓글 갯수
     static let comment = "comment"              //댓글 데이터
-    static let childComment = "childComment"
+    static let childComment = "childComment"    //대댓글 데이터
     static let writedDate = "writedDate"        //작성한 날짜.
     static let contents = "contents"            //레시피 조리과정
     static let heartPeople = "heartPeople"      //레시피 좋아요 눌러준 사람들.

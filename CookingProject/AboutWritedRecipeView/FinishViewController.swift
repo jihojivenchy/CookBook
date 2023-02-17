@@ -35,9 +35,6 @@ final class FinishViewController: UIViewController {
         return button
     }()
     
-    
-    final var userName = String()
-    
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +53,7 @@ final class FinishViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.backgroundColor = .customGray
+        view.backgroundColor = .customWhite
         
         view.addSubview(progressBar)
         progressBar.backgroundColor = .lightGray
@@ -107,6 +104,4 @@ final class FinishViewController: UIViewController {
     
     
 //MARK: - DataMethod
-    
-    
 }

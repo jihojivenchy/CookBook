@@ -17,7 +17,7 @@ final class ShowRecipeTableViewCell: UITableViewCell {
     final let foodImageView = UIImageView()
     final let foodNameLable = UILabel()
     final let personImageView = UIImageView()
-    final let chefNameLabel = UILabel()
+    final let userNameLabel = UILabel()
     
     final let levelImageView = UIImageView()
     final let foodLevelLabel = UILabel()
@@ -81,10 +81,10 @@ final class ShowRecipeTableViewCell: UITableViewCell {
             make.width.height.equalTo(15)
         }
         
-        backGroundView.addSubview(chefNameLabel)
-        chefNameLabel.textColor = .customNavy
-        chefNameLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
-        chefNameLabel.snp.makeConstraints { make in
+        backGroundView.addSubview(userNameLabel)
+        userNameLabel.textColor = .customNavy
+        userNameLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 14)
+        userNameLabel.snp.makeConstraints { make in
             make.centerY.equalTo(personImageView)
             make.left.equalTo(personImageView.snp_rightMargin).offset(15)
             make.right.equalToSuperview().inset(15)

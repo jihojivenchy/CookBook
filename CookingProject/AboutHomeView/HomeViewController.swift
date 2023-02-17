@@ -17,7 +17,7 @@ import Kingfisher
 final class HomeViewController: UIViewController{
 //MARK: - Properties
     private let db = Firestore.firestore()
-    private var userInformationData : UserInformationData = .init(name: "", email: "", login: "")
+    private var myInformationData : MyInformationData = .init(myName: "", myEmail: "", loginInfo: "")
     
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
@@ -210,7 +210,7 @@ final class HomeViewController: UIViewController{
         view.backgroundColor = .customSignature
         
         view.addSubview(scrollView)
-        scrollView.backgroundColor = .customGray
+        scrollView.backgroundColor = .customWhite
         scrollView.showsVerticalScrollIndicator = false
         scrollView.clipsToBounds = true
         scrollView.layer.cornerRadius = 30
@@ -391,7 +391,7 @@ final class HomeViewController: UIViewController{
     
     @objc private func menuButtonPressed(_ sender : UIBarButtonItem) {
         let vc = SideMenuViewController()
-        vc.userInformationData = self.userInformationData
+        vc.myInformationData = self.myInformationData
         vc.pushDelegate = self
         
         let sideView = SideMenuNavigation(rootViewController: vc)
@@ -410,7 +410,7 @@ final class HomeViewController: UIViewController{
     
     @objc private func plusButtonPressed(_ sender : UIButton) {
         let vc = CategoryViewController()
-        vc.userName = self.userInformationData.name
+        vc.myName = self.myInformationData.myName
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -610,14 +610,14 @@ extension HomeViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.tag == 0 {
             let vc = RecipeViewController()
-            vc.myName = self.userInformationData.name
+            vc.myName = self.myInformationData.myName
             vc.recipeData = self.popularRecipeDataArray[indexPath.row % 5]
             self.navigationController?.pushViewController(vc, animated: true)
             
         }else{
             let vc = ShowRecipeViewController()
             vc.selectedIndex = indexPath.row + 1
-            vc.myName = self.userInformationData.name
+            vc.myName = self.myInformationData.myName
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
@@ -631,8 +631,8 @@ extension HomeViewController : CellPushDelegate {
         case 0:    //마이 레시피.
             guard let user = Auth.auth().currentUser else{return}
             let vc = MyRecipeViewController()
-            vc.myName = self.userInformationData.name
-            vc.userName = self.userInformationData.name
+            vc.myName = self.myInformationData.myName
+            vc.userName = self.myInformationData.myName
             vc.userUid = user.uid
             self.navigationController?.pushViewController(vc, animated: true)
 
@@ -649,7 +649,7 @@ extension HomeViewController : CellPushDelegate {
             
         default:   //header(마이페이지)
             let vc = ProfileViewController()
-            vc.userInformationData = self.userInformationData
+            vc.myInformationData = self.myInformationData
             self.navigationController?.pushViewController(vc, animated: true)
             
         }
@@ -671,16 +671,16 @@ extension HomeViewController {
                     guard let userNameData = userData["myName"] as? String else{return} //유저 닉네임
                     guard let userLoginData = userData["login"] as? String else{return}
                     
-                    self.userInformationData = UserInformationData(name: userNameData, email: userEmailData, login: userLoginData)
+                    self.myInformationData = MyInformationData(myName: userNameData, myEmail: userEmailData, loginInfo: userLoginData)
                     
                     DispatchQueue.main.async {
-                        self.setIntroduceText(name: self.userInformationData.name)
+                        self.setIntroduceText(name: self.myInformationData.myName)
                     }
                 }
             }
         }else{
             self.setIntroduceText(name: "회원")
-            self.userInformationData = .init(name: "로그인", email: "로그인이 필요합니다.", login: "")
+            self.myInformationData = .init(myName: "로그인", myEmail: "로그인이 필요합니다.", loginInfo: "")
         }
     }
     

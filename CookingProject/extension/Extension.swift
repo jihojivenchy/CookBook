@@ -10,7 +10,6 @@ import UIKit
 
 extension UIColor {
     
-    class var customGray: UIColor? { return UIColor(named: "customWhite") }
     class var customPink: UIColor? { return UIColor(named: "핑크") }
     class var customSignature: UIColor? { return UIColor(named: "signatureColor") } //signatureColor
     class var customPink2: UIColor? { return UIColor(named: "customPink") }

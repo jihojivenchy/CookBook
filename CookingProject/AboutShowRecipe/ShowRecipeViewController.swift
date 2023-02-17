@@ -87,7 +87,7 @@ final class ShowRecipeViewController: UIViewController {
     
     private func addSubViews() {
         
-        view.backgroundColor = .customGray
+        view.backgroundColor = .customWhite
         
         view.addSubview(recipeTableView)
         recipeTableView.backgroundColor = .clear
@@ -188,7 +188,7 @@ extension ShowRecipeViewController : UITableViewDataSource {
         
         cell.contentView.isUserInteractionEnabled = false
         cell.foodNameLable.text = recipeDataArray[indexPath.row].foodName
-        cell.chefNameLabel.text = recipeDataArray[indexPath.row].userName
+        cell.userNameLabel.text = recipeDataArray[indexPath.row].userName
         cell.heartCountLabel.text = "\(recipeDataArray[indexPath.row].heartPeople.count)"
         cell.foodLevelLabel.text = recipeDataArray[indexPath.row].foodLevel
         cell.timeLabel.text = recipeDataArray[indexPath.row].foodTime

@@ -20,9 +20,22 @@ struct RecipeDataModel {
 }
 
 struct DetailRecipeModel {
+    var imageFile : [String]
     var urlArray : [String]
     var contents : [String]
     var ingredients : String
     var userUID : String
     var commentCount : Int
+}
+
+
+struct ModifyRecipeDataModel {
+    var foodName : String
+    var foodCategory : String
+    var foodLevel : String
+    var foodTime : String
+    var contents : [String]
+    var ingredients : String
+    var urlArray : [String]
+    var documentID : String
 }

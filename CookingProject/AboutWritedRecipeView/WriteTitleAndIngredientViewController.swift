@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class WriteTitleViewController: UIViewController {
+final class WriteTitleAndIngredientViewController: UIViewController {
     //MARK: - Properties
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
@@ -65,7 +65,7 @@ final class WriteTitleViewController: UIViewController {
     }()
     
     final var sendedArray : [String] = ["", "", "", ""]
-    final var userName = String()
+    final var myName = String()
     final var selectedTime = String()
     
 //MARK: - LifeCycle
@@ -92,7 +92,7 @@ final class WriteTitleViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.backgroundColor = .customGray
+        view.backgroundColor = .customWhite
         
         view.addSubview(stackView)
         stackView.backgroundColor = .clear
@@ -208,9 +208,9 @@ final class WriteTitleViewController: UIViewController {
             }else{
                 self.sendedArray[2] = titleText
                 
-                let vc = WriteRecipeViewController()
+                let vc = WriteRecipeProcessViewController()
                 vc.sendedArray = self.sendedArray
-                vc.userName = self.userName
+                vc.myName = self.myName
                 vc.selectedTime = self.selectedTime
                 vc.ingredients = ingreText
                 
@@ -262,7 +262,7 @@ final class WriteTitleViewController: UIViewController {
     
 }
 //MARK: - Extension
-extension WriteTitleViewController : UITextFieldDelegate {
+extension WriteTitleAndIngredientViewController : UITextFieldDelegate {
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         self.removeKeyboardNotifications()
@@ -277,7 +277,7 @@ extension WriteTitleViewController : UITextFieldDelegate {
     }
 }
 
-extension WriteTitleViewController : UITextViewDelegate {
+extension WriteTitleAndIngredientViewController : UITextViewDelegate {
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         self.addKeyboardNotifications()

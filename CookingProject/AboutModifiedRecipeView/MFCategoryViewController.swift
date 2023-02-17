@@ -1,15 +1,17 @@
 //
-//  ChoiceCategoryViewController.swift
+//  MFCategoryViewController.swift
 //  CookingProject
 //
-//  Created by 엄지호 on 2023/01/26.
+//  Created by 엄지호 on 2023/02/17.
 //
 
 import UIKit
 import SnapKit
 
-final class CategoryViewController: UIViewController {
-    //MARK: - Properties
+final class MFCategoryViewController: UIViewController {
+//MARK: - Properties
+    final var modifyRecipeData : ModifyRecipeDataModel?
+    
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
         
@@ -47,9 +49,6 @@ final class CategoryViewController: UIViewController {
         
         return button
     }()
-    
-    final var selectedCategory = String()
-    final var myName = String()
     
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
@@ -129,7 +128,6 @@ final class CategoryViewController: UIViewController {
         }
         
         scrollView.addSubview(nextButton)
-        nextButton.alpha = 0.6
         nextButton.snp.makeConstraints { make in
             make.top.equalTo(categoryCollectionView.snp_bottomMargin).offset(50)
             make.left.right.equalTo(view).inset(25)
@@ -141,17 +139,10 @@ final class CategoryViewController: UIViewController {
 //MARK: - ButtonMethod
     
     @objc private func nextButtonPressed(_ sender : UIButton){
-        let state = nextButton.alpha
         
-        if state == 1.0 {
-            let vc = LevelViewController()
-            vc.sendedArray[0] = self.selectedCategory
-            vc.myName = self.myName
-            
-            self.navigationController?.pushViewController(vc, animated: true)
-        }else{
-            CustomAlert.show(title: "카테고리 선택", subMessage: "선택 후 진행이 가능합니다.")
-        }
+        let vc = MFLevelViewController()
+        vc.modifyRecipeData = self.modifyRecipeData
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     
@@ -161,7 +152,7 @@ final class CategoryViewController: UIViewController {
     
 }
 //MARK: - Extension
-extension CategoryViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension MFCategoryViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return self.categoryArray.count
@@ -172,6 +163,14 @@ extension CategoryViewController : UICollectionViewDataSource, UICollectionViewD
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as! CategoryCollectionViewCell
         
         cell.categoryLabel.text = self.categoryArray[indexPath.row]
+        
+        if let modifyRecipeData = self.modifyRecipeData {
+            
+            if modifyRecipeData.foodCategory == self.categoryArray[indexPath.row]{
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+            }
+        }
+        
         
         return cell
         
@@ -194,11 +193,9 @@ extension CategoryViewController : UICollectionViewDataSource, UICollectionViewD
     }
 }
 
-extension CategoryViewController : UICollectionViewDelegate {
+extension MFCategoryViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.nextButton.alpha = 1
-        self.selectedCategory = categoryArray[indexPath.row]
-        
+        self.modifyRecipeData?.foodCategory = categoryArray[indexPath.row]
     }
 }
 

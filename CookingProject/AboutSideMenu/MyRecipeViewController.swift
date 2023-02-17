@@ -461,7 +461,9 @@ extension MyRecipeViewController {
     
     //댓글 데이터 삭제.
     private func deleteCommentsData(documentID : String) {
-        db.collection("전체보기").document(documentID).collection("댓글").getDocuments { qs, error in
+        let commentRef = db.collection("전체보기").document(documentID).collection("댓글")
+        
+        commentRef.getDocuments { qs, error in
             if let e = error{
                 print("Error find message data : \(e)")
                 DispatchQueue.main.async {
@@ -472,7 +474,30 @@ extension MyRecipeViewController {
                 
                 for doc in snapShotDocuments {
                     
-                    self.db.collection("전체보기").document(documentID).collection("댓글").document(doc.documentID).delete()
+                    commentRef.document(doc.documentID).delete()
+                    //대댓글 데이터삭제
+                    self.deleteChildCommentsData(documentID: documentID, commentDocumentID: doc.documentID)
+                }
+            }
+        }
+    }
+    
+    //대댓글 데이터 삭제
+    private func deleteChildCommentsData(documentID : String, commentDocumentID : String) {
+        let childRef = db.collection("전체보기").document(documentID).collection("댓글").document(commentDocumentID).collection("답글")
+        
+        childRef.getDocuments { qs, error in
+            if let e = error{
+                print("Error 대댓글 데이터 가져오기 실패 : \(e)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                guard let snapShotDocuments = qs?.documents else{return}
+                
+                for doc in snapShotDocuments {
+                    
+                    childRef.document(doc.documentID).delete()
                 }
             }
         }

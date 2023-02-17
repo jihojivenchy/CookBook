@@ -7,15 +7,15 @@
 
 import UIKit
 
-struct UserInformationData {
-    var name : String
-    var email : String
-    var login : String
+struct MyInformationData {
+    var myName : String
+    var myEmail : String
+    var loginInfo : String
 }
 
 struct HeartClikedUserDataModel {
-    var name : String
-    var uid : String
+    var userName : String
+    var userUID : String
 }
 
 struct BlockUserModel {

@@ -15,8 +15,10 @@ final class DetailRecipeHeaderView: UIView {
     final var recipeData : RecipeDataModel = RecipeDataModel(foodName: "", userName: "", heartPeople: [], foodLevel: "", foodTime: "", writedDate: "", url: "", foodCategory: "", documentID: "") {
         didSet{
             addSubViews()
+            viewBorderCustom()
         }
     }
+    
     final var name = String() //쉐프 닉네임
     final var commentsCount = Int() //댓글 갯수
     
@@ -168,7 +170,7 @@ final class DetailRecipeHeaderView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        viewBorderCustom()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -284,6 +286,16 @@ final class DetailRecipeHeaderView: UIView {
         self.delegate?.commentsButtonPressed()
     }
     
+    final func updateHeight(changeHeight : CGFloat) {
+//        let height = max(changeHeight, 400)
+//        
+//        print(height)
+//        
+//        self.titleFoodImage.snp.updateConstraints { make in
+//            make.top.equalToSuperview()
+//            make.height.equalTo(height)
+//        }
+    }
 }
 
 protocol RecipeHeaderDelegate {

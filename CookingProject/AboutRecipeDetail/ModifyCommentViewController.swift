@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 final class ModifyCommentViewController: UIViewController {
-    //MARK: - Properties
+//MARK: - Properties
     private let db = Firestore.firestore()
     final var commentData = CommentsDataModel(comment: "", childComments: [], date: "", userUID: "", userName: "", commentDocumentID: "")
     

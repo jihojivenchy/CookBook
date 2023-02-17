@@ -24,17 +24,10 @@ final class RecipeViewController: UIViewController {
         }
     }  //기본적으로 가지고 있던 정보들.
     
-    private var detailRecipeData = DetailRecipeModel(urlArray: [], contents: [], ingredients: "", userUID: "", commentCount: 0) //나머지 가지고 올 정보들.
+    private var detailRecipeData = DetailRecipeModel(imageFile: [], urlArray: [], contents: [], ingredients: "", userUID: "", commentCount: 0) //나머지 가지고 올 정보들.
     
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
-        
-        return sb
-    }()
-    
-    private lazy var dismissButton : UIBarButtonItem = {
-        let sb = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(dismissButtonPressed(_:)))
-        sb.tintColor = .customSignature
         
         return sb
     }()
@@ -78,7 +71,7 @@ final class RecipeViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.backgroundColor = .customGray
+        view.backgroundColor = .customWhite
         
         view.addSubview(recipeTableView)
         recipeTableView.backgroundColor = .clear
@@ -90,13 +83,6 @@ final class RecipeViewController: UIViewController {
     
     
 //MARK: - ButtonMethod
-    @objc private func dismissButtonPressed(_ sender : UIBarButtonItem) {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    @objc private func menuButtonPressed(_ sender : UIBarButtonItem) {
-        
-    }
     
 //MARK: - DataMethod
     private func getRecipeData() {
@@ -112,6 +98,7 @@ final class RecipeViewController: UIViewController {
             }else{
                 if let data = dos?.data() {
                     
+                    guard let imageFileData = data[DataKeyWord.imageFile] as? [String] else{return}
                     guard var urlData = data[DataKeyWord.url] as? [String] else{return}
                     guard let contentsData = data[DataKeyWord.contents] as? [String] else{return}
                     guard let ingredientData = data[DataKeyWord.ingredients] as? String else{return}
@@ -121,7 +108,7 @@ final class RecipeViewController: UIViewController {
                     urlData.removeFirst()
                     urlData.append(self.recipeData.url)
                     
-                    self.detailRecipeData = DetailRecipeModel(urlArray: urlData, contents: contentsData, ingredients: ingredientData, userUID: userUIDData, commentCount: commentCountData)
+                    self.detailRecipeData = DetailRecipeModel(imageFile: imageFileData, urlArray: urlData, contents: contentsData, ingredients: ingredientData, userUID: userUIDData, commentCount: commentCountData)
                     
                     
                 }
@@ -186,6 +173,11 @@ extension RecipeViewController : UITableViewDataSource {
         return 820
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y <= 0 {
+            scrollView.contentOffset = CGPoint(x: 0, y: 0)
+        }
+    }
 }
 
 extension RecipeViewController : UITableViewDelegate {
@@ -231,6 +223,7 @@ extension RecipeViewController : HeartButtonClickedDelegate {
     }
 }
 
+//데이터 삭제와 수정에 대한 alert
 extension RecipeViewController {
     private func checkUserState() {
         if let user = Auth.auth().currentUser{ //먼저 로그인 체크.
@@ -256,7 +249,21 @@ extension RecipeViewController {
     
     //레시피 수정
     private func goToModifyRecipe() {
+        let vc = MFCategoryViewController()
         
+        //마지막으로 변경해두었던 대표이미지를 다시 첫번째로 돌리고 url데이터 넘겨줌.
+        var urlArray = detailRecipeData.urlArray
+        urlArray.removeLast()
+        urlArray.insert(recipeData.url, at: 0)
+        
+        vc.modifyRecipeData = ModifyRecipeDataModel(foodName: recipeData.foodName,
+                                                    foodCategory: recipeData.foodCategory,
+                                                    foodLevel: recipeData.foodLevel, foodTime: recipeData.foodTime,
+                                                    contents: detailRecipeData.contents,
+                                                    ingredients: detailRecipeData.ingredients,
+                                                    urlArray: urlArray, documentID: recipeData.documentID)
+        
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
 }
@@ -332,7 +339,9 @@ extension RecipeViewController {
     
     //댓글 데이터 삭제.
     private func deleteCommentsData(documentID : String) {
-        db.collection("전체보기").document(documentID).collection("댓글").getDocuments { qs, error in
+        let commentRef = db.collection("전체보기").document(documentID).collection("댓글")
+        
+        commentRef.getDocuments { qs, error in
             if let e = error{
                 print("Error find message data : \(e)")
                 DispatchQueue.main.async {
@@ -342,7 +351,31 @@ extension RecipeViewController {
                 guard let snapShotDocuments = qs?.documents else{return}
                 
                 for doc in snapShotDocuments {
-                    self.db.collection("전체보기").document(documentID).collection("댓글").document(doc.documentID).delete()
+                    
+                    commentRef.document(doc.documentID).delete()
+                    //대댓글 데이터삭제
+                    self.deleteChildCommentsData(documentID: documentID, commentDocumentID: doc.documentID)
+                }
+            }
+        }
+    }
+    
+    //대댓글 데이터 삭제
+    private func deleteChildCommentsData(documentID : String, commentDocumentID : String) {
+        let childRef = db.collection("전체보기").document(documentID).collection("댓글").document(commentDocumentID).collection("답글")
+        
+        childRef.getDocuments { qs, error in
+            if let e = error{
+                print("Error 대댓글 데이터 가져오기 실패 : \(e)")
+                DispatchQueue.main.async {
+                    CustomLoadingView.shared.stopLoading()
+                }
+            }else{
+                guard let snapShotDocuments = qs?.documents else{return}
+                
+                for doc in snapShotDocuments {
+                    
+                    childRef.document(doc.documentID).delete()
                 }
             }
         }

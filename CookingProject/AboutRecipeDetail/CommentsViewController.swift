@@ -371,11 +371,10 @@ extension CommentsViewController {
                     if self.blockUserArray.contains(userUIDData){ //가져온 데이터가 차단한 유저라면 추가하지 않음.
                         blockCount += 1
                     }else{
-                        self.getChildCommentData(commentDocumentID: doc.documentID, index: index - blockCount)
-                        
                         let findData = CommentsDataModel(comment: commentData, childComments: [], date: dateData, userUID: userUIDData, userName: userNameData, commentDocumentID: doc.documentID)
                         self.commentsDataArray.append(findData)
                         
+                        self.getChildCommentData(commentDocumentID: doc.documentID, index: index - blockCount)
                     }
                 }
                 DispatchQueue.main.async {
@@ -396,7 +395,9 @@ extension CommentsViewController {
                 print("Error 대댓글 데이터 가져오기 실패 : \(e.localizedDescription)")
             }else{
                 guard let snapShotDocuments = qs?.documents else{return}
-                self.commentsDataArray[index].childComments = [] //대댓글 데이터 초기화
+                if self.commentsDataArray.count != 0 { //추가된 데이터들이 없는데 여기서 확인하면 해당 인덱스가 없는 오류가 발생하기 때문
+                    self.commentsDataArray[index].childComments = [] //대댓글 데이터 초기화
+                }
                 
                 for doc in snapShotDocuments {
                     let data = doc.data()
@@ -410,7 +411,10 @@ extension CommentsViewController {
                     }else{
                         let findData = ChildCommentsDataModel(comment: commentData, date: dateData, userUID: userUIDData, userName: userNameData, childDocumentID: doc.documentID)
                         
-                        self.commentsDataArray[index].childComments.append(findData)
+                        if self.commentsDataArray.count != 0 { //추가된 데이터들이 없는데 여기서 확인하면 해당 인덱스가 없는 오류가 발생하기 때문
+                            self.commentsDataArray[index].childComments.append(findData)
+                        }
+                        
                     }
                 }
                 
@@ -436,6 +440,7 @@ extension CommentsViewController {
                                                                  DataKeyWord.userUID : uid,
                                                                  DataKeyWord.userName : self.myName,
                                                                  "timeStamp" : Date().timeIntervalSince1970])
+        
         if blockUserArray.isEmpty { //블락유저가 없을 때,
             db.collection("전체보기").document(recipeDocumentID).updateData([DataKeyWord.commentCount : self.commentsDataArray.count])
             
@@ -487,8 +492,6 @@ extension CommentsViewController : CommentMenuButtonDelegate {
         }
     }
     
-    
-    
     //내가 작성한 댓글 수정이나 삭제
     private func modifyAndDeleteComment(index : Int){
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -527,7 +530,8 @@ extension CommentsViewController : CommentMenuButtonDelegate {
     //댓글 삭제
     private func deleteComment(index : Int) {
         //해당 댓글 데이터 삭제
-        db.collection("전체보기").document(recipeDocumentID).collection("댓글").document(self.commentsDataArray[index].commentDocumentID).delete()
+        let ref = db.collection("전체보기").document(recipeDocumentID).collection("댓글")
+        ref.document(self.commentsDataArray[index].commentDocumentID).delete()
         
         self.commentsDataArray.remove(at: index)
         
@@ -538,7 +542,6 @@ extension CommentsViewController : CommentMenuButtonDelegate {
         }else{ //블락유저가 있을 때, 차단된 댓글 갯수 +해서 댓글 갯수 갱신.
             db.collection("전체보기").document(recipeDocumentID).updateData([DataKeyWord.commentCount : self.commentsDataArray.count + self.blockCommentCount])
         }
-        
     }
     
     //댓글 작성자 차단이나 신고
@@ -661,7 +664,7 @@ extension CommentsViewController : ChildCommentMenuDelegate {
     
     //대댓글 삭제
     private func deleteChildComment(section : Int, index : Int) {
-        //해당 댓글 데이터 삭제
+        //해당 대댓글 데이터 삭제
         let commentDocumentID = self.commentsDataArray[section].commentDocumentID
         let childDocumentID = self.commentsDataArray[section].childComments[index].childDocumentID
         

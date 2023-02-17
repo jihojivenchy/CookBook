@@ -36,6 +36,7 @@ final class RecipeHeaderView: UIView {
     }()
     
     final var photoImageArray : [UIImage] = []
+    final var photoURLArray : [String] = []
     
     final var sendedArray : [String] = ["", "", "", ""] {
         didSet{
@@ -51,8 +52,6 @@ final class RecipeHeaderView: UIView {
         photoCollectionView.register(PhotoHeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: PhotoHeaderCollectionReusableView.identifier)
         photoCollectionView.delegate = self
         photoCollectionView.dataSource = self
-        
-        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
     }
     
     
@@ -135,27 +134,30 @@ final class RecipeHeaderView: UIView {
             self.stackView.addArrangedSubview(label)
         }
     }
-    
-    
-    @objc func handleTap(sender: UITapGestureRecognizer) {
-        
-    }
-    
-    
 }
 
 extension RecipeHeaderView : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photoImageArray.count
+        if photoImageArray.isEmpty{ //수정모드인지 체크.
+            return photoURLArray.count
+        }else{
+            return photoImageArray.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.identifier, for: indexPath) as! PhotoCollectionViewCell
         
         cell.contentView.isUserInteractionEnabled = false
-        cell.imageView.image = self.photoImageArray[indexPath.row]
+        
         cell.index = indexPath.row
         cell.delegate = self
+        
+        if photoImageArray.isEmpty{
+            cell.imageView.setImage(with: photoURLArray[indexPath.row], width: 80, height: 80)
+        }else{
+            cell.imageView.image = self.photoImageArray[indexPath.row]
+        }
         
         if indexPath.row == 0 {
             cell.firstLabel.isHidden = false
@@ -176,7 +178,12 @@ extension RecipeHeaderView : UICollectionViewDataSource, UICollectionViewDelegat
         case UICollectionView.elementKindSectionHeader:
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PhotoHeaderCollectionReusableView.identifier, for: indexPath) as! PhotoHeaderCollectionReusableView
             
-            headerView.imageCountLabel.text = "\(photoImageArray.count) / 10"
+            if photoImageArray.isEmpty{
+                headerView.imageCountLabel.text = "\(photoURLArray.count) / 10"
+            }else{
+                headerView.imageCountLabel.text = "\(photoImageArray.count) / 10"
+            }
+            
             headerView.delegate = self
             
             return headerView

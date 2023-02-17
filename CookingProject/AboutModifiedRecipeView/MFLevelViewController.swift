@@ -1,15 +1,17 @@
 //
-//  LevelViewController.swift
+//  MFLevelViewController.swift
 //  CookingProject
 //
-//  Created by 엄지호 on 2023/01/26.
+//  Created by 엄지호 on 2023/02/17.
 //
 
 import UIKit
 import SnapKit
 
-final class LevelViewController: UIViewController {
+final class MFLevelViewController: UIViewController {
 //MARK: - Properties
+    final var modifyRecipeData : ModifyRecipeDataModel?
+    
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
         
@@ -53,7 +55,7 @@ final class LevelViewController: UIViewController {
         let image = UIImage(systemName: "alarm.fill", withConfiguration: config)
         
         let button = UIButton()
-        button.setTitle(" 조리시간", for: .normal)
+        button.setTitle(modifyRecipeData?.foodTime, for: .normal)
         button.setTitleColor(.customNavy, for: .normal)
         button.setImage(image, for: .normal)
         button.tintColor = .customNavy
@@ -66,11 +68,7 @@ final class LevelViewController: UIViewController {
         return button
     }()
     
-    final var sendedArray : [String] = ["", "", "", ""]
-    final var selectedTime = String()
-    final var myName = String()
-    
-//MARK: - LifeCycle
+    //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -155,8 +153,11 @@ final class LevelViewController: UIViewController {
     }
     
     private func setStackView() {
+        guard let modifyRecipeData = self.modifyRecipeData else{return}
         
-        for i in sendedArray {
+        let stackViewArray = [modifyRecipeData.foodCategory, "", "", ""]
+        
+        for i in stackViewArray{
             
             let label = UILabel()
             label.text = i
@@ -171,8 +172,10 @@ final class LevelViewController: UIViewController {
         }
     }
     
-//MARK: - ButtonMethod
+    //MARK: - ButtonMethod
     @objc private func timeButtonPressed(_ sender : UIButton){
+        guard let modifyRecipeData = self.modifyRecipeData else{return}
+        
         UIView.animate(withDuration: 0.1, animations: {
             self.timeButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
             
@@ -181,48 +184,37 @@ final class LevelViewController: UIViewController {
                 self.timeButton.transform = CGAffineTransform.identity
             }
         })
-
+        
         let vc = SelectedTimeViewController()
         vc.modalPresentationStyle = .custom
         vc.delegate = self
-        vc.selectedTime = self.selectedTime
+        vc.selectedTime = modifyRecipeData.foodTime
         self.present(vc, animated: true)
     }
     
     @objc private func nextButtonPressed(_ sender : UIButton){
-        let level = self.sendedArray[1]
-        
-        if level == "" {
-            CustomAlert.show(title: "오류", subMessage: "난이도 선택 후 진행이 가능합니다.")
-        }else{
-            
-            if selectedTime == "" {
-                CustomAlert.show(title: "오류", subMessage: "조리시간 입력 후 진행이 가능합니다.")
-                
-            }else{
-                let vc = WriteTitleAndIngredientViewController()
-                vc.sendedArray = self.sendedArray
-                vc.myName = self.myName
-                vc.selectedTime = self.selectedTime
-                
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
-        }
+        let vc = MFTitleAndIngredientViewController()
+        vc.modifyRecipeData = self.modifyRecipeData
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
 }
 //MARK: - Extension
-extension LevelViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension MFLevelViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         return self.levelArray.count
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as! CategoryCollectionViewCell
         
         cell.categoryLabel.text = self.levelArray[indexPath.row]
+        
+        if let modifyRecipeData = self.modifyRecipeData {
+            if modifyRecipeData.foodLevel == self.levelArray[indexPath.row]{
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+            }
+        }
         
         return cell
         
@@ -245,15 +237,15 @@ extension LevelViewController : UICollectionViewDataSource, UICollectionViewDele
     }
 }
 
-extension LevelViewController : UICollectionViewDelegate {
+extension MFLevelViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.sendedArray[1] = levelArray[indexPath.row]
+        self.modifyRecipeData?.foodLevel = levelArray[indexPath.row]
     }
 }
 
-extension LevelViewController : SelectedTimeDelegate{
+extension MFLevelViewController : SelectedTimeDelegate{
     func result(time: String) {
-        self.selectedTime = time
+        self.modifyRecipeData?.foodTime = time
         self.timeButton.setTitle(" \(time)", for: .normal)
     }
 }

@@ -25,7 +25,5 @@ struct CustomAlert {
                           colorTextButton: 0xFFFFFF)
         
     }
-    
-    
-    
+
 }

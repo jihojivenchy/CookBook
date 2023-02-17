@@ -14,7 +14,7 @@ final class ProfileViewController: UIViewController {
 //MARK: - Properties
     private let db = Firestore.firestore()
     
-    final var userInformationData : UserInformationData = .init(name: "", email: "", login: "")
+    final var myInformationData : MyInformationData = .init(myName: "", myEmail: "", loginInfo: "")
     
     private let nameLabel = UILabel()
     private lazy var nameTextField : UITextField = {
@@ -185,10 +185,10 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setUserInfomationData() {
-        self.nameTextField.text = userInformationData.name
-        self.emailTextField.text = userInformationData.email
+        self.nameTextField.text = myInformationData.myName
+        self.emailTextField.text = myInformationData.myEmail
         
-        switch userInformationData.login {
+        switch myInformationData.loginInfo {
         case "kakao":
             self.loginTextField.text = "카카오 로그인"
         case "naver":
@@ -222,7 +222,7 @@ extension ProfileViewController {
         guard let user = Auth.auth().currentUser else{return}
         guard let name = nameTextField.text else{return}
         
-        if name != self.userInformationData.name { //닉네임에 변경사항이 있을 때
+        if name != self.myInformationData.myName { //닉네임에 변경사항이 있을 때
             
             if name == "" {
                 CustomAlert.show(title: "오류", subMessage: "닉네임을 작성해주세요.")

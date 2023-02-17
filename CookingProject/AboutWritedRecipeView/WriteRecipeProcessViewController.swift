@@ -14,7 +14,7 @@ import BSImagePicker
 import Photos
 import SCLAlertView
 
-final class WriteRecipeViewController: UIViewController {
+final class WriteRecipeProcessViewController: UIViewController {
 //MARK: - Properties
     private let storage = Storage.storage()
     private let db = Firestore.firestore()
@@ -34,7 +34,7 @@ final class WriteRecipeViewController: UIViewController {
     private let recipeTableView = UITableView(frame: .zero, style: .grouped)
     
     final var sendedArray : [String] = ["", "", "", ""]
-    final var userName = String()
+    final var myName = String()
     final var selectedTime = String()
     final var ingredients = String()
     private var contentsArray : [String] = ["", "", "", "", "", "", "", "", "", ""] //textview 작성 내용을 담는 곳
@@ -83,7 +83,7 @@ final class WriteRecipeViewController: UIViewController {
     
     private func addSubViews() {
         
-        view.backgroundColor = .customGray
+        view.backgroundColor = .customWhite
         
         view.addSubview(recipeTableView)
         recipeTableView.backgroundColor = .clear
@@ -160,7 +160,7 @@ final class WriteRecipeViewController: UIViewController {
 }
 //MARK: - Extension
 
-extension WriteRecipeViewController : UITableViewDataSource {
+extension WriteRecipeProcessViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.photoImageArray.count
@@ -199,7 +199,7 @@ extension WriteRecipeViewController : UITableViewDataSource {
     
 }
 
-extension WriteRecipeViewController : UITableViewDelegate {
+extension WriteRecipeProcessViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -208,7 +208,7 @@ extension WriteRecipeViewController : UITableViewDelegate {
 }
 
 //image picker
-extension WriteRecipeViewController : PhotoHeaderTouchDelegate {
+extension WriteRecipeProcessViewController : PhotoHeaderTouchDelegate {
     func tapHeaderView() {
         findImage()
     }
@@ -259,9 +259,15 @@ extension WriteRecipeViewController : PhotoHeaderTouchDelegate {
                 option.isSynchronous = true
                 option.deliveryMode = .opportunistic
                 
+                var targetImageSize : CGSize = CGSize(width: 150, height: 150)
+                
+                if i == 0 { //대표이미지만 크게. 나머지이미지는 기본 이미지.
+                    targetImageSize = CGSize(width: 400, height: 400)
+                }
+                
                 var thumbnail = UIImage()
                 imageManager.requestImage(for: asset[i],
-                                          targetSize: CGSize(width: 150, height: 150),
+                                          targetSize: targetImageSize,
                                           contentMode: .aspectFill,
                                           options: option) { result, info in
                     
@@ -285,7 +291,7 @@ extension WriteRecipeViewController : PhotoHeaderTouchDelegate {
 }
 
 //delete image
-extension WriteRecipeViewController : PhotoDeleteButtonDelegate {
+extension WriteRecipeProcessViewController : PhotoDeleteButtonDelegate {
     func delete(index: Int) {
         self.photoImageArray.remove(at: index)
         self.contentsArray = ["", "", "", "", "", "", "", "", "", ""]
@@ -294,7 +300,7 @@ extension WriteRecipeViewController : PhotoDeleteButtonDelegate {
 }
 
 //textview delegate
-extension WriteRecipeViewController : RecipeTextViewDelegate {
+extension WriteRecipeProcessViewController : RecipeTextViewDelegate {
     func startEditing(index: Int) {
         let indexPath = IndexPath(row: index, section: 0)
         self.recipeTableView.scrollToRow(at: indexPath, at: .middle, animated: true)
@@ -307,7 +313,7 @@ extension WriteRecipeViewController : RecipeTextViewDelegate {
 }
 
 //alert
-extension WriteRecipeViewController {
+extension WriteRecipeProcessViewController {
     private func setDataAlert() {
         let appearence = SCLAlertView.SCLAppearance(kTitleFont: UIFont(name: FontKeyWord.CustomFont, size: 17) ?? .boldSystemFont(ofSize: 17), kTextFont: UIFont(name: FontKeyWord.CustomFont, size: 13) ?? .boldSystemFont(ofSize: 13), showCloseButton: false)
         let alert = SCLAlertView(appearance: appearence)
@@ -328,7 +334,7 @@ extension WriteRecipeViewController {
 }
 
 //Set Wrtied Recipe Data
-extension WriteRecipeViewController {
+extension WriteRecipeProcessViewController {
     private func setUploadImage() {
         CustomLoadingView.shared.startLoading(alpha: 0.5)
         
@@ -403,7 +409,7 @@ extension WriteRecipeViewController {
                                                       DataKeyWord.contents : FieldValue.arrayUnion(contents),
                                                       DataKeyWord.userUID : user.uid,
                                                       DataKeyWord.writedDate : convertDate,
-                                                      DataKeyWord.userName : self.userName,
+                                                      DataKeyWord.userName : self.myName,
                                                       DataKeyWord.url : FieldValue.arrayUnion(url),
                                                       DataKeyWord.imageFile : FieldValue.arrayUnion(imageFileTitle)])
         
