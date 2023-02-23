@@ -17,9 +17,7 @@ final class MyRecipeViewController: UIViewController {
 //MARK: - Properties
     private let storage = Storage.storage()
     private let db = Firestore.firestore()
-    private var recipeDataArray : [RecipeDataModel] = []
-    
-    final var myName = String() //내 이름정보.
+    private var myRecipeDataArray : [MyRecipeDataModel] = []
     
     final var userName = String() //유저 닉네임정보.
     final var userUid = String()
@@ -70,8 +68,7 @@ final class MyRecipeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
         checkUserState()
         checkSquenceState()
@@ -84,7 +81,6 @@ final class MyRecipeViewController: UIViewController {
         myRecipeCollectionView.register(MyRecipeCollectionViewCell.self, forCellWithReuseIdentifier: MyRecipeCollectionViewCell.identifier)
         myRecipeCollectionView.register(MyRecipeHeaderCollectionReusableView.self,
                                         forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: MyRecipeHeaderCollectionReusableView.identifier)
-        
     }
     
 //MARK: - ViewMethod
@@ -192,19 +188,20 @@ final class MyRecipeViewController: UIViewController {
 //MARK: - Extension
 extension MyRecipeViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return recipeDataArray.count
+        return myRecipeDataArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyRecipeCollectionViewCell.identifier, for: indexPath) as! MyRecipeCollectionViewCell
         
-        let url = recipeDataArray[indexPath.row].url //이미지 url이 저장되어 있는 배열에서 하나씩 가져오기.
+        let url = myRecipeDataArray[indexPath.row].url //이미지 url이 저장되어 있는 배열에서 하나씩 가져오기.
         cell.foodImageView.setImage(with: url, width: 150, height: 150)
         
-        cell.foodNameLable.text = recipeDataArray[indexPath.row].foodName
-        cell.heartCountLabel.text = "\(recipeDataArray[indexPath.row].heartPeople.count)"
-        cell.categoryLabel.text = recipeDataArray[indexPath.row].foodCategory
-        cell.dateLabel.text = recipeDataArray[indexPath.row].writedDate
+        cell.commentCount = myRecipeDataArray[indexPath.row].commentCount
+        cell.heartCount = myRecipeDataArray[indexPath.row].heartPeopleCount
+        cell.foodCategory = myRecipeDataArray[indexPath.row].foodCategory
+        cell.foodNameLable.text = myRecipeDataArray[indexPath.row].foodName
+        cell.dateLabel.text = myRecipeDataArray[indexPath.row].writedDate
         
         if deleteRecipeArray.contains(indexPath.row) {
             cell.deleteModeCheckBox.isHidden = false
@@ -220,7 +217,7 @@ extension MyRecipeViewController : UICollectionViewDataSource, UICollectionViewD
         
         let width = collectionView.frame.size.width / 2
         
-        let size = CGSize(width: width, height: 285)
+        let size = CGSize(width: width, height: 300)
         
         return size
     }
@@ -236,7 +233,7 @@ extension MyRecipeViewController : UICollectionViewDataSource, UICollectionViewD
             headerView.sequenceString = self.sequenceString
             headerView.categoryLabel.text = "\(userName)님 레시피"
             headerView.subTitleLabel.text = "\(userName)님의 레시피를 \(sequenceString)서로 보여줍니다."
-            headerView.countLabel.text = "전체 \(recipeDataArray.count)개"
+            headerView.countLabel.text = "전체 \(myRecipeDataArray.count)개"
             
             return headerView
             
@@ -269,8 +266,7 @@ extension MyRecipeViewController : UICollectionViewDelegate {
             
         }else{ //아닐 때는 고냥 레시피로 이동.
             let vc = RecipeViewController()
-            vc.myName = self.myName
-            vc.recipeData = self.recipeDataArray[indexPath.row]
+            vc.recipeDocumentID = myRecipeDataArray[indexPath.row].documentID
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -321,24 +317,22 @@ extension MyRecipeViewController {
                 }
                 
             }else{
-                self.recipeDataArray = []
+                self.myRecipeDataArray = []
                 guard let snapshotDocuments = qs?.documents else{return} //도큐먼트들에 접근
                 
                 for doc in snapshotDocuments{
                     let data = doc.data()   //도큐먼트 안에 데이터에 접근
                     
                     guard let foodNameData = data[DataKeyWord.foodName] as? String else{return}
-                    guard let userNameData = data[DataKeyWord.userName] as? String else{return}
                     guard let heartPeopleData = data[DataKeyWord.heartPeople] as? [String] else{return}
-                    guard let levelData = data[DataKeyWord.foodLevel] as? String else{return}
-                    guard let timeData = data[DataKeyWord.foodTime] as? String else{return}
+                    guard let commentsCountData = data[DataKeyWord.commentCount] as? Int else{return}
                     guard let categoryData = data[DataKeyWord.foodCategory] as? String else{return}
                     guard let urlData = data[DataKeyWord.url] as? [String] else{return}
                     guard let dateData = data[DataKeyWord.writedDate] as? String else{return}
                     
-                    let findData = RecipeDataModel(foodName: foodNameData, userName: userNameData, heartPeople: heartPeopleData, foodLevel: levelData, foodTime: timeData, writedDate: dateData, url: urlData[0], foodCategory: categoryData, documentID: doc.documentID)
+                    let findData = MyRecipeDataModel(foodName: foodNameData, heartPeopleCount: heartPeopleData.count, commentCount: commentsCountData, writedDate: dateData, url: urlData[0], foodCategory: categoryData, documentID: doc.documentID)
                     
-                    self.recipeDataArray.append(findData)
+                    self.myRecipeDataArray.append(findData)
                 }
                 
                 DispatchQueue.main.async {
@@ -409,10 +403,10 @@ extension MyRecipeViewController {
 extension MyRecipeViewController {
     //레시피 데이터삭제
     private func deleteRecipeData() {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
         for i in deleteRecipeArray {
-            let document = recipeDataArray[i].documentID
+            let document = myRecipeDataArray[i].documentID
             
             db.collection("전체보기").document(document).getDocument { qs, error in
                 if let e = error {

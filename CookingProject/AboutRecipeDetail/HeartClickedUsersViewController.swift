@@ -13,7 +13,7 @@ import FirebaseFirestore
 final class HeartClickedUsersViewController: UIViewController {
 //MARK: - Properties
     private let db = Firestore.firestore()
-    final var delegate : HeartButtonClickedDelegate?   //좋아요 누르면 이전 뷰 좋아요 갯수 변경
+    
     final var heartUserUidArray : [String] = [] //좋아요를 누른 유저들의 uid 모음.
     private var heartUserNameArray : [String] = []
     
@@ -39,7 +39,6 @@ final class HeartClickedUsersViewController: UIViewController {
         return rf
     }()
     
-    final var myName = String()
     final var documentID = String()
     
 //MARK: - LifeCycle
@@ -111,9 +110,9 @@ final class HeartClickedUsersViewController: UIViewController {
     }//좋아요를 눌렀는지 안눌렀는지 체크.
     
 //MARK: - ButtonMethod
-    
     @objc private func heartButtonPressed(_ sender : UIBarButtonItem){
         guard let user = Auth.auth().currentUser else{return}
+        guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
         
         if heartUserUidArray.contains(user.uid) { //이미 좋아요를 눌렀을 때,
             
@@ -130,8 +129,6 @@ final class HeartClickedUsersViewController: UIViewController {
             heartUsersTableView.reloadData()
             updateHeartPeopleData()
         }
-        
-        self.delegate?.clickedButton(heartUserData: heartUserUidArray)
     }
     
 //MARK: - DataMethod
@@ -143,7 +140,7 @@ final class HeartClickedUsersViewController: UIViewController {
     
     private func getHeartUserName() {
         if heartUserUidArray.count != 0 {
-            CustomLoadingView.shared.startLoading(alpha: 0.5)
+            CustomLoadingView.shared.startLoading()
             var count = 0
             
             self.heartUserNameArray = [String](repeating: "", count: heartUserUidArray.count)
@@ -205,15 +202,10 @@ extension HeartClickedUsersViewController : UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let vc = MyRecipeViewController()
-        vc.myName = self.myName
         vc.userName = self.heartUserNameArray[indexPath.row]
         vc.userUid = self.heartUserUidArray[indexPath.row]
 
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
-}
-
-protocol HeartButtonClickedDelegate {
-    func clickedButton(heartUserData : [String])
 }

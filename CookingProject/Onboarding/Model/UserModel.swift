@@ -8,7 +8,6 @@
 import UIKit
 
 struct MyInformationData {
-    var myName : String
     var myEmail : String
     var loginInfo : String
 }

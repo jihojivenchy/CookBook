@@ -18,7 +18,7 @@ final class CommentsViewController: UIViewController {
     private var commentsDataArray : [CommentsDataModel] = [] //댓글
     
     final var recipeDocumentID = String() //현재 레시피 도큐먼트아이디
-    final var myName = String()
+    final var recipeUserUID = String() //현재 레시피의 주인.
     
     private var blockCommentCount = Int() //블락된 댓글이 몇개인지 센다. 이유는 차단유저리스트가 있는 유저가 댓글을 남길 시에 댓글 카운트를 갱신해주어야하는데 필요
     private var commentIndexSection = Int()     //대댓글을 어떤 댓글에 남길 것인지 섹션번호기억.
@@ -78,7 +78,7 @@ final class CommentsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        CustomLoadingView.shared.startLoading(alpha: 0.3)
+        CustomLoadingView.shared.startLoading()
         getBlockedUserData()
         getCommentsData()
         addSubViews()
@@ -191,9 +191,11 @@ final class CommentsViewController: UIViewController {
                     self.childMode = false
                     let commentDocumenID = commentsDataArray[self.commentIndexSection].commentDocumentID //어떤 댓글에 대댓글을 달았는지 도큐먼트.
                     self.setChildComments(userUID: user.uid, comment: comment, commentDocumentID: commentDocumenID)
+                    self.setCommentNotiData(userUID: user.uid, comment: comment)
                     
                 }else{//댓글데이터 저장.
                     self.setCommentsData(uid: user.uid, comment: comment)
+                    self.setRecipeNotiData(userUID: user.uid, comment: comment)
                 }
             }
 
@@ -427,20 +429,24 @@ extension CommentsViewController {
     }
     
     private func setCommentsData(uid : String, comment : String) {
+        guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
+        
         let formatDate = DateFormatter()
         formatDate.dateFormat = "yyyy-MM-dd HH:mm"
         let convertDate = formatDate.string(from: Date()) //date형식 원하는 형태로 format
         
         //댓글 갯수 갱신하기 위해 임의로 넣어줌.(어차피 데이터에 수정사항 생기면 데이터 가져오면서 배열 초기화)
-        self.commentsDataArray.append(CommentsDataModel(comment: comment, childComments: [], date: convertDate, userUID: uid, userName: self.myName, commentDocumentID: ""))
+        self.commentsDataArray.append(CommentsDataModel(comment: comment, childComments: [], date: convertDate, userUID: uid, userName: myName, commentDocumentID: ""))
         
+        //댓글 데이터 저장.(핵심.)
         db.collection("전체보기").document(recipeDocumentID).collection("댓글").addDocument(data:
                                                                 [DataKeyWord.comment : comment,
                                                                  DataKeyWord.writedDate : convertDate,
                                                                  DataKeyWord.userUID : uid,
-                                                                 DataKeyWord.userName : self.myName,
+                                                                 DataKeyWord.userName : myName,
                                                                  "timeStamp" : Date().timeIntervalSince1970])
         
+        //댓글 갯수 갱신.
         if blockUserArray.isEmpty { //블락유저가 없을 때,
             db.collection("전체보기").document(recipeDocumentID).updateData([DataKeyWord.commentCount : self.commentsDataArray.count])
             
@@ -583,6 +589,8 @@ extension CommentsViewController : CommentMenuButtonDelegate {
 extension CommentsViewController : ChildCommentMenuDelegate {
     //대댓글 달기.
     private func setChildComments(userUID : String, comment : String, commentDocumentID : String) {
+        guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
+        
         let formatDate = DateFormatter()
         formatDate.dateFormat = "yyyy-MM-dd HH:mm"
         let convertDate = formatDate.string(from: Date()) //date형식 원하는 형태로 format
@@ -590,7 +598,7 @@ extension CommentsViewController : ChildCommentMenuDelegate {
         let childRef = db.collection("전체보기").document(recipeDocumentID).collection("댓글").document(commentDocumentID).collection("답글")
         
         childRef.addDocument(data: [DataKeyWord.comment : comment,
-                                    DataKeyWord.writedDate : convertDate,                                            DataKeyWord.userUID : userUID,                                                DataKeyWord.userName : self.myName,
+                                    DataKeyWord.writedDate : convertDate,                                            DataKeyWord.userUID : userUID,                                                DataKeyWord.userName : myName,
                                     "timeStamp" : Date().timeIntervalSince1970]) { error in
             if let e = error{
                 print("Error 대댓글 데이터 저장 실패 : \(e.localizedDescription)")
@@ -704,3 +712,47 @@ extension CommentsViewController : ChildCommentMenuDelegate {
     }
 }
 
+//댓글을 달았을 때, 상대방에게 알림이 가는 처리.
+extension CommentsViewController {
+    //상대 레시피에 댓글을 달았을 경우.
+    private func setRecipeNotiData(userUID : String, comment : String) {
+        if userUID == self.recipeUserUID { //내 레시피에 내가 댓글을 달았을 때는 알림이 울릴 필요가 없다.
+        }else{
+            //레시피 주인에게 내가 단 댓글알림이 간다.
+            guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
+            
+            let formatDate = DateFormatter()
+            formatDate.dateFormat = "yyyy-MM-dd HH:mm"
+            let convertDate = formatDate.string(from: Date()) //date형식 원하는 형태로 format
+            
+            db.collection("\(recipeUserUID).Noti").addDocument(data: [DataKeyWord.userUID : userUID,
+                                                                      DataKeyWord.userName : myName,
+                                                                      "recipeDocumentID" : self.recipeDocumentID,
+                                                                      "version" : 0,
+                                                                      DataKeyWord.comment : comment,
+                                                                      DataKeyWord.writedDate : convertDate])
+        }
+    }
+    
+    //상대방의 댓글에 답글을 달았을 경우.
+    private func setCommentNotiData(userUID : String, comment : String) {
+        let owner = commentsDataArray[self.commentIndexSection].userUID
+        
+        if owner == userUID { //내 댓글에 내가 답글을 다는경우에는 알림이 울릴 필요가 없음.
+            
+        }else{//댓글 주인에게 답글 내용에 대한 알림을 넣어줌.
+            guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
+            
+            let formatDate = DateFormatter()
+            formatDate.dateFormat = "yyyy-MM-dd HH:mm"
+            let convertDate = formatDate.string(from: Date()) //date형식 원하는 형태로 format
+            
+            db.collection("\(owner).Noti").addDocument(data: [DataKeyWord.userUID : userUID,
+                                                              DataKeyWord.userName : myName,
+                                                              "recipeDocumentID" : self.recipeDocumentID,
+                                                              "version" : 1,
+                                                              DataKeyWord.comment : comment,
+                                                              DataKeyWord.writedDate : convertDate])
+        }
+    }
+}

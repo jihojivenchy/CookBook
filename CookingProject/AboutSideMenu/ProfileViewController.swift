@@ -14,7 +14,7 @@ final class ProfileViewController: UIViewController {
 //MARK: - Properties
     private let db = Firestore.firestore()
     
-    final var myInformationData : MyInformationData = .init(myName: "", myEmail: "", loginInfo: "")
+    final var myInformationData : MyInformationData = .init(myEmail: "", loginInfo: "")
     
     private let nameLabel = UILabel()
     private lazy var nameTextField : UITextField = {
@@ -185,7 +185,9 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setUserInfomationData() {
-        self.nameTextField.text = myInformationData.myName
+        guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
+        
+        self.nameTextField.text = myName
         self.emailTextField.text = myInformationData.myEmail
         
         switch myInformationData.loginInfo {
@@ -220,14 +222,15 @@ extension ProfileViewController : UITextFieldDelegate {
 extension ProfileViewController {
     private func updateUserNickName() {
         guard let user = Auth.auth().currentUser else{return}
+        guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
         guard let name = nameTextField.text else{return}
         
-        if name != self.myInformationData.myName { //닉네임에 변경사항이 있을 때
+        if name != myName { //닉네임에 변경사항이 있을 때
             
             if name == "" {
                 CustomAlert.show(title: "오류", subMessage: "닉네임을 작성해주세요.")
             }else{
-                CustomLoadingView.shared.startLoading(alpha: 0.5)
+                CustomLoadingView.shared.startLoading()
                 
                 db.collection("Users").document(user.uid).updateData([DataKeyWord.myName : name]) { error in
                     if let e = error{

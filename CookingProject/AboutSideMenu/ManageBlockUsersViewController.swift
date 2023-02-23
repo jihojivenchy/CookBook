@@ -83,7 +83,7 @@ final class ManageBlockUsersViewController: UIViewController {
 //MARK: - DataMethod
     private func getBlockedUserData() {
         guard let user = Auth.auth().currentUser else{return}
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
         db.collection("\(user.uid).block").addSnapshotListener { qs, error in
             if let e = error {

@@ -18,13 +18,10 @@ final class RecipeViewController: UIViewController {
     private let storage = Storage.storage()
     private let db = Firestore.firestore()
     
-    final var recipeData : RecipeDataModel = .init(foodName: "", userName: "", heartPeople: [], foodLevel: "", foodTime: "", writedDate: "", url: "", foodCategory: "", documentID: ""){
-        didSet{
-            self.getRecipeData()
-        }
-    }  //기본적으로 가지고 있던 정보들.
+    final var recipeDocumentID = String()
+    final var goToComment : Bool = false
     
-    private var detailRecipeData = DetailRecipeModel(imageFile: [], urlArray: [], contents: [], ingredients: "", userUID: "", commentCount: 0) //나머지 가지고 올 정보들.
+    private var detailRecipeData = DetailRecipeModel(foodName: "", foodLevel: "", foodTime: "", foodCategory: "", ingredients: "", contents: [], userName: "", userUID: "", heartPeople: [], imageFile: [], urlArray: [], commentCount: 0) //레시피정보
     
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
@@ -33,8 +30,6 @@ final class RecipeViewController: UIViewController {
     }()
     
     private let recipeTableView = UITableView(frame: .zero, style: .grouped)
-    
-    final var myName = String()
 
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
@@ -45,7 +40,7 @@ final class RecipeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        getRecipeData()
         naviBarAppearance()
         addSubViews()
         
@@ -81,14 +76,24 @@ final class RecipeViewController: UIViewController {
         }
     }
     
+    //알림 뷰에서 왔을 때는 바로 댓글 뷰로 이동하도록.
+    private func goToCommentView() {
+        if goToComment {
+            goToComment = false
+            let vc = CommentsViewController()
+            vc.recipeDocumentID = self.recipeDocumentID
+            vc.recipeUserUID = detailRecipeData.userUID
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
     
 //MARK: - ButtonMethod
     
 //MARK: - DataMethod
     private func getRecipeData() {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
-        db.collection("전체보기").document(recipeData.documentID).addSnapshotListener{ dos, error in
+        db.collection("전체보기").document(recipeDocumentID).addSnapshotListener{ dos, error in
             if let e = error {
                 print("Error 레시피 데이터 가져오기 실패 : \(e)")
                 
@@ -98,25 +103,31 @@ final class RecipeViewController: UIViewController {
             }else{
                 if let data = dos?.data() {
                     
+                    guard let foodNameData = data[DataKeyWord.foodName] as? String else{return}
+                    guard let foodLevelData = data[DataKeyWord.foodLevel] as? String else{return}
+                    guard let foodTimeData = data[DataKeyWord.foodTime] as? String else{return}
+                    guard let foodCategoryData = data[DataKeyWord.foodCategory] as? String else{return}
+                    guard let ingredientData = data[DataKeyWord.ingredients] as? String else{return}
+                    guard let contentsData = data[DataKeyWord.contents] as? [String] else{return}
+                    guard let userNameData = data[DataKeyWord.userName] as? String else{return}
+                    guard let userUIDData = data[DataKeyWord.userUID] as? String else{return}
+                    guard let heartData = data[DataKeyWord.heartPeople] as? [String] else{return}
                     guard let imageFileData = data[DataKeyWord.imageFile] as? [String] else{return}
                     guard var urlData = data[DataKeyWord.url] as? [String] else{return}
-                    guard let contentsData = data[DataKeyWord.contents] as? [String] else{return}
-                    guard let ingredientData = data[DataKeyWord.ingredients] as? String else{return}
-                    guard let userUIDData = data[DataKeyWord.userUID] as? String else{return}
                     guard let commentCountData = data[DataKeyWord.commentCount] as? Int else{return}
                     
+                    let url = urlData[0]
                     urlData.removeFirst()
-                    urlData.append(self.recipeData.url)
+                    urlData.append(url)
                     
-                    self.detailRecipeData = DetailRecipeModel(imageFile: imageFileData, urlArray: urlData, contents: contentsData, ingredients: ingredientData, userUID: userUIDData, commentCount: commentCountData)
-                    
-                    
+                    self.detailRecipeData = DetailRecipeModel(foodName: foodNameData, foodLevel: foodLevelData, foodTime: foodTimeData, foodCategory: foodCategoryData, ingredients: ingredientData, contents: contentsData, userName: userNameData, userUID: userUIDData, heartPeople: heartData, imageFile: imageFileData, urlArray: urlData, commentCount: commentCountData)
                 }
                 
                 DispatchQueue.main.async {
                     CustomLoadingView.shared.stopLoading()
                     self.checkUserState() //현재 레시피와 내 정보를 비교.
                     self.recipeTableView.reloadData()
+                    self.goToCommentView()
                 }
             }
         }
@@ -158,12 +169,14 @@ extension RecipeViewController : UITableViewDataSource {
     //headerview
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let recipeHeaderView = DetailRecipeHeaderView()
-        
         recipeHeaderView.delegate = self
-        recipeHeaderView.name = recipeData.userName
-        recipeHeaderView.commentsCount = detailRecipeData.commentCount
-        recipeHeaderView.recipeData = recipeData
-        recipeHeaderView.ingredientsTextView.text = detailRecipeData.ingredients
+        
+        let urlCount = detailRecipeData.urlArray.count
+        
+        if urlCount != 0 { //url 데이터가 모두 들어오고 나서 헤더뷰에 데이터가 들어가도록
+            recipeHeaderView.recipeHeaderData = DetailRecipeHeaderModel(foodName: detailRecipeData.foodName, foodLevel: detailRecipeData.foodLevel, foodTime: detailRecipeData.foodTime, foodCategory: detailRecipeData.foodCategory, heartPeopleCount: detailRecipeData.heartPeople.count, commentCount: detailRecipeData.commentCount, ingredients: detailRecipeData.ingredients, url: detailRecipeData.urlArray[urlCount - 1], userName: detailRecipeData.userName)
+        }
+        
         
         return recipeHeaderView
     }
@@ -190,17 +203,14 @@ extension RecipeViewController : UITableViewDelegate {
 extension RecipeViewController : RecipeHeaderDelegate {
     func heartButtonPressed() {
         let vc = HeartClickedUsersViewController()
-        vc.delegate = self
-        vc.myName = self.myName
-        vc.documentID = self.recipeData.documentID
-        vc.heartUserUidArray = self.recipeData.heartPeople
+        vc.documentID = self.recipeDocumentID
+        vc.heartUserUidArray = self.detailRecipeData.heartPeople
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func userButtonPressed() {
         let vc = MyRecipeViewController()
-        vc.myName = self.myName
-        vc.userName = recipeData.userName
+        vc.userName = detailRecipeData.userName
         vc.userUid = detailRecipeData.userUID
         
         self.navigationController?.pushViewController(vc, animated: true)
@@ -208,20 +218,13 @@ extension RecipeViewController : RecipeHeaderDelegate {
     
     func commentsButtonPressed() {
         let vc = CommentsViewController()
-        vc.recipeDocumentID = recipeData.documentID
-        vc.myName = self.myName
+        vc.recipeDocumentID = self.recipeDocumentID
+        vc.recipeUserUID = detailRecipeData.userUID
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
-//heartclickedview에서 전달한 하트 갯수 변경사항.
-extension RecipeViewController : HeartButtonClickedDelegate {
-    func clickedButton(heartUserData: [String]) {
-        recipeData.heartPeople = heartUserData
-        self.recipeTableView.reloadData()
-    }
-}
 
 //데이터 삭제와 수정에 대한 alert
 extension RecipeViewController {
@@ -253,15 +256,17 @@ extension RecipeViewController {
         
         //마지막으로 변경해두었던 대표이미지를 다시 첫번째로 돌리고 url데이터 넘겨줌.
         var urlArray = detailRecipeData.urlArray
+        let url = urlArray[urlArray.count - 1]
         urlArray.removeLast()
-        urlArray.insert(recipeData.url, at: 0)
+        urlArray.insert(url, at: 0)
         
-        vc.modifyRecipeData = ModifyRecipeDataModel(foodName: recipeData.foodName,
-                                                    foodCategory: recipeData.foodCategory,
-                                                    foodLevel: recipeData.foodLevel, foodTime: recipeData.foodTime,
+        vc.modifyRecipeData = ModifyRecipeDataModel(foodName: detailRecipeData.foodName,
+                                                    foodCategory: detailRecipeData.foodCategory,
+                                                    foodLevel: detailRecipeData.foodLevel,
+                                                    foodTime: detailRecipeData.foodTime,
                                                     contents: detailRecipeData.contents,
                                                     ingredients: detailRecipeData.ingredients,
-                                                    urlArray: urlArray, documentID: recipeData.documentID)
+                                                    urlArray: urlArray, documentID: self.recipeDocumentID)
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -291,27 +296,13 @@ extension RecipeViewController {
     
     //레시피 데이터삭제
     private func deleteRecipeData() {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
-        let documentID = self.recipeData.documentID
+        self.deleteCommentsData(documentID: self.recipeDocumentID) //레시피 댓글데이터 삭제
+        self.db.collection("전체보기").document(self.recipeDocumentID).delete() //레시피 데이터 삭제
+        self.deleteImageData(files: detailRecipeData.imageFile) //레시피 이미지들 삭제
         
-        db.collection("전체보기").document(documentID).getDocument { qs, error in
-            if let e = error {
-                print("Error 삭제 전 레시피 데이터 가져오기 실패 : \(e)")
-                DispatchQueue.main.async {
-                    CustomLoadingView.shared.stopLoading()
-                }
-            }else{
-                if let data = qs?.data() {
-                    
-                    guard let imageFileNameData = data[DataKeyWord.imageFile] as? [String] else{return}
-                    
-                    self.deleteImageData(files: imageFileNameData)
-                    self.deleteCommentsData(documentID: documentID)
-                    self.db.collection("전체보기").document(documentID).delete()
-                }
-            }
-        }
+        
     }
     
     //이미지 데이터 삭제

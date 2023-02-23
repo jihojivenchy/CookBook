@@ -158,7 +158,7 @@ final class WritePasswordViewController: UIViewController {
         guard let password = pwCheckTextField.text else{return}
         
         if check == "비밀번호가 일치합니다." {
-            CustomLoadingView.shared.startLoading(alpha: 0.5)
+            CustomLoadingView.shared.startLoading()
             self.firebaseRegister(email: self.email, password: password, nickName: self.nickName)
         }else{
             CustomAlert.show(title: "오류", subMessage: "비밀번호를 확인해주세요.")

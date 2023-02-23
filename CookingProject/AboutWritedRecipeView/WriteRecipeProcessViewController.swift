@@ -34,7 +34,6 @@ final class WriteRecipeProcessViewController: UIViewController {
     private let recipeTableView = UITableView(frame: .zero, style: .grouped)
     
     final var sendedArray : [String] = ["", "", "", ""]
-    final var myName = String()
     final var selectedTime = String()
     final var ingredients = String()
     private var contentsArray : [String] = ["", "", "", "", "", "", "", "", "", ""] //textview 작성 내용을 담는 곳
@@ -336,7 +335,7 @@ extension WriteRecipeProcessViewController {
 //Set Wrtied Recipe Data
 extension WriteRecipeProcessViewController {
     private func setUploadImage() {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
         var completionCount = 0 //for문이 끝나는 시점을 알기 위해서.
         var saveUrlArray = [String](repeating: "", count: photoImageArray.count)  //image url들을 담는 공간
@@ -398,6 +397,7 @@ extension WriteRecipeProcessViewController {
         let convertDate = dfMatter.string(from: Date()) //date형식 원하는 형태로 format
         
         guard let user = Auth.auth().currentUser else{return}
+        guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
         
         self.db.collection("전체보기").addDocument(data: [DataKeyWord.foodName : self.sendedArray[2],
                                                       DataKeyWord.ingredients : self.ingredients,
@@ -409,7 +409,7 @@ extension WriteRecipeProcessViewController {
                                                       DataKeyWord.contents : FieldValue.arrayUnion(contents),
                                                       DataKeyWord.userUID : user.uid,
                                                       DataKeyWord.writedDate : convertDate,
-                                                      DataKeyWord.userName : self.myName,
+                                                      DataKeyWord.userName : myName,
                                                       DataKeyWord.url : FieldValue.arrayUnion(url),
                                                       DataKeyWord.imageFile : FieldValue.arrayUnion(imageFileTitle)])
         

@@ -49,7 +49,6 @@ final class CategoryViewController: UIViewController {
     }()
     
     final var selectedCategory = String()
-    final var myName = String()
     
 //MARK: - LifeCycle
     override func viewWillAppear(_ animated: Bool) {
@@ -146,7 +145,6 @@ final class CategoryViewController: UIViewController {
         if state == 1.0 {
             let vc = LevelViewController()
             vc.sendedArray[0] = self.selectedCategory
-            vc.myName = self.myName
             
             self.navigationController?.pushViewController(vc, animated: true)
         }else{

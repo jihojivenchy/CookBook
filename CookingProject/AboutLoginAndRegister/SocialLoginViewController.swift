@@ -284,7 +284,7 @@ final class SocialLoginViewController: UIViewController {
         if email == "", password == "" {
             CustomAlert.show(title: "오류", subMessage: "양식에 맞게 작성해주세요.")
         }else{
-            CustomLoadingView.shared.startLoading(alpha: 0.5)
+            CustomLoadingView.shared.startLoading()
             firebaseLogin(email: email, password: password)
         }
     }
@@ -294,7 +294,7 @@ final class SocialLoginViewController: UIViewController {
     }
     
     @objc func naverLoginPressed(_ sender : UIButton) {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         loginInstance?.requestThirdPartyLogin()
     }
     
@@ -312,7 +312,7 @@ final class SocialLoginViewController: UIViewController {
         authorizationController.performRequests()
         
         DispatchQueue.main.async {
-            CustomLoadingView.shared.startLoading(alpha: 0.5)
+            CustomLoadingView.shared.startLoading()
         }
     }
     
@@ -340,7 +340,7 @@ extension SocialLoginViewController : UITextFieldDelegate {
 //MARK: - KaKao Social Login
 extension SocialLoginViewController {
     private func kakaoInstallCheck() {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
         if (UserApi.isKakaoTalkLoginAvailable()) { //카톡 설치 확인
             
@@ -523,23 +523,7 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
                     let email = user.email ?? "abcde@"
                     let name = self.randomString(length: 5)
                     
-                    self.db.collection("Users").document(user.uid).setData([DataKeyWord.myName : name,
-                                                                               "email" : email,
-                                                                               "login" : "appleLogin"]) { err in
-                        
-                        if let e = err {
-                            print("Error 업데이트 실패 : \(e)")
-                            
-                            self.db.collection("Users").document(user.uid).setData([DataKeyWord.myName : name,
-                                                                                       "email" : email,
-                                                                                       "login" : "appleLogin"])
-                        }else{
-                            DispatchQueue.main.async {
-                                CustomLoadingView.shared.stopLoading()
-                                self.navigationController?.popViewController(animated: true)
-                            }
-                        }
-                    }
+                    self.setAppleLoginUser(userUID: user.uid, email: email, name: name)
                 }
             }
         }
@@ -588,6 +572,39 @@ extension SocialLoginViewController : ASAuthorizationControllerDelegate{
         return result
     }
     
+    //유저가 새로 회원가입한것이라면 데이터 저장, 아니면 로그인 진행
+    private func setAppleLoginUser(userUID : String, email : String, name : String){
+        self.db.collection("Users").document(userUID).getDocument { document, error in
+            if let e = error {
+                print("Error 유저 정보 찾기 실패 : \(e)")
+                
+            }else{
+                if (document?.data()) != nil { //유저가 이미 기존 회원이라면 로그인 완료.
+                    DispatchQueue.main.async {
+                        CustomLoadingView.shared.stopLoading()
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    
+                    
+                }else{ //유저가 회원가입을 했을 경우 유저 데이터 심어주기.
+                    self.db.collection("Users").document(userUID).setData([DataKeyWord.myName : name,
+                                                                               "email" : email,
+                                                                               "login" : "appleLogin"]) { err in
+
+                        if let e = err {
+                            print("Error 업데이트 실패 : \(e)")
+
+                        }else{
+                            DispatchQueue.main.async {
+                                CustomLoadingView.shared.stopLoading()
+                                self.navigationController?.popViewController(animated: true)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension SocialLoginViewController : ASAuthorizationControllerPresentationContextProviding {

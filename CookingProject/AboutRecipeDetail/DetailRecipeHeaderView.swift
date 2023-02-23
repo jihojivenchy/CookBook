@@ -11,17 +11,15 @@ import Kingfisher
 
 final class DetailRecipeHeaderView: UIView {
     static let identifier = "DetailRecipeHeader"
+    
     final var delegate : RecipeHeaderDelegate?
-    final var recipeData : RecipeDataModel = RecipeDataModel(foodName: "", userName: "", heartPeople: [], foodLevel: "", foodTime: "", writedDate: "", url: "", foodCategory: "", documentID: "") {
+    final var recipeHeaderData = DetailRecipeHeaderModel(foodName: "", foodLevel: "", foodTime: "", foodCategory: "", heartPeopleCount: 0, commentCount: 0, ingredients: "", url: "", userName: ""){
         didSet{
             addSubViews()
             viewBorderCustom()
         }
     }
-    
-    final var name = String() //쉐프 닉네임
-    final var commentsCount = Int() //댓글 갯수
-    
+
     final let titleFoodImage = UIImageView()
     final let backGroundView = UIView()
     
@@ -36,7 +34,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
-        configuration.title = "\(recipeData.heartPeople.count)개"
+        configuration.title = "\(recipeHeaderData.heartPeopleCount)개"
         configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
@@ -57,7 +55,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
-        configuration.title = recipeData.foodCategory
+        configuration.title = recipeHeaderData.foodCategory
         configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
@@ -77,7 +75,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
-        configuration.title = recipeData.foodLevel
+        configuration.title = recipeHeaderData.foodLevel
         configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
@@ -97,7 +95,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .top
         configuration.imagePadding = 5
-        configuration.title = recipeData.foodTime
+        configuration.title = recipeHeaderData.foodTime
         configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         configuration.baseBackgroundColor = .customSignature
         
@@ -117,7 +115,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .leading
         configuration.imagePadding = 7
-        configuration.title = self.name
+        configuration.title = recipeHeaderData.userName
         configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 16)
         configuration.baseBackgroundColor = .clear
         
@@ -137,7 +135,7 @@ final class DetailRecipeHeaderView: UIView {
         configuration.image = image
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 5
-        configuration.title = "댓글 \(self.commentsCount)개"
+        configuration.title = "댓글 \(recipeHeaderData.commentCount)개"
         configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 16)
         configuration.baseBackgroundColor = .clear
         
@@ -182,7 +180,7 @@ final class DetailRecipeHeaderView: UIView {
         let width = self.frame.size.width
         
         addSubview(titleFoodImage)
-        titleFoodImage.setImage(with: recipeData.url, width: width, height: 400)
+        titleFoodImage.setImage(with: recipeHeaderData.url, width: width, height: 400)
         titleFoodImage.backgroundColor = .clear
         titleFoodImage.snp.makeConstraints { make in
             make.top.right.left.equalToSuperview()
@@ -200,7 +198,7 @@ final class DetailRecipeHeaderView: UIView {
         }
         
         backGroundView.addSubview(titleFoodName)
-        titleFoodName.text = recipeData.foodName
+        titleFoodName.text = recipeHeaderData.foodName
         titleFoodName.textColor = .customNavy
         titleFoodName.font = UIFont(name: FontKeyWord.CustomFont, size: 25)
         titleFoodName.snp.makeConstraints { make in
@@ -238,6 +236,7 @@ final class DetailRecipeHeaderView: UIView {
         }
         
         backGroundView.addSubview(ingredientsTextView)
+        ingredientsTextView.text = recipeHeaderData.ingredients
         ingredientsTextView.snp.makeConstraints { make in
             make.top.equalTo(ingredientsLabel.snp_bottomMargin).offset(15)
             make.left.right.equalToSuperview().inset(15)
@@ -286,16 +285,6 @@ final class DetailRecipeHeaderView: UIView {
         self.delegate?.commentsButtonPressed()
     }
     
-    final func updateHeight(changeHeight : CGFloat) {
-//        let height = max(changeHeight, 400)
-//        
-//        print(height)
-//        
-//        self.titleFoodImage.snp.updateConstraints { make in
-//            make.top.equalToSuperview()
-//            make.height.equalTo(height)
-//        }
-    }
 }
 
 protocol RecipeHeaderDelegate {

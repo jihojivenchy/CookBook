@@ -23,10 +23,14 @@ final class CustomLoadingView {
         // Add the activity indicator to the view
         let windowScene = UIApplication.shared.connectedScenes.first {$0.activationState == .foregroundActive} as? UIWindowScene
         windowScene?.windows.first?.addSubview(backgroundView)
-        windowScene?.windows.first?.addSubview(activityIndicator)
+        backgroundView.addSubview(activityIndicator)
+//        windowScene?.windows.first?.addSubview(activityIndicator)
         
+        backgroundView.clipsToBounds = true
+        backgroundView.layer.cornerRadius = 7
         backgroundView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
+            make.centerX.centerY.equalToSuperview()
+            make.width.height.equalTo(90)
         }
         activityIndicator.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
@@ -35,10 +39,10 @@ final class CustomLoadingView {
         backgroundView.isHidden = true
     }
     
-    final func startLoading(alpha : CGFloat) {
+    final func startLoading() {
         // Start the animation
         activityIndicator.startAnimating()
-        backgroundView.backgroundColor = UIColor.black.withAlphaComponent(alpha)
+        backgroundView.backgroundColor = UIColor.white
         backgroundView.isHidden = false
     }
     

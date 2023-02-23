@@ -16,9 +16,8 @@ final class ShowRecipeViewController: UIViewController {
     private let db = Firestore.firestore()
     private var lastSnapshotDocument : QueryDocumentSnapshot? //스크롤이 다되면 다음 데이터 가져오기
     private var collection : Query?                           //분기를 통해 쿼리조건을 설정할 변수
-    final var myName = String()
     
-    private var recipeDataArray : [RecipeDataModel] = []
+    private var showRecipeDataArray : [ShowRecipeDataModel] = []
     private var blockUserArray : [String] = []
     
     private lazy var backButton : UIBarButtonItem = {
@@ -54,7 +53,7 @@ final class ShowRecipeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         setQuery(category: "\(self.categoryArray[selectedIndex])")
         getBlockedUserData()
         getRecipeData()
@@ -177,21 +176,21 @@ extension ShowRecipeViewController {
 extension ShowRecipeViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.recipeDataArray.count
+        return self.showRecipeDataArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ShowRecipeTableViewCell.identifier, for: indexPath) as! ShowRecipeTableViewCell
         
-        let url = recipeDataArray[indexPath.row].url //이미지 url이 저장되어 있는 배열에서 하나씩 가져오기.
+        let url = showRecipeDataArray[indexPath.row].url //이미지 url이 저장되어 있는 배열에서 하나씩 가져오기.
         cell.foodImageView.setImage(with: url, width: 150, height: 150)
         
         cell.contentView.isUserInteractionEnabled = false
-        cell.foodNameLable.text = recipeDataArray[indexPath.row].foodName
-        cell.userNameLabel.text = recipeDataArray[indexPath.row].userName
-        cell.heartCountLabel.text = "\(recipeDataArray[indexPath.row].heartPeople.count)"
-        cell.foodLevelLabel.text = recipeDataArray[indexPath.row].foodLevel
-        cell.timeLabel.text = recipeDataArray[indexPath.row].foodTime
+        cell.foodNameLable.text = showRecipeDataArray[indexPath.row].foodName
+        cell.userNameLabel.text = showRecipeDataArray[indexPath.row].userName
+        cell.heartCountLabel.text = "\(showRecipeDataArray[indexPath.row].heartPeople.count)"
+        cell.foodLevelLabel.text = showRecipeDataArray[indexPath.row].foodLevel
+        cell.timeLabel.text = showRecipeDataArray[indexPath.row].foodTime
         cell.indexRow = indexPath.row
         cell.tapDelegate = self
         
@@ -239,8 +238,7 @@ extension ShowRecipeViewController : CategoryCellClikedDelegate {
 extension ShowRecipeViewController : RecipeCellDoublTabDelegate {
     func singleTab(index: Int) { //셀의 이미지뷰를 뺀 나머지 영역을 한번 터치했을 때
         let vc = RecipeViewController()
-        vc.myName = self.myName
-        vc.recipeData = self.recipeDataArray[index]
+        vc.recipeDocumentID = showRecipeDataArray[index].documentID
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -248,17 +246,17 @@ extension ShowRecipeViewController : RecipeCellDoublTabDelegate {
         
         if let user = Auth.auth().currentUser { //로그인 유저일 때
             
-            if self.recipeDataArray[index].heartPeople.contains(user.uid){ //이미 좋아요를 눌렀다면
-                let filter = recipeDataArray[index].heartPeople.filter { $0 != user.uid}
-                recipeDataArray[index].heartPeople = filter
+            if self.showRecipeDataArray[index].heartPeople.contains(user.uid){ //이미 좋아요를 눌렀다면
+                let filter = showRecipeDataArray[index].heartPeople.filter { $0 != user.uid}
+                showRecipeDataArray[index].heartPeople = filter
                 self.recipeTableView.reloadData()
                 updateHeartPeopleData(index: index)
-                ToastMessage.shared.showToast(message: " \(recipeDataArray[index].foodName)에 좋아요를 취소했습니다. ", durationTime: 1.5, delayTime: 1.5, width: 250, view: self.view)
+                ToastMessage.shared.showToast(message: " \(showRecipeDataArray[index].foodName)에 좋아요를 취소했습니다. ", durationTime: 1.5, delayTime: 1.5, width: 250, view: self.view)
             }else{
-                self.recipeDataArray[index].heartPeople.append(user.uid)
+                self.showRecipeDataArray[index].heartPeople.append(user.uid)
                 self.recipeTableView.reloadData()
                 updateHeartPeopleData(index: index)
-                ToastMessage.shared.showToast(message: " \(recipeDataArray[index].foodName)에 좋아요를 눌렀습니다. ", durationTime: 1.5, delayTime: 1.5, width: 250, view: self.view)
+                ToastMessage.shared.showToast(message: " \(showRecipeDataArray[index].foodName)에 좋아요를 눌렀습니다. ", durationTime: 1.5, delayTime: 1.5, width: 250, view: self.view)
             }
             
         }else{
@@ -267,8 +265,8 @@ extension ShowRecipeViewController : RecipeCellDoublTabDelegate {
     }
     
     private func updateHeartPeopleData(index : Int) {
-        let path = db.collection("전체보기").document(recipeDataArray[index].documentID)
-        path.updateData([DataKeyWord.heartPeople : self.recipeDataArray[index].heartPeople])
+        let path = db.collection("전체보기").document(showRecipeDataArray[index].documentID)
+        path.updateData([DataKeyWord.heartPeople : self.showRecipeDataArray[index].heartPeople])
         
     }
 }
@@ -304,7 +302,7 @@ extension ShowRecipeViewController {
                     CustomLoadingView.shared.stopLoading()
                 }
             }else{
-                self.recipeDataArray = []
+                self.showRecipeDataArray = []
                 guard let snapshotDocuments = querySnapshot?.documents else{return} //도큐먼트들에 접근
                 
                 for doc in snapshotDocuments{
@@ -315,16 +313,14 @@ extension ShowRecipeViewController {
                     guard let heartPeopleData = data[DataKeyWord.heartPeople] as? [String] else{return}
                     guard let levelData = data[DataKeyWord.foodLevel] as? String else{return}
                     guard let timeData = data[DataKeyWord.foodTime] as? String else{return}
-                    guard let dateData = data[DataKeyWord.writedDate] as? String else{return}
-                    guard let categoryData = data[DataKeyWord.foodCategory] as? String else{return}
                     guard let urlData = data[DataKeyWord.url] as? [String] else{return}
                     guard let userUidData = data[DataKeyWord.userUID] as? String else{return} //유저 차단용
                     
-                    let findData = RecipeDataModel(foodName: foodNameData, userName: userNameData, heartPeople: heartPeopleData, foodLevel: levelData, foodTime: timeData, writedDate: dateData, url: urlData[0], foodCategory: categoryData, documentID: doc.documentID)
-                    
                     if self.blockUserArray.contains(userUidData){ //가져온 데이터가 차단한 유저라면 추가하지 않음.
                     }else{
-                        self.recipeDataArray.append(findData)
+                        let findData = ShowRecipeDataModel(foodName: foodNameData, userName: userNameData, heartPeople: heartPeopleData, foodLevel: levelData, foodTime: timeData, url: urlData[0], documentID: doc.documentID)
+                        
+                        self.showRecipeDataArray.append(findData)
                     }
                 }
                 

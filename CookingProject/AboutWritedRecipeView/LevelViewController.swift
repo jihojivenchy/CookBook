@@ -68,7 +68,6 @@ final class LevelViewController: UIViewController {
     
     final var sendedArray : [String] = ["", "", "", ""]
     final var selectedTime = String()
-    final var myName = String()
     
 //MARK: - LifeCycle
     override func viewDidLoad() {
@@ -202,7 +201,6 @@ final class LevelViewController: UIViewController {
             }else{
                 let vc = WriteTitleAndIngredientViewController()
                 vc.sendedArray = self.sendedArray
-                vc.myName = self.myName
                 vc.selectedTime = self.selectedTime
                 
                 self.navigationController?.pushViewController(vc, animated: true)

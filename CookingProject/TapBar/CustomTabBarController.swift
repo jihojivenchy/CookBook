@@ -16,7 +16,7 @@ final class CustomTabBarController: UITabBarController, UITabBarControllerDelega
         let tabBarFirstItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
         homeNavigationController.tabBarItem = tabBarFirstItem
         
-        let notiNavigationController = UINavigationController(rootViewController: SignalViewController())
+        let notiNavigationController = UINavigationController(rootViewController: ManageNotificationViewController())
         let tabBarSecondItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 1)
         notiNavigationController.tabBarItem = tabBarSecondItem
         

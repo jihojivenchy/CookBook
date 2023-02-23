@@ -17,10 +17,11 @@ import Kingfisher
 final class HomeViewController: UIViewController{
 //MARK: - Properties
     private let db = Firestore.firestore()
-    private var myInformationData : MyInformationData = .init(myName: "", myEmail: "", loginInfo: "")
+    private var myInformationData : MyInformationData = .init(myEmail: "", loginInfo: "")
     
     private lazy var backButton : UIBarButtonItem = {
         let sb = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
+        sb.tintColor = .customNavy
         
         return sb
     }()
@@ -119,7 +120,7 @@ final class HomeViewController: UIViewController{
         return cView
     }()
     
-    private var popularRecipeDataArray : [RecipeDataModel] = []
+    private var popularRecipeDataArray : [PopularRecipeDataModel] = []
     
     private var previousCellIndex : Int = 20 //지나간 cell은 다시 축소 이미지 animation 구현
     
@@ -156,7 +157,6 @@ final class HomeViewController: UIViewController{
     private let categoryArray : [String] = ["한식", "중식", "양식", "일식", "간식", "채식", "퓨전", "분식", "안주"]
     
     private let scrollView = UIScrollView()
-    private let whiteView = UIView()
     
 
 //MARK: - LifeCycle
@@ -173,7 +173,6 @@ final class HomeViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
 //        getPopularRecipeData()
-//        CustomLoadingView.shared.startLoading(alpha: 0.3)
         setCustomTabButton()
         addSubViews()
         naviBarAppearance()
@@ -400,22 +399,22 @@ final class HomeViewController: UIViewController{
         present(sideView, animated: true)
     }
     
-    @objc private func signalButtonPressed(_ sender : UIBarButtonItem) {
-        self.navigationController?.pushViewController(SignalViewController(), animated: true)
-    }
-    
     @objc private func homeButtonPressed(_ sender : UIButton) {
         self.tabBarController?.selectedIndex = 0
     }
     
     @objc private func plusButtonPressed(_ sender : UIButton) {
-        let vc = CategoryViewController()
-        vc.myName = self.myInformationData.myName
-        self.navigationController?.pushViewController(vc, animated: true)
+        if Auth.auth().currentUser != nil {
+            let vc = CategoryViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            CustomAlert.show(title: "로그인", subMessage: "로그인이 필요한 서비스입니다.")
+        }
     }
     
     @objc private func bellButtonPressed(_ sender : UIButton) {
-        self.tabBarController?.selectedIndex = 1
+        let vc = ManageNotificationViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
 //MARK: - Timer
@@ -610,14 +609,12 @@ extension HomeViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.tag == 0 {
             let vc = RecipeViewController()
-            vc.myName = self.myInformationData.myName
-            vc.recipeData = self.popularRecipeDataArray[indexPath.row % 5]
+            vc.recipeDocumentID = self.popularRecipeDataArray[indexPath.row % 5].documentID
             self.navigationController?.pushViewController(vc, animated: true)
             
         }else{
             let vc = ShowRecipeViewController()
             vc.selectedIndex = indexPath.row + 1
-            vc.myName = self.myInformationData.myName
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
@@ -630,9 +627,10 @@ extension HomeViewController : CellPushDelegate {
         switch index {
         case 0:    //마이 레시피.
             guard let user = Auth.auth().currentUser else{return}
+            guard let myName = UserDefaults.standard.string(forKey: "myName") else{return}
+            
             let vc = MyRecipeViewController()
-            vc.myName = self.myInformationData.myName
-            vc.userName = self.myInformationData.myName
+            vc.userName = myName
             vc.userUid = user.uid
             self.navigationController?.pushViewController(vc, animated: true)
 
@@ -671,16 +669,19 @@ extension HomeViewController {
                     guard let userNameData = userData["myName"] as? String else{return} //유저 닉네임
                     guard let userLoginData = userData["login"] as? String else{return}
                     
-                    self.myInformationData = MyInformationData(myName: userNameData, myEmail: userEmailData, loginInfo: userLoginData)
+                    self.myInformationData = MyInformationData(myEmail: userEmailData, loginInfo: userLoginData)
+                    
+                    UserDefaults.standard.set(userNameData, forKey: "myName")
                     
                     DispatchQueue.main.async {
-                        self.setIntroduceText(name: self.myInformationData.myName)
+                        self.setIntroduceText(name: userNameData)
                     }
                 }
             }
         }else{
             self.setIntroduceText(name: "회원")
-            self.myInformationData = .init(myName: "로그인", myEmail: "로그인이 필요합니다.", loginInfo: "")
+            self.myInformationData = .init(myEmail: "로그인이 필요합니다.", loginInfo: "")
+            UserDefaults.standard.set("", forKey: "myName")
         }
     }
     
@@ -714,7 +715,7 @@ extension HomeViewController {
 //추천 레시피에 올라올 레시피들 가져오기
 extension HomeViewController {
     private func getPopularRecipeData() {
-        CustomLoadingView.shared.startLoading(alpha: 0.5)
+        CustomLoadingView.shared.startLoading()
         
         db.collection("전체보기").order(by: DataKeyWord.heartPeople, descending: true).limit(to: 5).addSnapshotListener { qs, error in
             if let e = error {
@@ -736,11 +737,9 @@ extension HomeViewController {
                     guard let heartPeopleData = data[DataKeyWord.heartPeople] as? [String] else{return}
                     guard let levelData = data[DataKeyWord.foodLevel] as? String else{return}
                     guard let timeData = data[DataKeyWord.foodTime] as? String else{return}
-                    guard let dateData = data[DataKeyWord.writedDate] as? String else{return}
-                    guard let categoryData = data[DataKeyWord.foodCategory] as? String else{return}
                     guard let urlData = data[DataKeyWord.url] as? [String] else{return}
                     
-                    let findData = RecipeDataModel(foodName: foodNameData, userName: userNameData, heartPeople: heartPeopleData, foodLevel: levelData, foodTime: timeData, writedDate: dateData, url: urlData[0], foodCategory: categoryData, documentID: doc.documentID)
+                    let findData = PopularRecipeDataModel(foodName: foodNameData, userName: userNameData, heartPeople: heartPeopleData, foodLevel: levelData, foodTime: timeData, url: urlData[0], documentID: doc.documentID)
                     
                     self.popularRecipeDataArray.append(findData)
                 }

@@ -17,7 +17,7 @@ import SideMenu
 final class SideMenuViewController: UIViewController {
     //MARK: - Properties
     private let db = Firestore.firestore()
-    final var myInformationData : MyInformationData = .init(myName: "", myEmail: "", loginInfo: "")
+    final var myInformationData : MyInformationData = .init(myEmail: "", loginInfo: "")
     final var pushDelegate : CellPushDelegate?
     
     private lazy var backButton : UIBarButtonItem = {
@@ -148,7 +148,7 @@ extension SideMenuViewController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let customHeaderView = SideMenuHeaderView()
         
-        customHeaderView.nameLabel.text = self.myInformationData.myName
+        customHeaderView.nameLabel.text = UserDefaults.standard.string(forKey: "myName") ?? ""
         customHeaderView.emailLabel.text = self.myInformationData.myEmail
         customHeaderView.delegate = self
         
@@ -229,7 +229,7 @@ extension SideMenuViewController {
     }
     
     private func goToLogout() {
-        //유저가 로그인을 어떤 방식을 사용했는지
+        //유저가 어떤 로그인 방식을 사용했는지
         switch myInformationData.loginInfo {
             
         case "kakao":
@@ -261,6 +261,7 @@ extension SideMenuViewController {
         }
         
         DispatchQueue.main.async {
+            UserDefaults.standard.set("", forKey: "myName")
             self.navigationController?.pushViewController(SocialLoginViewController(), animated: true)
         }
     }

@@ -65,7 +65,6 @@ final class WriteTitleAndIngredientViewController: UIViewController {
     }()
     
     final var sendedArray : [String] = ["", "", "", ""]
-    final var myName = String()
     final var selectedTime = String()
     
 //MARK: - LifeCycle
@@ -210,7 +209,6 @@ final class WriteTitleAndIngredientViewController: UIViewController {
                 
                 let vc = WriteRecipeProcessViewController()
                 vc.sendedArray = self.sendedArray
-                vc.myName = self.myName
                 vc.selectedTime = self.selectedTime
                 vc.ingredients = ingreText
                 
