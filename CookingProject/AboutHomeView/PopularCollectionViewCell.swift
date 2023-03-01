@@ -12,19 +12,21 @@ final class PopularCollectionViewCell: UICollectionViewCell {
     static let identifier = "popularCell"
     
     final let foodImageView = UIImageView()
-    
     final let explainView = UIView()
+    final let foodNameLabel = UILabel()
+    final let explainStackView = UIStackView()
     
-    final let foodLabel = UILabel()
-    
-    final let personImageView = UIImageView()
-    final let nameLabel = UILabel()
-    
+    final let firstStackView = UIStackView()
     final let heartImageView = UIImageView()
     final let heartCountLabel = UILabel()
     
-    final let levelImageView = UIImageView()
-    final let levelLabel = UILabel()
+    final let secondStackView = UIStackView()
+    final let foodLevelImageView = UIImageView()
+    final let foodLevelLabel = UILabel()
+    
+    final let thirdStackView = UIStackView()
+    final let foodTimeImageView = UIImageView()
+    final let foodTimeLabel = UILabel()
     
     override init(frame: CGRect) {
             super.init(frame: frame)
@@ -46,7 +48,7 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         foodImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.left.right.equalToSuperview()
-            make.bottom.equalToSuperview().inset(35)
+            make.bottom.equalToSuperview().inset(55)
         }
         
         addSubview(explainView)
@@ -61,73 +63,83 @@ final class PopularCollectionViewCell: UICollectionViewCell {
         explainView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(5)
             make.left.right.equalToSuperview().inset(15)
-            make.height.equalTo(65)
+            make.height.equalTo(85)
         }
         
-        explainView.addSubview(foodLabel)
-        foodLabel.textColor = .customNavy
-        foodLabel.textAlignment = .center
-        foodLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
-        foodLabel.snp.makeConstraints { make in
+        explainView.addSubview(foodNameLabel)
+        foodNameLabel.textColor = .customNavy
+        foodNameLabel.textAlignment = .center
+        foodNameLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 17)
+        foodNameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(10)
             make.left.right.equalToSuperview().inset(15)
             make.height.equalTo(20)
         }
         
-        explainView.addSubview(personImageView)
-        personImageView.image = UIImage(systemName: "person.fill")
-        personImageView.tintColor = .customSignature
-        personImageView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(10)
-            make.left.equalToSuperview().inset(20)
-            make.width.height.equalTo(13)
+        explainView.addSubview(explainStackView)
+        explainStackView.backgroundColor = .clear
+        explainStackView.axis = .horizontal
+        explainStackView.distribution = .fillEqually
+        explainStackView.alignment = .center
+        explainStackView.spacing = 0
+        explainStackView.snp.makeConstraints { make in
+            make.top.equalTo(foodNameLabel.snp_bottomMargin).offset(15)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(40)
         }
         
-        explainView.addSubview(nameLabel)
-        nameLabel.textColor = .customNavy
-        nameLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
-        nameLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(personImageView)
-            make.left.equalTo(personImageView.snp_rightMargin).offset(10)
-            make.width.equalTo(70)
-            make.height.equalTo(13)
-        }
-        
-        explainView.addSubview(heartImageView)
         heartImageView.image = UIImage(systemName: "suit.heart.fill")
         heartImageView.tintColor = .customSignature
         heartImageView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(10)
-            make.centerX.equalToSuperview()
-            make.width.height.equalTo(13)
+            make.width.height.equalTo(15)
         }
+        heartCountLabel.textColor = .customSignature
+        heartCountLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         
-        explainView.addSubview(heartCountLabel)
-        heartCountLabel.textColor = .customNavy
-        heartCountLabel.font = .boldSystemFont(ofSize: 12) //ChosunCentennial
-        heartCountLabel.sizeToFit()
-        heartCountLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(heartImageView)
-            make.left.equalTo(heartImageView.snp_rightMargin).offset(10)
+        firstStackView.backgroundColor = .clear
+        firstStackView.axis = .vertical
+        firstStackView.distribution = .fill
+        firstStackView.alignment = .center
+        firstStackView.spacing = 5
+        firstStackView.addArrangedSubview(heartImageView)
+        firstStackView.addArrangedSubview(heartCountLabel)
+        
+        
+        foodLevelImageView.image = UIImage(systemName: "chart.bar.fill")
+        foodLevelImageView.tintColor = .customSignature
+        foodLevelImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(15)
         }
+        foodLevelLabel.textColor = .customSignature
+        foodLevelLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         
-        explainView.addSubview(levelLabel)
-        levelLabel.textColor = .customNavy
-        levelLabel.font = .boldSystemFont(ofSize: 12)
-        levelLabel.sizeToFit()
-        levelLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(heartImageView)
-            make.right.equalToSuperview().inset(20)
+        secondStackView.backgroundColor = .clear
+        secondStackView.axis = .vertical
+        secondStackView.distribution = .fill
+        secondStackView.alignment = .center
+        secondStackView.spacing = 5
+        secondStackView.addArrangedSubview(foodLevelImageView)
+        secondStackView.addArrangedSubview(foodLevelLabel)
+        
+        foodTimeImageView.image = UIImage(systemName: "alarm.fill")
+        foodTimeImageView.tintColor = .customSignature
+        foodTimeImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(15)
         }
+        foodTimeLabel.textColor = .customSignature
+        foodTimeLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
         
-        explainView.addSubview(levelImageView)
-        levelImageView.image = UIImage(systemName: "chart.bar.fill")
-        levelImageView.tintColor = .customSignature
-        levelImageView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(10)
-            make.right.equalToSuperview().inset(45)
-            make.width.height.equalTo(13)
-        }
+        thirdStackView.backgroundColor = .clear
+        thirdStackView.axis = .vertical
+        thirdStackView.distribution = .fill
+        thirdStackView.alignment = .center
+        thirdStackView.spacing = 5
+        thirdStackView.addArrangedSubview(foodTimeImageView)
+        thirdStackView.addArrangedSubview(foodTimeLabel)
         
+        
+        explainStackView.addArrangedSubview(firstStackView)
+        explainStackView.addArrangedSubview(secondStackView)
+        explainStackView.addArrangedSubview(thirdStackView)
     }
 }

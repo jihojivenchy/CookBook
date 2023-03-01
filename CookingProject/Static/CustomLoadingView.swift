@@ -14,7 +14,7 @@ final class CustomLoadingView {
     
     final let backgroundView = UIView()
     final let activityIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50),
-                                                          type: .pacman,
+                                                          type: .ballRotateChase,
                                                           color: .customSignature,
                                                           padding: 0)
     

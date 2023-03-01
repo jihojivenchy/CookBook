@@ -197,9 +197,9 @@ extension MyRecipeViewController : UICollectionViewDataSource, UICollectionViewD
         let url = myRecipeDataArray[indexPath.row].url //이미지 url이 저장되어 있는 배열에서 하나씩 가져오기.
         cell.foodImageView.setImage(with: url, width: 150, height: 150)
         
-        cell.commentCount = myRecipeDataArray[indexPath.row].commentCount
-        cell.heartCount = myRecipeDataArray[indexPath.row].heartPeopleCount
-        cell.foodCategory = myRecipeDataArray[indexPath.row].foodCategory
+        cell.commentCountLabel.text = "\(myRecipeDataArray[indexPath.row].commentCount)"
+        cell.heartCountLabel.text = "\(myRecipeDataArray[indexPath.row].heartPeopleCount)"
+        cell.foodCategoryLabel.text = myRecipeDataArray[indexPath.row].foodCategory
         cell.foodNameLable.text = myRecipeDataArray[indexPath.row].foodName
         cell.dateLabel.text = myRecipeDataArray[indexPath.row].writedDate
         
@@ -239,6 +239,7 @@ extension MyRecipeViewController : UICollectionViewDataSource, UICollectionViewD
             
         default:
             assert(false, "faile")
+            return UICollectionReusableView()
         }
     }
     

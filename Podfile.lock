@@ -454,13 +454,10 @@ PODS:
   - NVActivityIndicatorView (5.1.1):
     - NVActivityIndicatorView/Base (= 5.1.1)
   - NVActivityIndicatorView/Base (5.1.1)
-  - Pageboy (3.6.2)
   - PromisesObjC (2.1.0)
   - SCLAlertView (0.8)
   - SideMenu (6.5.0)
   - SnapKit (5.6.0)
-  - Tabman (2.12.0):
-    - Pageboy (~> 3.6.0)
 
 DEPENDENCIES:
   - BSImagePicker (~> 3.1)
@@ -477,7 +474,6 @@ DEPENDENCIES:
   - SCLAlertView
   - SideMenu
   - SnapKit (~> 5.6.0)
-  - Tabman (~> 2.11)
 
 SPEC REPOS:
   trunk:
@@ -505,12 +501,10 @@ SPEC REPOS:
     - nanopb
     - naveridlogin-sdk-ios
     - NVActivityIndicatorView
-    - Pageboy
     - PromisesObjC
     - SCLAlertView
     - SideMenu
     - SnapKit
-    - Tabman
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
@@ -537,13 +531,11 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   naveridlogin-sdk-ios: 4351fe7162cd6b8b6dbb37bd7cc205304fa1d889
   NVActivityIndicatorView: 1f6c5687f1171810aa27a3296814dc2d7dec3667
-  Pageboy: cf121b9dd48c63f3f281b2a9ec93d02e0f23879b
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
   SideMenu: f583187d21c5b1dd04c72002be544b555a2627a2
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
-  Tabman: 447a50447ed2869c39ab3b1a779327e43e067c4e
 
-PODFILE CHECKSUM: b9dabdfa97a7222debbcf366fd160de8c6ca6a01
+PODFILE CHECKSUM: cd697347515ae033154cfa4477a778a03de0e75d
 
 COCOAPODS: 1.11.3

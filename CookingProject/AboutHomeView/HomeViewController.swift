@@ -106,7 +106,7 @@ final class HomeViewController: UIViewController{
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         flowLayout.minimumLineSpacing = 20
-        flowLayout.itemSize = .init(width: 250, height: 300)
+        flowLayout.itemSize = .init(width: 250, height: 320)
         let inset = (UIScreen.main.bounds.width - 250) / 2
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
         
@@ -172,7 +172,7 @@ final class HomeViewController: UIViewController{
    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        getPopularRecipeData()
+        getPopularRecipeData()
         setCustomTabButton()
         addSubViews()
         naviBarAppearance()
@@ -263,7 +263,7 @@ final class HomeViewController: UIViewController{
         backGroundView2.snp.makeConstraints { make in
             make.top.equalTo(backGroundView.snp_bottomMargin).offset(30)
             make.left.right.equalTo(view)
-            make.height.equalTo(450)
+            make.height.equalTo(460)
         }
         
         backGroundView2.addSubview(popularLabel)
@@ -281,7 +281,7 @@ final class HomeViewController: UIViewController{
         popularCollectionView.snp.makeConstraints { make in
             make.top.equalTo(popularLabel.snp_bottomMargin).offset(30)
             make.left.right.equalToSuperview()
-            make.height.equalTo(300)
+            make.height.equalTo(320)
         }
         
         backGroundView2.addSubview(pageControl)
@@ -557,11 +557,12 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
             
             cell.foodImageView.setImage(with: url, width: 250, height: 265)
             
-            cell.foodLabel.text = popularRecipeDataArray[indexPath.row % 5].foodName
-            cell.nameLabel.text = popularRecipeDataArray[indexPath.row % 5].userName
-            cell.heartCountLabel.text = "\(popularRecipeDataArray[indexPath.row % 5].heartPeople.count)"
-            cell.levelLabel.text = popularRecipeDataArray[indexPath.row % 5].foodLevel
+            let data = popularRecipeDataArray[indexPath.row % 5]
             
+            cell.heartCountLabel.text = "\(data.heartPeople)개"
+            cell.foodLevelLabel.text = data.foodLevel
+            cell.foodTimeLabel.text = data.foodTime
+            cell.foodNameLabel.text = data.foodName
             
             if indexPath.row != self.previousCellIndex {
                 cell.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
@@ -592,7 +593,7 @@ extension HomeViewController : UICollectionViewDataSource, UICollectionViewDeleg
         
         if collectionView.tag == 0 {
             
-            size = CGSize(width: 250, height: 300)
+            size = CGSize(width: 250, height: 320)
             
         }else{
             let width = collectionView.frame.width / 3
@@ -658,6 +659,7 @@ extension HomeViewController : CellPushDelegate {
 extension HomeViewController {
     private func getUsereData(){
         if let user = Auth.auth().currentUser {
+            CustomLoadingView.shared.startLoading()
             
             db.collection("Users").document("\(user.uid)").getDocument { qs, error in
                 if let e = error {
@@ -675,6 +677,7 @@ extension HomeViewController {
                     
                     DispatchQueue.main.async {
                         self.setIntroduceText(name: userNameData)
+                        CustomLoadingView.shared.stopLoading()
                     }
                 }
             }
@@ -715,14 +718,9 @@ extension HomeViewController {
 //추천 레시피에 올라올 레시피들 가져오기
 extension HomeViewController {
     private func getPopularRecipeData() {
-        CustomLoadingView.shared.startLoading()
-        
         db.collection("전체보기").order(by: DataKeyWord.heartPeople, descending: true).limit(to: 5).addSnapshotListener { qs, error in
             if let e = error {
                 print("Error 좋아요 레시피 가져오기 실패 : \(e)")
-                DispatchQueue.main.async {
-                    CustomLoadingView.shared.stopLoading()
-                }
             }else{
                 self.popularRecipeDataArray = []
                 self.timer.invalidate() //timer 초기화. 중복 가능성 제거.
@@ -733,19 +731,17 @@ extension HomeViewController {
                     let data = doc.data()   //도큐먼트 안에 데이터에 접근
                     
                     guard let foodNameData = data[DataKeyWord.foodName] as? String else{return}
-                    guard let userNameData = data[DataKeyWord.userName] as? String else{return}
                     guard let heartPeopleData = data[DataKeyWord.heartPeople] as? [String] else{return}
                     guard let levelData = data[DataKeyWord.foodLevel] as? String else{return}
                     guard let timeData = data[DataKeyWord.foodTime] as? String else{return}
                     guard let urlData = data[DataKeyWord.url] as? [String] else{return}
                     
-                    let findData = PopularRecipeDataModel(foodName: foodNameData, userName: userNameData, heartPeople: heartPeopleData, foodLevel: levelData, foodTime: timeData, url: urlData[0], documentID: doc.documentID)
+                    let findData = PopularRecipeDataModel(foodName: foodNameData, heartPeople: heartPeopleData.count, foodLevel: levelData, foodTime: timeData, url: urlData[0], documentID: doc.documentID)
                     
                     self.popularRecipeDataArray.append(findData)
                 }
                 
                 DispatchQueue.main.async {
-                    CustomLoadingView.shared.stopLoading()
                     self.popularCollectionView.reloadData()
                     self.popularCollectionView.scrollToItem(at: IndexPath(item: 20, section: 0),
                                                         at: .centeredHorizontally,

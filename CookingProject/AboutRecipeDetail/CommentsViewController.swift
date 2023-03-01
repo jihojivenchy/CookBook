@@ -77,8 +77,8 @@ final class CommentsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         CustomLoadingView.shared.startLoading()
+        
         getBlockedUserData()
         getCommentsData()
         addSubViews()

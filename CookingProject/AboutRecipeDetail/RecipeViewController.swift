@@ -190,6 +190,11 @@ extension RecipeViewController : UITableViewDataSource {
         if scrollView.contentOffset.y <= 0 {
             scrollView.contentOffset = CGPoint(x: 0, y: 0)
         }
+        
+        if scrollView.contentOffset.y < 380 {
+            let alpha = 1 - (-(scrollView.contentOffset.y / 380.0) * 100.0)
+            print(alpha)
+        }
     }
 }
 

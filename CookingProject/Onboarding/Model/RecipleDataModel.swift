@@ -19,8 +19,7 @@ struct ShowRecipeDataModel {
 
 struct PopularRecipeDataModel {
     var foodName : String
-    var userName : String
-    var heartPeople : [String]
+    var heartPeople : Int
     var foodLevel : String
     var foodTime : String
     var url : String

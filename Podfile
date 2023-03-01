@@ -7,7 +7,6 @@ target 'CookingProject' do
 
   pod 'SnapKit', '~> 5.6.0'
   pod 'lottie-ios'
-  pod 'Tabman', '~> 2.11'
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
   pod 'Firebase/Storage'

@@ -15,67 +15,19 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
     
     final let foodImageView = UIImageView()
     final let foodNameLable = UILabel()
-    
-    final var foodCategory = String() {
-        didSet{
-            addSubViews()
-        }
-    }
-    final var heartCount = Int()
-    final var commentCount = Int()
-    
-    private lazy var temaButton : UIButton = {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 13, weight: .regular, scale: .default)
-        let image = UIImage(systemName: "bookmark.fill", withConfiguration: imageConfig)
-        var configuration = UIButton.Configuration.tinted()
-        configuration.image = image
-        configuration.imagePlacement = .top
-        configuration.imagePadding = 5
-        configuration.title = foodCategory
-        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
-        configuration.baseBackgroundColor = .clear
-        
-        let button = UIButton(configuration: configuration)
-        button.tintColor = .customSignature
-        
-        return button
-    }()
-    
-    private lazy var heartButton : UIButton = {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 13, weight: .regular, scale: .default)
-        let image = UIImage(systemName: "suit.heart.fill", withConfiguration: imageConfig)
-        var configuration = UIButton.Configuration.tinted()
-        configuration.image = image
-        configuration.imagePlacement = .top
-        configuration.imagePadding = 5
-        configuration.title = "\(heartCount)개"
-        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
-        configuration.baseBackgroundColor = .clear
-        
-        let button = UIButton(configuration: configuration)
-        button.tintColor = .customSignature
-        
-        return button
-    }()
-    
-    private lazy var commentButton : UIButton = {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 13, weight: .regular, scale: .default)
-        let image = UIImage(systemName: "doc.text", withConfiguration: imageConfig)
-        var configuration = UIButton.Configuration.tinted()
-        configuration.image = image
-        configuration.imagePlacement = .top
-        configuration.imagePadding = 5
-        configuration.title = "\(commentCount)개"
-        configuration.attributedTitle?.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
-        configuration.baseBackgroundColor = .clear
-        
-        let button = UIButton(configuration: configuration)
-        button.tintColor = .customSignature
-        
-        return button
-    }()
-    
     final let stackView = UIStackView()
+    
+    final let firstStackView = UIStackView()
+    final let foodCategoryImageView = UIImageView()
+    final let foodCategoryLabel = UILabel()
+    
+    final let secondStackView = UIStackView()
+    final let heartImageView = UIImageView()
+    final let heartCountLabel = UILabel()
+    
+    final let thirdStackView = UIStackView()
+    final let commentImageView = UIImageView()
+    final let commentCountLabel = UILabel()
     
     final let dateLabel = UILabel()
     
@@ -84,7 +36,7 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        addSubViews()
     }
     
     required init?(coder: NSCoder) {
@@ -135,9 +87,60 @@ final class MyRecipeCollectionViewCell: UICollectionViewCell {
             make.height.equalTo(40)
         }
         
-        stackView.addArrangedSubview(temaButton)
-        stackView.addArrangedSubview(heartButton)
-        stackView.addArrangedSubview(commentButton)
+        
+        foodCategoryImageView.image = UIImage(systemName: "bookmark.fill")
+        foodCategoryImageView.tintColor = .customSignature
+        foodCategoryImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(15)
+        }
+        foodCategoryLabel.textColor = .customSignature
+        foodCategoryLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
+        
+        firstStackView.backgroundColor = .clear
+        firstStackView.axis = .vertical
+        firstStackView.distribution = .fill
+        firstStackView.alignment = .center
+        firstStackView.spacing = 5
+        firstStackView.addArrangedSubview(foodCategoryImageView)
+        firstStackView.addArrangedSubview(foodCategoryLabel)
+        
+        
+        heartImageView.image = UIImage(systemName: "suit.heart.fill")
+        heartImageView.tintColor = .customSignature
+        heartImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(15)
+        }
+        heartCountLabel.textColor = .customSignature
+        heartCountLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
+        
+        secondStackView.backgroundColor = .clear
+        secondStackView.axis = .vertical
+        secondStackView.distribution = .fill
+        secondStackView.alignment = .center
+        secondStackView.spacing = 5
+        secondStackView.addArrangedSubview(heartImageView)
+        secondStackView.addArrangedSubview(heartCountLabel)
+        
+        commentImageView.image = UIImage(systemName: "doc.text.fill")
+        commentImageView.tintColor = .customSignature
+        commentImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(15)
+        }
+        commentCountLabel.textColor = .customSignature
+        commentCountLabel.font = UIFont(name: FontKeyWord.CustomFont, size: 12)
+        
+        thirdStackView.backgroundColor = .clear
+        thirdStackView.axis = .vertical
+        thirdStackView.distribution = .fill
+        thirdStackView.alignment = .center
+        thirdStackView.spacing = 5
+        thirdStackView.addArrangedSubview(commentImageView)
+        thirdStackView.addArrangedSubview(commentCountLabel)
+        
+        
+        stackView.addArrangedSubview(firstStackView)
+        stackView.addArrangedSubview(secondStackView)
+        stackView.addArrangedSubview(thirdStackView)
         
         backGroundView.addSubview(dateLabel)
         dateLabel.textAlignment = .center
