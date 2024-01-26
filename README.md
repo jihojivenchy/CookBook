@@ -13,8 +13,17 @@
 </br>
 
 ## 🛠️ 기술
-- 프레임워크 및 라이브러리: UIKit, Firebase, SnapKit, KingFisher
-- 디자인패턴: MVC
+### iOS
+<a href="버튼을 눌렀을 때 이동할 링크" target="_blank"><img src="https://img.shields.io/badge/Swift-FF6C22?style=for-the-badge&logo=Swift&logoColor=FFFFFF"/></a>
+<a href="버튼을 눌렀을 때 이동할 링크" target="_blank"><img src="https://img.shields.io/badge/UIkit-2396F3?style=for-the-badge&logo=UIkit&logoColor=FFFFFF"/></a>
+<a href="버튼을 눌렀을 때 이동할 링크" target="_blank"><img src="https://img.shields.io/badge/Firebase-FFFBF5?style=for-the-badge&logo=firebase&logoColor=FF9843"/></a>
+<a href="버튼을 눌렀을 때 이동할 링크" target="_blank"><img src="https://img.shields.io/badge/KingFisher-3B66BC?style=for-the-badge&logo=librarything&logoColor=FFFFFF"/></a>
+
+### UI/UX Tool
+<a href="버튼을 눌렀을 때 이동할 링크" target="_blank"><img src="https://img.shields.io/badge/Snapkit-FF90BC?style=for-the-badge&logo=librarything&logoColor=FFFFFF"/></a>
+
+### Design Pattern
+<a href="버튼을 눌렀을 때 이동할 링크" target="_blank"><img src="https://img.shields.io/badge/MVC-7FC7D9?style=for-the-badge&logo=instructure&logoColor=FFFFFF"/></a>
 
 </br>
 
